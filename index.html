@@ -1280,6 +1280,9 @@
         );
 
 
+        resizeCanvas();
+
+
         /* =========================
            WORLD
         ========================= */
@@ -1308,9 +1311,6 @@
 
         const MAX_ZOOM =
             1.35;
-
-
-        resizeCanvas();
 
 
         let mouseWorldX = 0;
@@ -2046,11 +2046,11 @@
             ).map(
                 water => ({
 
-                    x: water[0],
+                    x: (water[0]) * MAP_LENGTH_SCALE,
                     y: water[1],
 
                     width:
-                        water[2],
+                        (water[2]) * MAP_LENGTH_SCALE,
 
                     height:
                         water[3]
@@ -2064,6 +2064,8 @@
         /* =========================
            PATH CREATION
         ========================= */
+
+        const MAP_LENGTH_SCALE = 0.80;
 
         function createPath(level) {
 
@@ -2090,6 +2092,7 @@
 
                 const x1 =
                     a[0] *
+                    MAP_LENGTH_SCALE *
                     GRID_SIZE;
 
 
@@ -2100,6 +2103,7 @@
 
                 const x2 =
                     b[0] *
+                    MAP_LENGTH_SCALE *
                     GRID_SIZE;
 
 
@@ -2165,6 +2169,7 @@
 
                 x:
                     last[0] *
+                    MAP_LENGTH_SCALE *
                     GRID_SIZE,
 
                 y:
@@ -3297,6 +3302,10 @@
                     tower.damage
                 )}
 
+                ${tower.stun ? `<br>Stun: ${(tower.stun / 60).toFixed(2)}s` : ""}
+
+                ${tower.stun ? `<br>Stun: ${(tower.stun / 60).toFixed(2)}s` : ""}
+
                 <br>
 
                 Range:
@@ -4137,6 +4146,13 @@
             enemy
         ) {
 
+            if (
+                enemy.stun > 0
+            ) {
+                enemy.stun--;
+                return;
+            }
+
             const target =
                 levelPath[
                     enemy.pathIndex + 1
@@ -4355,6 +4371,10 @@
 
                 chain:
                     tower.chain ||
+                    0,
+
+                stun:
+                    tower.stun ||
                     0
 
             });
@@ -4469,6 +4489,15 @@
             enemy.hp -=
                 projectile.damage;
 
+            if (
+                projectile.stun
+            ) {
+                enemy.stun = Math.max(
+                    enemy.stun || 0,
+                    projectile.stun
+                );
+            }
+
 
             if (
                 projectile.burn
@@ -4568,6 +4597,15 @@
                         other.hp -=
                             projectile.damage *
                             .55;
+
+                        if (
+                            projectile.stun
+                        ) {
+                            other.stun = Math.max(
+                                other.stun || 0,
+                                projectile.stun
+                            );
+                        }
 
 
                         chained++;
