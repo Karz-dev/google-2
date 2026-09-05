@@ -1280,9 +1280,6 @@
         );
 
 
-        resizeCanvas();
-
-
         /* =========================
            WORLD
         ========================= */
@@ -1297,6 +1294,13 @@
 
         const GRID_SIZE =
             50;
+
+
+        const MAP_LENGTH_SCALE =
+            0.80;
+
+
+        resizeCanvas();
 
 
         let cameraX = 0;
@@ -2046,11 +2050,14 @@
             ).map(
                 water => ({
 
-                    x: (water[0]) * MAP_LENGTH_SCALE,
+                    x:
+                        water[0] *
+                        MAP_LENGTH_SCALE,
                     y: water[1],
 
                     width:
-                        (water[2]) * MAP_LENGTH_SCALE,
+                        water[2] *
+                        MAP_LENGTH_SCALE,
 
                     height:
                         water[3]
@@ -2064,8 +2071,6 @@
         /* =========================
            PATH CREATION
         ========================= */
-
-        const MAP_LENGTH_SCALE = 0.80;
 
         function createPath(level) {
 
@@ -2282,6 +2287,8 @@
                 cooldown: 70,
 
                 chain: 2,
+
+                stun: 45,
 
                 color:
                     "#facc15"
@@ -3302,10 +3309,6 @@
                     tower.damage
                 )}
 
-                ${tower.stun ? `<br>Stun: ${(tower.stun / 60).toFixed(2)}s` : ""}
-
-                ${tower.stun ? `<br>Stun: ${(tower.stun / 60).toFixed(2)}s` : ""}
-
                 <br>
 
                 Range:
@@ -3343,6 +3346,15 @@
                     ?
                     `<br>Chain:
                     ${tower.chain}`
+                    :
+                    ""
+                }
+
+                ${
+                    tower.stun
+                    ?
+                    `<br>Stun:
+                    ${(tower.stun / 60).toFixed(2)}s`
                     :
                     ""
                 }
@@ -3760,6 +3772,8 @@
 
                     pathIndex: 0,
 
+                    stun: 0,
+
                     hp:
                         20 +
                         currentWave *
@@ -4147,11 +4161,16 @@
         ) {
 
             if (
-                enemy.stun > 0
+                enemy.stun >
+                0
             ) {
+
                 enemy.stun--;
+
                 return;
+
             }
+
 
             const target =
                 levelPath[
@@ -4489,15 +4508,6 @@
             enemy.hp -=
                 projectile.damage;
 
-            if (
-                projectile.stun
-            ) {
-                enemy.stun = Math.max(
-                    enemy.stun || 0,
-                    projectile.stun
-                );
-            }
-
 
             if (
                 projectile.burn
@@ -4505,6 +4515,20 @@
 
                 enemy.burn =
                     projectile.burn;
+
+            }
+
+
+            if (
+                projectile.stun >
+                0
+            ) {
+
+                enemy.stun =
+                    Math.max(
+                        enemy.stun || 0,
+                        projectile.stun
+                    );
 
             }
 
@@ -4598,13 +4622,18 @@
                             projectile.damage *
                             .55;
 
+
                         if (
-                            projectile.stun
+                            projectile.stun >
+                            0
                         ) {
-                            other.stun = Math.max(
-                                other.stun || 0,
-                                projectile.stun
-                            );
+
+                            other.stun =
+                                Math.max(
+                                    other.stun || 0,
+                                    projectile.stun
+                                );
+
                         }
 
 
