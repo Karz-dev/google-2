@@ -1,0 +1,6248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Block Defense</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            overflow: hidden;
+
+            background: #101810;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: white;
+
+            user-select: none;
+
+        }
+
+
+        canvas {
+
+            position: fixed;
+
+            inset: 0;
+
+            display: block;
+
+        }
+
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        #topBar {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+            right: 0;
+
+            height: 58px;
+
+            display: flex;
+
+            align-items: center;
+
+            background: #173b20;
+
+            border-bottom:
+                3px solid #3fa34d;
+
+            box-shadow:
+                0 3px 0 rgba(0, 0, 0, .35);
+
+            z-index: 20;
+
+        }
+
+
+        #stats {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding-left: 10px;
+
+        }
+
+
+        .stat {
+
+            min-width: 105px;
+
+            padding:
+                7px 12px;
+
+            background: #24572d;
+
+            border:
+                2px solid #3fa34d;
+
+            border-radius: 5px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            text-align: center;
+
+        }
+
+
+        #levelName {
+
+            position: absolute;
+
+            left: 50%;
+
+            transform:
+                translateX(-50%);
+
+            font-size: 19px;
+
+            font-weight: bold;
+
+            color: #b8f5bd;
+
+        }
+
+
+        #menuButton {
+
+            margin-left: auto;
+
+            margin-right: 10px;
+
+            padding:
+                8px 14px;
+
+            background: #24572d;
+
+            border:
+                2px solid #3fa34d;
+
+            border-radius: 5px;
+
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        #menuButton:hover {
+
+            background: #32743d;
+
+        }
+
+
+        /* =========================
+           SHOP
+        ========================= */
+
+        #shop {
+
+            position: fixed;
+
+            left: 10px;
+
+            bottom: 10px;
+
+            width: 215px;
+
+            padding: 10px;
+
+            background: #173b20;
+
+            border:
+                3px solid #3fa34d;
+
+            border-radius: 6px;
+
+            box-shadow:
+                0 4px 12px rgba(0,0,0,.45);
+
+            z-index: 20;
+
+        }
+
+
+        #shop h3 {
+
+            margin-bottom: 8px;
+
+            color: #b8f5bd;
+
+            font-size: 16px;
+
+        }
+
+
+        .shopButton {
+
+            width: 100%;
+
+            margin-bottom: 6px;
+
+            padding: 9px;
+
+            background: #24572d;
+
+            border:
+                2px solid #347c3e;
+
+            border-radius: 4px;
+
+            color: white;
+
+            text-align: left;
+
+            cursor: pointer;
+
+        }
+
+
+        .shopButton:hover {
+
+            background: #32743d;
+
+        }
+
+
+        .shopButton.selected {
+
+            background: #3d8748;
+
+            border-color:
+                #b8f5bd;
+
+            box-shadow:
+                0 0 0 2px #facc15;
+
+        }
+
+
+        .shopName {
+
+            font-weight: bold;
+
+        }
+
+
+        .shopInfo {
+
+            margin-top: 2px;
+
+            font-size: 11px;
+
+            color: #b9d8bd;
+
+        }
+
+
+        /* =========================
+           TOWER PANEL
+        ========================= */
+
+        #towerPanel {
+
+            position: fixed;
+
+            right: 10px;
+
+            bottom: 10px;
+
+            width: 235px;
+
+            padding: 12px;
+
+            background: #173b20;
+
+            border:
+                3px solid #3fa34d;
+
+            border-radius: 6px;
+
+            box-shadow:
+                0 4px 12px rgba(0,0,0,.45);
+
+            z-index: 20;
+
+            display: none;
+
+        }
+
+
+        #towerPanel h2 {
+
+            color: #b8f5bd;
+
+            font-size: 18px;
+
+            margin-bottom: 7px;
+
+        }
+
+
+        #towerStats {
+
+            line-height: 1.6;
+
+            font-size: 13px;
+
+            color: #c8e7cb;
+
+        }
+
+
+        .upgradeButton {
+
+            width: 100%;
+
+            margin-top: 6px;
+
+            padding: 8px;
+
+            background: #286b34;
+
+            border:
+                2px solid #3fa34d;
+
+            border-radius: 4px;
+
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .upgradeButton:hover {
+
+            background: #3d8748;
+
+        }
+
+
+        .upgradeButton:disabled {
+
+            opacity: .35;
+
+            cursor: not-allowed;
+
+        }
+
+
+        #sellButton {
+
+            background: #713030;
+
+            border-color: #a34b4b;
+
+        }
+
+
+        #sellButton:hover {
+
+            background: #914040;
+
+        }
+
+
+        /* =========================
+           CAMERA CONTROLS
+        ========================= */
+
+        #cameraHint {
+
+            position: fixed;
+
+            right: 10px;
+
+            top: 68px;
+
+            padding:
+                7px 10px;
+
+            background:
+                rgba(23,59,32,.92);
+
+            border:
+                2px solid #3fa34d;
+
+            border-radius: 5px;
+
+            color: #b8f5bd;
+
+            font-size: 12px;
+
+            z-index: 15;
+
+            pointer-events: none;
+
+        }
+
+
+        /* =========================
+           OVERLAYS
+        ========================= */
+
+        .overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                rgba(8,20,10,.88);
+
+            z-index: 100;
+
+        }
+
+
+        .panel {
+
+            width:
+                min(850px,92vw);
+
+            padding: 32px;
+
+            background: #173b20;
+
+            border:
+                3px solid #3fa34d;
+
+            border-radius: 8px;
+
+            box-shadow:
+                0 10px 50px rgba(0,0,0,.6);
+
+            text-align: center;
+
+        }
+
+
+        .panel h1 {
+
+            margin-bottom: 8px;
+
+            color: #b8f5bd;
+
+            font-size: 44px;
+
+        }
+
+
+        .panel p {
+
+            margin-bottom: 20px;
+
+            color: #b9d8bd;
+
+        }
+
+
+        .bigButton {
+
+            margin: 5px;
+
+            padding:
+                11px 23px;
+
+            background: #286b34;
+
+            border:
+                2px solid #3fa34d;
+
+            border-radius: 5px;
+
+            color: white;
+
+            font-weight: bold;
+
+            font-size: 15px;
+
+            cursor: pointer;
+
+        }
+
+
+        .bigButton:hover {
+
+            background: #3d8748;
+
+        }
+
+
+        .secondaryButton {
+
+            background: #24572d;
+
+        }
+
+
+        /* =========================
+           LEVEL SELECT
+        ========================= */
+
+        #levelGrid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3,1fr);
+
+            gap: 10px;
+
+            margin: 18px 0;
+
+        }
+
+
+        .levelButton {
+
+            min-height: 105px;
+
+            padding: 12px;
+
+            background: #24572d;
+
+            border:
+                2px solid #347c3e;
+
+            border-radius: 6px;
+
+            color: white;
+
+            cursor: pointer;
+
+        }
+
+
+        .levelButton:hover {
+
+            background: #32743d;
+
+            border-color:
+                #b8f5bd;
+
+        }
+
+
+        .levelNumber {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            color: #b8f5bd;
+
+        }
+
+
+        .levelDifficulty {
+
+            margin-top: 6px;
+
+            font-size: 12px;
+
+            color: #a9c9ad;
+
+        }
+
+
+        /* =========================
+           HELP
+        ========================= */
+
+        #helpPanel {
+
+            position: fixed;
+
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                rgba(5,15,7,.85);
+
+            z-index: 150;
+
+        }
+
+
+        #helpBox {
+
+            position: relative;
+
+            width:
+                min(650px,90vw);
+
+            padding: 28px;
+
+            background: #173b20;
+
+            border:
+                3px solid #3fa34d;
+
+            border-radius: 7px;
+
+        }
+
+
+        #helpBox h2 {
+
+            margin-bottom: 15px;
+
+            color: #b8f5bd;
+
+        }
+
+
+        #helpBox p {
+
+            line-height: 1.7;
+
+            color: #c8e7cb;
+
+        }
+
+
+        #closeHelp {
+
+            position: absolute;
+
+            top: 8px;
+
+            right: 12px;
+
+            border: none;
+
+            background: transparent;
+
+            color: white;
+
+            font-size: 25px;
+
+            cursor: pointer;
+
+        }
+
+
+        #gameOver,
+        #levelComplete {
+
+            display: none;
+
+        }
+
+
+        #gameOver h1 {
+
+            color: #ff7777;
+
+        }
+
+
+        #levelComplete h1 {
+
+            color: #78e58a;
+
+        }
+
+
+        @media(max-width:700px) {
+
+            #levelGrid {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+
+            }
+
+
+            #shop {
+
+                width: 175px;
+
+            }
+
+
+            #towerPanel {
+
+                width: 195px;
+
+            }
+
+
+            .stat {
+
+                min-width: auto;
+
+                padding:
+                    6px 8px;
+
+                font-size: 12px;
+
+            }
+
+
+            #levelName {
+
+                display: none;
+
+            }
+
+
+            #cameraHint {
+
+                display: none;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <canvas id="gameCanvas"></canvas>
+
+
+    <!-- =========================
+         TOP BAR
+    ========================= -->
+
+    <div id="topBar">
+
+        <div id="stats">
+
+            <div class="stat">
+
+                💰 $
+                <span id="money">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                ❤️
+                <span id="lives">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                🌊 Wave
+                <span id="wave">
+                    0 / 0
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                ⭐
+                <span id="score">
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div id="levelName">
+
+            Block Defense
+
+        </div>
+
+
+        <button
+            id="menuButton"
+            onclick="returnToMenu()"
+        >
+
+            ☰ Main Menu
+
+        </button>
+
+    </div>
+
+
+    <!-- CAMERA HELP -->
+
+    <div id="cameraHint">
+
+        WASD / Arrow Keys = Move Camera
+        •
+        Mouse Wheel = Zoom
+        •
+        Middle Mouse = Drag
+
+    </div>
+
+
+    <!-- =========================
+         SHOP
+    ========================= -->
+
+    <div id="shop">
+
+        <h3>
+            🏗 Towers
+        </h3>
+
+
+        <button
+            class="shopButton"
+            id="shop-fire"
+            onclick="selectShopTower('fire')"
+        >
+
+            <div class="shopName">
+
+                🔥 Fire Mage — $100
+
+            </div>
+
+            <div class="shopInfo">
+
+                Area damage
+
+            </div>
+
+        </button>
+
+
+        <button
+            class="shopButton"
+            id="shop-archer"
+            onclick="selectShopTower('archer')"
+        >
+
+            <div class="shopName">
+
+                🏹 Archer — $125
+
+            </div>
+
+            <div class="shopInfo">
+
+                Fast attacks
+
+            </div>
+
+        </button>
+
+
+        <button
+            class="shopButton"
+            id="shop-sniper"
+            onclick="selectShopTower('sniper')"
+        >
+
+            <div class="shopName">
+
+                🎯 Sniper — $300
+
+            </div>
+
+            <div class="shopInfo">
+
+                Extreme range
+
+            </div>
+
+        </button>
+
+
+        <button
+            class="shopButton"
+            id="shop-water"
+            onclick="selectShopTower('water')"
+        >
+
+            <div class="shopName">
+
+                💧 Water Cannon — $175
+
+            </div>
+
+            <div class="shopInfo">
+
+                Water placement
+
+            </div>
+
+        </button>
+
+
+        <button
+            class="shopButton"
+            id="shop-shock"
+            onclick="selectShopTower('shock')"
+        >
+
+            <div class="shopName">
+
+                ⚡ Shock Tower — $225
+
+            </div>
+
+            <div class="shopInfo">
+
+                Chain attacks
+
+            </div>
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         TOWER PANEL
+    ========================= -->
+
+    <div id="towerPanel">
+
+        <h2 id="towerTitle">
+            Tower
+        </h2>
+
+
+        <div id="towerStats"></div>
+
+
+        <button
+            class="upgradeButton"
+            id="upgrade1"
+            onclick="upgradeTower(1)"
+        ></button>
+
+
+        <button
+            class="upgradeButton"
+            id="upgrade2"
+            onclick="upgradeTower(2)"
+        ></button>
+
+
+        <button
+            class="upgradeButton"
+            id="upgrade3"
+            onclick="upgradeTower(3)"
+        ></button>
+
+
+        <button
+            class="upgradeButton"
+            id="sellButton"
+            onclick="sellTower()"
+        >
+
+            Sell
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         MAIN MENU
+    ========================= -->
+
+    <div
+        id="mainMenu"
+        class="overlay"
+    >
+
+        <div class="panel">
+
+            <h1>
+                BLOCK DEFENSE
+            </h1>
+
+
+            <p>
+                Build. Upgrade. Survive.
+            </p>
+
+
+            <button
+                class="bigButton"
+                onclick="openLevelSelect()"
+            >
+
+                ▶ PLAY
+
+            </button>
+
+
+            <button
+                class="bigButton secondaryButton"
+                onclick="openHelp()"
+            >
+
+                ? HOW TO PLAY
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         LEVEL SELECT
+    ========================= -->
+
+    <div
+        id="levelSelect"
+        class="overlay"
+        style="display:none;"
+    >
+
+        <div class="panel">
+
+            <h1>
+                LEVEL SELECT
+            </h1>
+
+
+            <p>
+                Choose your battlefield.
+            </p>
+
+
+            <div id="levelGrid"></div>
+
+
+            <button
+                class="bigButton secondaryButton"
+                onclick="returnToMenu()"
+            >
+
+                ← BACK
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         HELP
+    ========================= -->
+
+    <div id="helpPanel">
+
+        <div id="helpBox">
+
+            <button
+                id="closeHelp"
+                onclick="closeHelp()"
+            >
+
+                ×
+
+            </button>
+
+
+            <h2>
+                How To Play
+            </h2>
+
+
+            <p>
+
+                Select a tower and click an empty
+                part of the map to place it.
+
+                <br><br>
+
+                Click a tower to inspect and upgrade it.
+
+                <br><br>
+
+                Towers automatically attack enemies.
+
+                <br><br>
+
+                Keep enemies away from the red exit.
+
+                <br><br>
+
+                💧 Water Cannons need water.
+
+                <br><br>
+
+                🖱️ Scroll to zoom the map.
+
+                <br><br>
+
+                🖱️ Hold middle mouse and drag
+                to move around.
+
+                <br><br>
+
+                ⌨️ WASD / Arrow Keys move the camera.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         GAME OVER
+    ========================= -->
+
+    <div
+        id="gameOver"
+        class="overlay"
+    >
+
+        <div class="panel">
+
+            <h1>
+                GAME OVER
+            </h1>
+
+
+            <p>
+                The enemies got through.
+            </p>
+
+
+            <button
+                class="bigButton"
+                onclick="restartLevel()"
+            >
+
+                ↻ RETRY
+
+            </button>
+
+
+            <button
+                class="bigButton secondaryButton"
+                onclick="openLevelSelect()"
+            >
+
+                LEVELS
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         COMPLETE
+    ========================= -->
+
+    <div
+        id="levelComplete"
+        class="overlay"
+    >
+
+        <div class="panel">
+
+            <h1>
+                LEVEL COMPLETE
+            </h1>
+
+
+            <p id="completeText">
+                Victory!
+            </p>
+
+
+            <button
+                class="bigButton"
+                onclick="nextLevel()"
+            >
+
+                NEXT LEVEL →
+
+            </button>
+
+
+            <button
+                class="bigButton secondaryButton"
+                onclick="openLevelSelect()"
+            >
+
+                LEVELS
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+
+        /* =========================
+           CANVAS
+        ========================= */
+
+        const canvas =
+            document.getElementById(
+                "gameCanvas"
+            );
+
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        function resizeCanvas() {
+
+            canvas.width =
+                window.innerWidth;
+
+            canvas.height =
+                window.innerHeight;
+
+            clampCamera();
+
+        }
+
+
+        window.addEventListener(
+            "resize",
+            resizeCanvas
+        );
+
+
+        resizeCanvas();
+
+
+        /* =========================
+           WORLD
+        ========================= */
+
+        const WORLD_WIDTH =
+            9500;
+
+
+        const WORLD_HEIGHT =
+            5000;
+
+
+        const GRID_SIZE =
+            50;
+
+
+        let cameraX = 0;
+        let cameraY = 0;
+
+        let cameraZoom = 1;
+
+
+        const MIN_ZOOM =
+            0.65;
+
+
+        const MAX_ZOOM =
+            1.35;
+
+
+        let mouseWorldX = 0;
+        let mouseWorldY = 0;
+
+
+        /* =========================
+           CAMERA
+        ========================= */
+
+        let cameraDragging =
+            false;
+
+
+        let cameraDragStartX = 0;
+        let cameraDragStartY = 0;
+
+        let cameraStartX = 0;
+        let cameraStartY = 0;
+
+
+        canvas.addEventListener(
+            "mousedown",
+            event => {
+
+                if (
+                    event.button === 1
+                ) {
+
+                    cameraDragging =
+                        true;
+
+
+                    cameraDragStartX =
+                        event.clientX;
+
+
+                    cameraDragStartY =
+                        event.clientY;
+
+
+                    cameraStartX =
+                        cameraX;
+
+
+                    cameraStartY =
+                        cameraY;
+
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+
+        window.addEventListener(
+            "mouseup",
+            event => {
+
+                if (
+                    event.button === 1
+                ) {
+
+                    cameraDragging =
+                        false;
+
+                }
+
+            }
+        );
+
+
+        canvas.addEventListener(
+            "mousemove",
+            event => {
+
+                if (
+                    cameraDragging
+                ) {
+
+                    cameraX =
+                        cameraStartX -
+                        (
+                            event.clientX -
+                            cameraDragStartX
+                        )
+                        /
+                        cameraZoom;
+
+
+                    cameraY =
+                        cameraStartY -
+                        (
+                            event.clientY -
+                            cameraDragStartY
+                        )
+                        /
+                        cameraZoom;
+
+
+                    clampCamera();
+
+                }
+
+
+                updateMouseWorld(
+                    event
+                );
+
+            }
+        );
+
+
+        canvas.addEventListener(
+            "wheel",
+            event => {
+
+                const oldZoom =
+                    cameraZoom;
+
+
+                if (
+                    event.deltaY < 0
+                ) {
+
+                    cameraZoom *=
+                        1.1;
+
+                }
+
+                else {
+
+                    cameraZoom /=
+                        1.1;
+
+                }
+
+
+                cameraZoom =
+                    Math.max(
+                        MIN_ZOOM,
+                        Math.min(
+                            MAX_ZOOM,
+                            cameraZoom
+                        )
+                    );
+
+
+                const mouseX =
+                    event.clientX;
+
+
+                const mouseY =
+                    event.clientY;
+
+
+                const worldBeforeX =
+                    cameraX +
+                    mouseX /
+                    oldZoom;
+
+
+                const worldBeforeY =
+                    cameraY +
+                    mouseY /
+                    oldZoom;
+
+
+                cameraX =
+                    worldBeforeX -
+                    mouseX /
+                    cameraZoom;
+
+
+                cameraY =
+                    worldBeforeY -
+                    mouseY /
+                    cameraZoom;
+
+
+                clampCamera();
+
+
+                updateMouseWorld(
+                    event
+                );
+
+
+                event.preventDefault();
+
+            },
+            {
+                passive: false
+            }
+        );
+
+
+        canvas.addEventListener(
+            "contextmenu",
+            event => {
+
+                event.preventDefault();
+
+            }
+        );
+
+
+        function updateMouseWorld(
+            event
+        ) {
+
+            mouseWorldX =
+                cameraX +
+                event.clientX /
+                cameraZoom;
+
+
+            mouseWorldY =
+                cameraY +
+                event.clientY /
+                cameraZoom;
+
+        }
+
+
+        function clampCamera() {
+
+            const visibleWidth =
+                canvas.width /
+                cameraZoom;
+
+
+            const visibleHeight =
+                canvas.height /
+                cameraZoom;
+
+
+            const maxX =
+                Math.max(
+                    0,
+                    WORLD_WIDTH -
+                    visibleWidth
+                );
+
+
+            const maxY =
+                Math.max(
+                    0,
+                    WORLD_HEIGHT -
+                    visibleHeight
+                );
+
+
+            cameraX =
+                Math.max(
+                    0,
+                    Math.min(
+                        maxX,
+                        cameraX
+                    )
+                );
+
+
+            cameraY =
+                Math.max(
+                    0,
+                    Math.min(
+                        maxY,
+                        cameraY
+                    )
+                );
+
+        }
+
+
+        /* =========================
+           KEYBOARD
+        ========================= */
+
+        const keys = {};
+
+
+        window.addEventListener(
+            "keydown",
+            event => {
+
+                keys[
+                    event.key.toLowerCase()
+                ] = true;
+
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    selectedTower = null;
+
+                    selectedShopTower = null;
+
+                    document.getElementById(
+                        "towerPanel"
+                    ).style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+
+        window.addEventListener(
+            "keyup",
+            event => {
+
+                keys[
+                    event.key.toLowerCase()
+                ] = false;
+
+            }
+        );
+
+
+        function updateCamera() {
+
+            const speed =
+                15 /
+                cameraZoom;
+
+
+            if (
+                keys["w"] ||
+                keys["arrowup"]
+            ) {
+
+                cameraY -= speed;
+
+            }
+
+
+            if (
+                keys["s"] ||
+                keys["arrowdown"]
+            ) {
+
+                cameraY += speed;
+
+            }
+
+
+            if (
+                keys["a"] ||
+                keys["arrowleft"]
+            ) {
+
+                cameraX -= speed;
+
+            }
+
+
+            if (
+                keys["d"] ||
+                keys["arrowright"]
+            ) {
+
+                cameraX += speed;
+
+            }
+
+
+            clampCamera();
+
+        }
+
+
+        /* =========================
+           GAME STATE
+        ========================= */
+
+        let currentLevel = 1;
+
+        let money = 0;
+
+        let lives = 0;
+
+        let score = 0;
+
+        let currentWave = 0;
+
+
+        let enemies = [];
+
+        let towers = [];
+
+        let projectiles = [];
+
+        let particles = [];
+
+
+        let selectedShopTower =
+            null;
+
+
+        let selectedTower =
+            null;
+
+
+        let gameRunning =
+            false;
+
+
+        let enemiesToSpawn = 0;
+
+        let spawnTimer = 0;
+
+        let waveDelay = 90;
+
+
+        let levelPath = [];
+
+        let waterZones = [];
+
+
+        /* =========================
+           LEVELS
+        ========================= */
+
+        const levels = {
+
+            1: {
+                name: "Green Run",
+                difficulty: "Easy",
+                money: 650,
+                lives: 20,
+                waves: 15
+            },
+
+            2: {
+                name: "River Bend",
+                difficulty: "Easy",
+                money: 700,
+                lives: 20,
+                waves: 18
+            },
+
+            3: {
+                name: "Floodplain",
+                difficulty: "Medium",
+                money: 800,
+                lives: 18,
+                waves: 22
+            },
+
+            4: {
+                name: "Twin Rivers",
+                difficulty: "Medium",
+                money: 850,
+                lives: 18,
+                waves: 25
+            },
+
+            5: {
+                name: "The Crossing",
+                difficulty: "Hard",
+                money: 950,
+                lives: 16,
+                waves: 30
+            },
+
+            6: {
+                name: "Endless Valley",
+                difficulty: "Hard",
+                money: 1100,
+                lives: 15,
+                waves: 35
+            }
+
+        };
+
+
+        /* =========================
+           LONG MAPS
+        ========================= */
+
+        const pathPoints = {
+
+            1: [
+
+                [0,15],
+                [8,15],
+                [8,5],
+                [20,5],
+                [20,25],
+                [35,25],
+                [35,10],
+                [50,10],
+                [50,32],
+                [66,32],
+                [66,17],
+                [82,17],
+                [82,38],
+                [100,38],
+                [100,8],
+                [120,8],
+                [120,28],
+                [142,28],
+                [142,14],
+                [165,14],
+                [165,40],
+                [185,40]
+
+            ],
+
+
+            2: [
+
+                [0,8],
+                [10,8],
+                [10,28],
+                [22,28],
+                [22,5],
+                [36,5],
+                [36,38],
+                [51,38],
+                [51,16],
+                [68,16],
+                [68,6],
+                [85,6],
+                [85,31],
+                [103,31],
+                [103,12],
+                [120,12],
+                [120,40],
+                [140,40],
+                [140,22],
+                [160,22],
+                [160,5],
+                [185,5]
+
+            ],
+
+
+            3: [
+
+                [0,20],
+                [10,20],
+                [10,6],
+                [24,6],
+                [24,35],
+                [39,35],
+                [39,16],
+                [55,16],
+                [55,42],
+                [72,42],
+                [72,8],
+                [90,8],
+                [90,27],
+                [108,27],
+                [108,5],
+                [125,5],
+                [125,38],
+                [145,38],
+                [145,18],
+                [163,18],
+                [163,44],
+                [188,44]
+
+            ],
+
+
+            4: [
+
+                [0,30],
+                [10,30],
+                [10,8],
+                [25,8],
+                [25,40],
+                [42,40],
+                [42,20],
+                [58,20],
+                [58,5],
+                [75,5],
+                [75,32],
+                [92,32],
+                [92,12],
+                [110,12],
+                [110,43],
+                [130,43],
+                [130,24],
+                [148,24],
+                [148,6],
+                [168,6],
+                [168,35],
+                [190,35]
+
+            ],
+
+
+            5: [
+
+                [0,7],
+                [12,7],
+                [12,34],
+                [27,34],
+                [27,13],
+                [42,13],
+                [42,43],
+                [58,43],
+                [58,21],
+                [75,21],
+                [75,5],
+                [92,5],
+                [92,35],
+                [108,35],
+                [108,15],
+                [125,15],
+                [125,44],
+                [143,44],
+                [143,25],
+                [161,25],
+                [161,8],
+                [185,8]
+
+            ],
+
+
+            6: [
+
+                [0,18],
+                [10,18],
+                [10,5],
+                [24,5],
+                [24,34],
+                [39,34],
+                [39,15],
+                [54,15],
+                [54,43],
+                [70,43],
+                [70,7],
+                [87,7],
+                [87,30],
+                [103,30],
+                [103,4],
+                [120,4],
+                [120,40],
+                [138,40],
+                [138,17],
+                [155,17],
+                [155,45],
+                [174,45],
+                [174,25],
+                [195,25]
+
+            ]
+
+        };
+
+
+        /* =========================
+           WATER
+        ========================= */
+
+        function createWater(level) {
+
+            if (
+                level === 1
+            ) {
+
+                return [];
+
+            }
+
+
+            const sets = {
+
+                2: [
+
+                    [500,0,800,850],
+                    [2500,800,850,900],
+                    [5000,0,900,850],
+                    [7100,800,900,900]
+
+                ],
+
+                3: [
+
+                    [300,700,1200,1000],
+                    [2300,0,1000,900],
+                    [4200,950,1100,1000],
+                    [6500,0,1100,950],
+                    [8200,1000,700,1000]
+
+                ],
+
+                4: [
+
+                    [250,0,850,850],
+                    [1600,850,1000,950],
+                    [3500,0,1000,1000],
+                    [5200,950,1000,1000],
+                    [7300,0,1100,1000]
+
+                ],
+
+                5: [
+
+                    [0,0,1100,900],
+                    [1550,850,1100,1000],
+                    [3300,0,1100,950],
+                    [5100,1000,1100,1000],
+                    [7000,0,1300,1000],
+                    [8300,1300,700,1000]
+
+                ],
+
+                6: [
+
+                    [150,650,1100,1150],
+                    [1750,0,1050,1000],
+                    [3350,900,1150,1100],
+                    [5100,0,1200,1050],
+                    [7000,950,1200,1100],
+                    [8550,0,450,1250]
+
+                ]
+
+            };
+
+
+            return (
+                sets[level] || []
+            ).map(
+                water => ({
+
+                    x: water[0],
+                    y: water[1],
+
+                    width:
+                        water[2],
+
+                    height:
+                        water[3]
+
+                })
+            );
+
+        }
+
+
+        /* =========================
+           PATH CREATION
+        ========================= */
+
+        function createPath(level) {
+
+            const points =
+                pathPoints[level];
+
+
+            const result = [];
+
+
+            for (
+                let i = 0;
+                i < points.length - 1;
+                i++
+            ) {
+
+                const a =
+                    points[i];
+
+
+                const b =
+                    points[i + 1];
+
+
+                const x1 =
+                    a[0] *
+                    GRID_SIZE;
+
+
+                const y1 =
+                    a[1] *
+                    GRID_SIZE;
+
+
+                const x2 =
+                    b[0] *
+                    GRID_SIZE;
+
+
+                const y2 =
+                    b[1] *
+                    GRID_SIZE;
+
+
+                const distance =
+                    Math.hypot(
+                        x2-x1,
+                        y2-y1
+                    );
+
+
+                const steps =
+                    Math.max(
+                        1,
+                        Math.ceil(
+                            distance /
+                            GRID_SIZE
+                        )
+                    );
+
+
+                for (
+                    let s = 0;
+                    s < steps;
+                    s++
+                ) {
+
+                    const t =
+                        s /
+                        steps;
+
+
+                    result.push({
+
+                        x:
+                            x1 +
+                            (x2-x1) *
+                            t,
+
+                        y:
+                            y1 +
+                            (y2-y1) *
+                            t
+
+                    });
+
+                }
+
+            }
+
+
+            const last =
+                points[
+                    points.length-1
+                ];
+
+
+            result.push({
+
+                x:
+                    last[0] *
+                    GRID_SIZE,
+
+                y:
+                    last[1] *
+                    GRID_SIZE
+
+            });
+
+
+            return result;
+
+        }
+
+
+        /* =========================
+           TOWER DATA
+        ========================= */
+
+        const towerData = {
+
+            fire: {
+
+                name:
+                    "Fire Mage",
+
+                cost: 100,
+
+                damage: 15,
+
+                range: 150,
+
+                cooldown: 45,
+
+                color:
+                    "#ef4444"
+
+            },
+
+
+            archer: {
+
+                name:
+                    "Archer",
+
+                cost: 125,
+
+                damage: 6,
+
+                range: 220,
+
+                cooldown: 20,
+
+                color:
+                    "#3b82f6"
+
+            },
+
+
+            sniper: {
+
+                name:
+                    "Sniper",
+
+                cost: 300,
+
+                damage: 150,
+
+                range: 99999,
+
+                cooldown: 130,
+
+                color:
+                    "#a855f7"
+
+            },
+
+
+            water: {
+
+                name:
+                    "Water Cannon",
+
+                cost: 175,
+
+                damage: 12,
+
+                range: 180,
+
+                cooldown: 38,
+
+                splash: 0,
+
+                color:
+                    "#06b6d4"
+
+            },
+
+
+            shock: {
+
+                name:
+                    "Shock Tower",
+
+                cost: 225,
+
+                damage: 22,
+
+                range: 210,
+
+                cooldown: 70,
+
+                chain: 2,
+
+                color:
+                    "#facc15"
+
+            }
+
+        };
+
+
+        /* =========================
+           LOAD LEVEL
+        ========================= */
+
+        function loadLevel(level) {
+
+            currentLevel =
+                level;
+
+
+            const data =
+                levels[level];
+
+
+            money =
+                data.money;
+
+
+            lives =
+                data.lives;
+
+
+            score = 0;
+
+
+            currentWave = 0;
+
+
+            enemies = [];
+
+            towers = [];
+
+            projectiles = [];
+
+            particles = [];
+
+
+            selectedTower =
+                null;
+
+
+            selectedShopTower =
+                null;
+
+
+            levelPath =
+                createPath(level);
+
+
+            waterZones =
+                createWater(level);
+
+
+            cameraX = 0;
+
+            cameraY = 0;
+
+            cameraZoom = 1;
+
+
+            gameRunning = true;
+
+
+            enemiesToSpawn = 0;
+
+            spawnTimer = 0;
+
+            waveDelay = 80;
+
+
+            document.getElementById(
+                "levelName"
+            ).textContent =
+                data.name;
+
+
+            document.getElementById(
+                "towerPanel"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "mainMenu"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "levelSelect"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "gameOver"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "levelComplete"
+            ).style.display =
+                "none";
+
+
+            updateUI();
+
+        }
+
+
+        /* =========================
+           MENU
+        ========================= */
+
+        function openLevelSelect() {
+
+            gameRunning =
+                false;
+
+
+            document.getElementById(
+                "mainMenu"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "gameOver"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "levelComplete"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "levelSelect"
+            ).style.display =
+                "flex";
+
+        }
+
+
+        function returnToMenu() {
+
+            gameRunning =
+                false;
+
+
+            selectedTower =
+                null;
+
+
+            selectedShopTower =
+                null;
+
+
+            document.getElementById(
+                "towerPanel"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "levelSelect"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "gameOver"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "levelComplete"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "mainMenu"
+            ).style.display =
+                "flex";
+
+        }
+
+
+        function restartLevel() {
+
+            loadLevel(
+                currentLevel
+            );
+
+        }
+
+
+        function nextLevel() {
+
+            if (
+                currentLevel < 6
+            ) {
+
+                loadLevel(
+                    currentLevel + 1
+                );
+
+            }
+
+            else {
+
+                openLevelSelect();
+
+            }
+
+        }
+
+
+        /* =========================
+           LEVEL BUTTONS
+        ========================= */
+
+        function buildLevelButtons() {
+
+            const grid =
+                document.getElementById(
+                    "levelGrid"
+                );
+
+
+            grid.innerHTML = "";
+
+
+            for (
+                let i = 1;
+                i <= 6;
+                i++
+            ) {
+
+                const level =
+                    levels[i];
+
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.className =
+                    "levelButton";
+
+
+                button.innerHTML = `
+
+                    <div class="levelNumber">
+                        ${i}
+                    </div>
+
+                    <div>
+                        ${level.name}
+                    </div>
+
+                    <div class="levelDifficulty">
+                        ${level.difficulty}
+                    </div>
+
+                `;
+
+
+                button.onclick =
+                    () =>
+                        loadLevel(i);
+
+
+                grid.appendChild(
+                    button
+                );
+
+            }
+
+        }
+
+
+        buildLevelButtons();
+
+
+        /* =========================
+           HELP
+        ========================= */
+
+        function openHelp() {
+
+            document.getElementById(
+                "helpPanel"
+            ).style.display =
+                "flex";
+
+        }
+
+
+        function closeHelp() {
+
+            document.getElementById(
+                "helpPanel"
+            ).style.display =
+                "none";
+
+        }
+
+
+        /* =========================
+           TERRAIN
+        ========================= */
+
+        function isWater(x,y) {
+
+            return waterZones.some(
+                water =>
+
+                    x >= water.x &&
+
+                    x <=
+                    water.x +
+                    water.width &&
+
+                    y >= water.y &&
+
+                    y <=
+                    water.y +
+                    water.height
+
+            );
+
+        }
+
+
+        function isPath(x,y) {
+
+            for (
+                const point of
+                levelPath
+            ) {
+
+                if (
+                    Math.hypot(
+                        point.x-x,
+                        point.y-y
+                    ) <
+                    GRID_SIZE*.75
+                ) {
+
+                    return true;
+
+                }
+
+            }
+
+
+            return false;
+
+        }
+
+
+        /* =========================
+           SHOP
+        ========================= */
+
+        function selectShopTower(
+            type
+        ) {
+
+            selectedShopTower =
+                type;
+
+
+            selectedTower =
+                null;
+
+
+            document.getElementById(
+                "towerPanel"
+            ).style.display =
+                "none";
+
+
+            document
+                .querySelectorAll(
+                    ".shopButton"
+                )
+                .forEach(
+                    button =>
+                        button.classList.remove(
+                            "selected"
+                        )
+                );
+
+
+            document.getElementById(
+                "shop-"+type
+            ).classList.add(
+                "selected"
+            );
+
+        }
+
+
+        /* =========================
+           PLACE TOWER
+        ========================= */
+
+        function placeTower(
+            x,
+            y
+        ) {
+
+            if (
+                !selectedShopTower
+            ) {
+
+                return;
+
+            }
+
+
+            const data =
+                towerData[
+                    selectedShopTower
+                ];
+
+
+            x =
+                Math.floor(
+                    x /
+                    GRID_SIZE
+                ) *
+                GRID_SIZE +
+                GRID_SIZE/2;
+
+
+            y =
+                Math.floor(
+                    y /
+                    GRID_SIZE
+                ) *
+                GRID_SIZE +
+                GRID_SIZE/2;
+
+
+            if (
+                isPath(x,y)
+            ) {
+
+                return;
+
+            }
+
+
+            const occupied =
+                towers.some(
+                    tower =>
+                        Math.hypot(
+                            tower.x-x,
+                            tower.y-y
+                        ) <
+                        GRID_SIZE
+                );
+
+
+            if (
+                occupied
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                selectedShopTower ===
+                "water"
+                &&
+                !isWater(x,y)
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                selectedShopTower !==
+                "water"
+                &&
+                isWater(x,y)
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                money <
+                data.cost
+            ) {
+
+                return;
+
+            }
+
+
+            money -=
+                data.cost;
+
+
+            towers.push({
+
+                type:
+                    selectedShopTower,
+
+                x,
+                y,
+
+                level: 0,
+
+                damage:
+                    data.damage,
+
+                range:
+                    data.range,
+
+                cooldown:
+                    data.cooldown,
+
+                splash:
+                    data.splash ||
+                    0,
+
+                chain:
+                    data.chain ||
+                    0,
+
+                timer: 0,
+
+                totalSpent:
+                    data.cost
+
+            });
+
+
+            updateUI();
+
+        }
+
+
+        /* =========================
+           FIND TOWER
+        ========================= */
+
+        function getTowerAt(
+            x,
+            y
+        ) {
+
+            for (
+                let i =
+                    towers.length-1;
+                i >= 0;
+                i--
+            ) {
+
+                const tower =
+                    towers[i];
+
+
+                if (
+                    Math.hypot(
+                        tower.x-x,
+                        tower.y-y
+                    ) <
+                    GRID_SIZE*.6
+                ) {
+
+                    return tower;
+
+                }
+
+            }
+
+
+            return null;
+
+        }
+
+
+        /* =========================
+           UPGRADES
+        ========================= */
+
+        function upgradeTower(
+            level
+        ) {
+
+            if (
+                !selectedTower
+            ) {
+
+                return;
+
+            }
+
+
+            const tower =
+                selectedTower;
+
+
+            let cost = 0;
+
+
+            if (
+                tower.type ===
+                "fire"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    cost = 100;
+
+                    if (
+                        tower.level >= 1
+                    )
+                        return;
+
+                    tower.range += 40;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    cost = 150;
+
+                    if (
+                        tower.level < 1 ||
+                        tower.fireBurn
+                    )
+                        return;
+
+                    tower.fireBurn = 5;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    cost = 225;
+
+                    if (
+                        !tower.fireBurn ||
+                        tower.burnLevel
+                    )
+                        return;
+
+                    tower.fireBurn = 9;
+
+                    tower.burnLevel = 1;
+
+                }
+
+            }
+
+
+            if (
+                tower.type ===
+                "archer"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    cost = 90;
+
+                    if (
+                        tower.level >= 1
+                    )
+                        return;
+
+                    tower.range += 50;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    cost = 140;
+
+                    if (
+                        tower.level < 1 ||
+                        tower.damageLevel
+                    )
+                        return;
+
+                    tower.damage += 8;
+
+                    tower.damageLevel = 1;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    cost = 190;
+
+                    if (
+                        tower.level < 1 ||
+                        tower.speedLevel
+                    )
+                        return;
+
+                    tower.cooldown =
+                        Math.max(
+                            7,
+                            tower.cooldown-7
+                        );
+
+                    tower.speedLevel = 1;
+
+                }
+
+            }
+
+
+            if (
+                tower.type ===
+                "sniper"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    cost = 200;
+
+                    if (
+                        tower.damageLevel
+                    )
+                        return;
+
+                    tower.damage += 100;
+
+                    tower.damageLevel = 1;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    cost = 350;
+
+                    if (
+                        !tower.damageLevel ||
+                        tower.damageLevel2
+                    )
+                        return;
+
+                    tower.damage += 200;
+
+                    tower.damageLevel2 = 1;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    cost = 500;
+
+                    if (
+                        tower.speedLevel
+                    )
+                        return;
+
+                    tower.cooldown =
+                        Math.max(
+                            50,
+                            tower.cooldown-35
+                        );
+
+                    tower.speedLevel = 1;
+
+                }
+
+            }
+
+
+            if (
+                tower.type ===
+                "water"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    cost = 120;
+
+                    if (
+                        tower.level >= 1
+                    )
+                        return;
+
+                    tower.range += 50;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    cost = 160;
+
+                    if (
+                        tower.level < 1 ||
+                        tower.damageLevel
+                    )
+                        return;
+
+                    tower.damage += 15;
+
+                    tower.damageLevel = 1;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    cost = 220;
+
+                    if (
+                        tower.level < 1 ||
+                        tower.splash
+                    )
+                        return;
+
+                    tower.splash = 55;
+
+                }
+
+            }
+
+
+            if (
+                tower.type ===
+                "shock"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    cost = 125;
+
+                    if (
+                        tower.level >= 1
+                    )
+                        return;
+
+                    tower.damage += 15;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    cost = 200;
+
+                    if (
+                        tower.level < 1 ||
+                        tower.chainLevel
+                    )
+                        return;
+
+                    tower.chain += 2;
+
+                    tower.chainLevel = 1;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    cost = 300;
+
+                    if (
+                        tower.level < 1 ||
+                        tower.speedLevel
+                    )
+                        return;
+
+                    tower.cooldown =
+                        Math.max(
+                            25,
+                            tower.cooldown-25
+                        );
+
+                    tower.speedLevel = 1;
+
+                }
+
+            }
+
+
+            if (
+                money < cost
+            ) {
+
+                return;
+
+            }
+
+
+            money -= cost;
+
+
+            tower.totalSpent +=
+                cost;
+
+
+            tower.level =
+                Math.max(
+                    tower.level,
+                    level
+                );
+
+
+            updateTowerPanel();
+
+            updateUI();
+
+        }
+
+
+        /* =========================
+           TOWER PANEL
+        ========================= */
+
+        function updateTowerPanel() {
+
+            if (
+                !selectedTower
+            ) {
+
+                return;
+
+            }
+
+
+            const tower =
+                selectedTower;
+
+
+            const data =
+                towerData[
+                    tower.type
+                ];
+
+
+            document.getElementById(
+                "towerTitle"
+            ).textContent =
+                data.name +
+                " Lv." +
+                tower.level;
+
+
+            document.getElementById(
+                "towerStats"
+            ).innerHTML = `
+
+                Damage:
+                ${Math.round(
+                    tower.damage
+                )}
+
+                <br>
+
+                Range:
+                ${
+                    tower.range >
+                    5000
+                    ?
+                    "MAPWIDE"
+                    :
+                    Math.round(
+                        tower.range
+                    )
+                }
+
+                <br>
+
+                Attack:
+                ${(
+                    60 /
+                    tower.cooldown
+                ).toFixed(1)}
+                /sec
+
+                ${
+                    tower.splash
+                    ?
+                    `<br>Splash:
+                    ${tower.splash}`
+                    :
+                    ""
+                }
+
+                ${
+                    tower.chain
+                    ?
+                    `<br>Chain:
+                    ${tower.chain}`
+                    :
+                    ""
+                }
+
+                ${
+                    tower.fireBurn
+                    ?
+                    `<br>Burn:
+                    ${tower.fireBurn}`
+                    :
+                    ""
+                }
+
+            `;
+
+
+            setupUpgradeButton(
+                "upgrade1",
+                tower,
+                1
+            );
+
+
+            setupUpgradeButton(
+                "upgrade2",
+                tower,
+                2
+            );
+
+
+            setupUpgradeButton(
+                "upgrade3",
+                tower,
+                3
+            );
+
+        }
+
+
+        function setupUpgradeButton(
+            id,
+            tower,
+            level
+        ) {
+
+            const button =
+                document.getElementById(
+                    id
+                );
+
+
+            let text = "";
+
+            let cost = 0;
+
+            let locked = false;
+
+
+            if (
+                tower.type ===
+                "fire"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    text =
+                        "🔥 Inferno Range — $100";
+
+                    cost = 100;
+
+                    locked =
+                        tower.level >= 1;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    text =
+                        "🔥 Ignite — $150";
+
+                    cost = 150;
+
+                    locked =
+                        tower.level < 1 ||
+                        !!tower.fireBurn;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    text =
+                        "🔥 Deep Burn — $225";
+
+                    cost = 225;
+
+                    locked =
+                        !tower.fireBurn ||
+                        !!tower.burnLevel;
+
+                }
+
+            }
+
+
+            if (
+                tower.type ===
+                "archer"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    text =
+                        "🏹 Longbow — $90";
+
+                    cost = 90;
+
+                    locked =
+                        tower.level >= 1;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    text =
+                        "🏹 Heavy Arrows — $140";
+
+                    cost = 140;
+
+                    locked =
+                        tower.level < 1 ||
+                        !!tower.damageLevel;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    text =
+                        "🏹 Rapid Fire — $190";
+
+                    cost = 190;
+
+                    locked =
+                        tower.level < 1 ||
+                        !!tower.speedLevel;
+
+                }
+
+            }
+
+
+            if (
+                tower.type ===
+                "sniper"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    text =
+                        "🎯 AP Rounds — $200";
+
+                    cost = 200;
+
+                    locked =
+                        !!tower.damageLevel;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    text =
+                        "🎯 Heavy Caliber — $350";
+
+                    cost = 350;
+
+                    locked =
+                        !tower.damageLevel ||
+                        !!tower.damageLevel2;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    text =
+                        "🎯 Quick Reload — $500";
+
+                    cost = 500;
+
+                    locked =
+                        !!tower.speedLevel;
+
+                }
+
+            }
+
+
+            if (
+                tower.type ===
+                "water"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    text =
+                        "💧 Pressure — $120";
+
+                    cost = 120;
+
+                    locked =
+                        tower.level >= 1;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    text =
+                        "💧 High Pressure — $160";
+
+                    cost = 160;
+
+                    locked =
+                        tower.level < 1 ||
+                        !!tower.damageLevel;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    text =
+                        "💧 Splash — $220";
+
+                    cost = 220;
+
+                    locked =
+                        tower.level < 1 ||
+                        !!tower.splash;
+
+                }
+
+            }
+
+
+            if (
+                tower.type ===
+                "shock"
+            ) {
+
+                if (
+                    level === 1
+                ) {
+
+                    text =
+                        "⚡ Overcharge — $125";
+
+                    cost = 125;
+
+                    locked =
+                        tower.level >= 1;
+
+                }
+
+
+                if (
+                    level === 2
+                ) {
+
+                    text =
+                        "⚡ Chain +2 — $200";
+
+                    cost = 200;
+
+                    locked =
+                        tower.level < 1 ||
+                        !!tower.chainLevel;
+
+                }
+
+
+                if (
+                    level === 3
+                ) {
+
+                    text =
+                        "⚡ Rapid Pulse — $300";
+
+                    cost = 300;
+
+                    locked =
+                        tower.level < 1 ||
+                        !!tower.speedLevel;
+
+                }
+
+            }
+
+
+            button.textContent =
+                text;
+
+
+            button.disabled =
+                locked ||
+                money < cost;
+
+        }
+
+
+        /* =========================
+           SELL
+        ========================= */
+
+        function sellTower() {
+
+            if (
+                !selectedTower
+            ) {
+
+                return;
+
+            }
+
+
+            money +=
+                Math.floor(
+                    selectedTower
+                        .totalSpent *
+                    .7
+                );
+
+
+            towers =
+                towers.filter(
+                    tower =>
+                        tower !==
+                        selectedTower
+                );
+
+
+            selectedTower =
+                null;
+
+
+            document.getElementById(
+                "towerPanel"
+            ).style.display =
+                "none";
+
+
+            updateUI();
+
+        }
+
+
+        /* =========================
+           ENEMY SPAWNING
+        ========================= */
+
+        function spawnEnemy(
+            type
+        ) {
+
+            const start =
+                levelPath[0];
+
+
+            let enemy;
+
+
+            if (
+                type ===
+                "casual"
+            ) {
+
+                enemy = {
+
+                    type:
+                        "casual",
+
+                    x:
+                        start.x,
+
+                    y:
+                        start.y,
+
+                    pathIndex: 0,
+
+                    hp:
+                        20 +
+                        currentWave *
+                        5,
+
+                    maxHp:
+                        20 +
+                        currentWave *
+                        5,
+
+                    speed:
+                        2 +
+                        currentWave *
+                        .035,
+
+                    radius: 12,
+
+                    reward: 12,
+
+                    color:
+                        "#4dabf7",
+
+                    emoji:
+                        "😎"
+
+                };
+
+            }
+
+
+            else if (
+                type ===
+                "tank"
+            ) {
+
+                enemy = {
+
+                    type:
+                        "tank",
+
+                    x:
+                        start.x,
+
+                    y:
+                        start.y,
+
+                    pathIndex: 0,
+
+                    hp:
+                        110 +
+                        currentWave *
+                        20,
+
+                    maxHp:
+                        110 +
+                        currentWave *
+                        20,
+
+                    speed:
+                        .72 +
+                        currentWave *
+                        .015,
+
+                    radius: 19,
+
+                    reward: 35,
+
+                    color:
+                        "#f59e0b",
+
+                    emoji:
+                        "■"
+
+                };
+
+            }
+
+
+            else if (
+                type ===
+                "boss"
+            ) {
+
+                enemy = {
+
+                    type:
+                        "boss",
+
+                    x:
+                        start.x,
+
+                    y:
+                        start.y,
+
+                    pathIndex: 0,
+
+                    hp:
+                        1200 +
+                        currentWave *
+                        350,
+
+                    maxHp:
+                        1200 +
+                        currentWave *
+                        350,
+
+                    speed:
+                        .52 +
+                        currentWave *
+                        .012,
+
+                    radius: 30,
+
+                    reward:
+                        180 +
+                        currentWave *
+                        25,
+
+                    color:
+                        "#991b1b",
+
+                    emoji:
+                        "☠"
+
+                };
+
+            }
+
+
+            else {
+
+                enemy = {
+
+                    type:
+                        "normal",
+
+                    x:
+                        start.x,
+
+                    y:
+                        start.y,
+
+                    pathIndex: 0,
+
+                    hp:
+                        35 +
+                        currentWave *
+                        9,
+
+                    maxHp:
+                        35 +
+                        currentWave *
+                        9,
+
+                    speed:
+                        1.2 +
+                        currentWave *
+                        .035,
+
+                    radius: 14,
+
+                    reward: 15,
+
+                    color:
+                        "#22c55e",
+
+                    emoji:
+                        ""
+
+                };
+
+            }
+
+
+            enemies.push(
+                enemy
+            );
+
+        }
+
+
+        /* =========================
+           WAVE LOGIC
+        ========================= */
+
+        function startWave() {
+
+            if (
+                currentWave >=
+                levels[
+                    currentLevel
+                ].waves
+            ) {
+
+                return;
+
+            }
+
+
+            currentWave++;
+
+
+            if (
+                currentWave %
+                5 ===
+                0
+            ) {
+
+                enemiesToSpawn =
+                    1 +
+                    Math.floor(
+                        currentWave /
+                        10
+                    );
+
+            }
+
+            else {
+
+                enemiesToSpawn =
+                    7 +
+                    currentWave *
+                    2;
+
+            }
+
+
+            spawnTimer = 0;
+
+
+            updateUI();
+
+        }
+
+
+        function updateWaveLogic() {
+
+            if (
+                currentWave === 0
+            ) {
+
+                waveDelay--;
+
+
+                if (
+                    waveDelay <= 0
+                ) {
+
+                    startWave();
+
+                }
+
+
+                return;
+
+            }
+
+
+            if (
+                enemiesToSpawn >
+                0
+            ) {
+
+                spawnTimer--;
+
+
+                if (
+                    spawnTimer <= 0
+                ) {
+
+                    let type =
+                        "normal";
+
+
+                    if (
+                        currentWave %
+                        5 ===
+                        0
+                    ) {
+
+                        type =
+                            "boss";
+
+                    }
+
+                    else {
+
+                        const roll =
+                            Math.random();
+
+
+                        if (
+                            currentWave >= 4 &&
+                            roll < .18
+                        ) {
+
+                            type =
+                                "tank";
+
+                        }
+
+                        else if (
+                            roll < .42
+                        ) {
+
+                            type =
+                                "casual";
+
+                        }
+
+                    }
+
+
+                    spawnEnemy(
+                        type
+                    );
+
+
+                    enemiesToSpawn--;
+
+
+                    spawnTimer = 28;
+
+                }
+
+            }
+
+
+            if (
+                enemiesToSpawn === 0 &&
+                enemies.length === 0
+            ) {
+
+                if (
+                    currentWave >=
+                    levels[
+                        currentLevel
+                    ].waves
+                ) {
+
+                    completeLevel();
+
+                    return;
+
+                }
+
+
+                waveDelay--;
+
+
+                if (
+                    waveDelay <= 0
+                ) {
+
+                    waveDelay = 100;
+
+
+                    money +=
+                        45 +
+                        currentWave *
+                        8;
+
+
+                    score +=
+                        100 +
+                        currentWave *
+                        25;
+
+
+                    startWave();
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================
+           ENEMY MOVEMENT
+        ========================= */
+
+        function moveEnemy(
+            enemy
+        ) {
+
+            const target =
+                levelPath[
+                    enemy.pathIndex + 1
+                ];
+
+
+            if (!target) {
+
+                lives--;
+
+
+                enemies =
+                    enemies.filter(
+                        e =>
+                            e !==
+                            enemy
+                    );
+
+
+                updateUI();
+
+
+                if (
+                    lives <= 0
+                ) {
+
+                    endGame();
+
+                }
+
+
+                return;
+
+            }
+
+
+            const dx =
+                target.x -
+                enemy.x;
+
+
+            const dy =
+                target.y -
+                enemy.y;
+
+
+            const distance =
+                Math.hypot(
+                    dx,
+                    dy
+                );
+
+
+            if (
+                distance <
+                enemy.speed
+            ) {
+
+                enemy.x =
+                    target.x;
+
+                enemy.y =
+                    target.y;
+
+                enemy.pathIndex++;
+
+            }
+
+            else {
+
+                enemy.x +=
+                    dx /
+                    distance *
+                    enemy.speed;
+
+
+                enemy.y +=
+                    dy /
+                    distance *
+                    enemy.speed;
+
+            }
+
+        }
+
+
+        /* =========================
+           TARGETING
+        ========================= */
+
+        function findTarget(
+            tower
+        ) {
+
+            let best = null;
+
+            let bestProgress =
+                -1;
+
+
+            for (
+                const enemy of
+                enemies
+            ) {
+
+                const distance =
+                    Math.hypot(
+                        enemy.x -
+                        tower.x,
+
+                        enemy.y -
+                        tower.y
+                    );
+
+
+                if (
+                    distance >
+                    tower.range
+                ) {
+
+                    continue;
+
+                }
+
+
+                if (
+                    enemy.pathIndex >
+                    bestProgress
+                ) {
+
+                    best =
+                        enemy;
+
+                    bestProgress =
+                        enemy.pathIndex;
+
+                }
+
+            }
+
+
+            return best;
+
+        }
+
+
+        /* =========================
+           ATTACK
+        ========================= */
+
+        function towerAttack(
+            tower
+        ) {
+
+            if (
+                tower.timer > 0
+            ) {
+
+                tower.timer--;
+
+                return;
+
+            }
+
+
+            const target =
+                findTarget(
+                    tower
+                );
+
+
+            if (!target) {
+
+                return;
+
+            }
+
+
+            tower.timer =
+                tower.cooldown;
+
+
+            projectiles.push({
+
+                x:
+                    tower.x,
+
+                y:
+                    tower.y,
+
+                target,
+
+                damage:
+                    tower.damage,
+
+                speed:
+                    tower.type ===
+                    "sniper"
+                    ?
+                    18
+                    :
+                    11,
+
+                color:
+                    towerData[
+                        tower.type
+                    ].color,
+
+                splash:
+                    tower.splash ||
+                    0,
+
+                burn:
+                    tower.fireBurn ||
+                    0,
+
+                chain:
+                    tower.chain ||
+                    0
+
+            });
+
+        }
+
+
+        /* =========================
+           PROJECTILES
+        ========================= */
+
+        function updateProjectiles() {
+
+            for (
+                let i =
+                    projectiles.length -
+                    1;
+
+                i >= 0;
+
+                i--
+            ) {
+
+                const projectile =
+                    projectiles[i];
+
+
+                const target =
+                    projectile.target;
+
+
+                if (
+                    !enemies.includes(
+                        target
+                    )
+                ) {
+
+                    projectiles.splice(
+                        i,
+                        1
+                    );
+
+                    continue;
+
+                }
+
+
+                const dx =
+                    target.x -
+                    projectile.x;
+
+
+                const dy =
+                    target.y -
+                    projectile.y;
+
+
+                const distance =
+                    Math.hypot(
+                        dx,
+                        dy
+                    );
+
+
+                if (
+                    distance <
+                    projectile.speed
+                ) {
+
+                    hitEnemy(
+                        target,
+                        projectile
+                    );
+
+
+                    projectiles.splice(
+                        i,
+                        1
+                    );
+
+
+                    continue;
+
+                }
+
+
+                projectile.x +=
+                    dx /
+                    distance *
+                    projectile.speed;
+
+
+                projectile.y +=
+                    dy /
+                    distance *
+                    projectile.speed;
+
+            }
+
+        }
+
+
+        /* =========================
+           HIT ENEMY
+        ========================= */
+
+        function hitEnemy(
+            enemy,
+            projectile
+        ) {
+
+            enemy.hp -=
+                projectile.damage;
+
+
+            if (
+                projectile.burn
+            ) {
+
+                enemy.burn =
+                    projectile.burn;
+
+            }
+
+
+            if (
+                projectile.splash >
+                0
+            ) {
+
+                for (
+                    const other of
+                    enemies
+                ) {
+
+                    if (
+                        other ===
+                        enemy
+                    ) {
+
+                        continue;
+
+                    }
+
+
+                    if (
+                        Math.hypot(
+                            other.x -
+                            enemy.x,
+
+                            other.y -
+                            enemy.y
+                        ) <=
+                        projectile.splash
+                    ) {
+
+                        other.hp -=
+                            projectile.damage *
+                            .45;
+
+                    }
+
+                }
+
+            }
+
+
+            if (
+                projectile.chain >
+                0
+            ) {
+
+                let chained = 0;
+
+
+                for (
+                    const other of
+                    enemies
+                ) {
+
+                    if (
+                        other ===
+                        enemy
+                    ) {
+
+                        continue;
+
+                    }
+
+
+                    if (
+                        chained >=
+                        projectile.chain
+                    ) {
+
+                        break;
+
+                    }
+
+
+                    if (
+                        Math.hypot(
+                            other.x -
+                            enemy.x,
+
+                            other.y -
+                            enemy.y
+                        ) < 160
+                    ) {
+
+                        other.hp -=
+                            projectile.damage *
+                            .55;
+
+
+                        chained++;
+
+                    }
+
+                }
+
+            }
+
+
+            createBurst(
+                enemy.x,
+                enemy.y,
+                projectile.color
+            );
+
+
+            if (
+                enemy.hp <= 0
+            ) {
+
+                money +=
+                    enemy.reward;
+
+
+                score +=
+                    enemy.reward *
+                    10;
+
+
+                enemies =
+                    enemies.filter(
+                        e =>
+                            e !==
+                            enemy
+                    );
+
+
+                updateUI();
+
+            }
+
+        }
+
+
+        /* =========================
+           BURN
+        ========================= */
+
+        function updateBurn() {
+
+            for (
+                const enemy of
+                [...enemies]
+            ) {
+
+                if (
+                    enemy.burn
+                ) {
+
+                    enemy.hp -=
+                        enemy.burn /
+                        60;
+
+
+                    if (
+                        enemy.hp <= 0
+                    ) {
+
+                        money +=
+                            enemy.reward;
+
+
+                        score +=
+                            enemy.reward *
+                            10;
+
+
+                        enemies =
+                            enemies.filter(
+                                e =>
+                                    e !==
+                                    enemy
+                            );
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================
+           PARTICLES
+        ========================= */
+
+        function createBurst(
+            x,
+            y,
+            color
+        ) {
+
+            for (
+                let i = 0;
+                i < 7;
+                i++
+            ) {
+
+                particles.push({
+
+                    x,
+                    y,
+
+                    vx:
+                        (
+                            Math.random() -
+                            .5
+                        ) *
+                        5,
+
+                    vy:
+                        (
+                            Math.random() -
+                            .5
+                        ) *
+                        5,
+
+                    life: 25,
+
+                    color
+
+                });
+
+            }
+
+        }
+
+
+        function updateParticles() {
+
+            for (
+                let i =
+                    particles.length -
+                    1;
+
+                i >= 0;
+
+                i--
+            ) {
+
+                const particle =
+                    particles[i];
+
+
+                particle.x +=
+                    particle.vx;
+
+
+                particle.y +=
+                    particle.vy;
+
+
+                particle.life--;
+
+
+                if (
+                    particle.life <= 0
+                ) {
+
+                    particles.splice(
+                        i,
+                        1
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================
+           DRAW WATER
+        ========================= */
+
+        function drawWater() {
+
+            for (
+                const water of
+                waterZones
+            ) {
+
+                const x =
+                    (
+                        water.x -
+                        cameraX
+                    ) *
+                    cameraZoom;
+
+
+                const y =
+                    (
+                        water.y -
+                        cameraY
+                    ) *
+                    cameraZoom;
+
+
+                const width =
+                    water.width *
+                    cameraZoom;
+
+
+                const height =
+                    water.height *
+                    cameraZoom;
+
+
+                ctx.fillStyle =
+                    "#185c72";
+
+
+                ctx.fillRect(
+                    x,
+                    y,
+                    width,
+                    height
+                );
+
+
+                ctx.strokeStyle =
+                    "rgba(80,220,255,.22)";
+
+
+                ctx.lineWidth = 2;
+
+
+                for (
+                    let wy =
+                        water.y;
+
+                    wy <
+                    water.y +
+                    water.height;
+
+                    wy += 35
+                ) {
+
+                    ctx.beginPath();
+
+
+                    ctx.moveTo(
+
+                        (
+                            water.x -
+                            cameraX
+                        ) *
+                        cameraZoom,
+
+                        (
+                            wy -
+                            cameraY
+                        ) *
+                        cameraZoom
+
+                    );
+
+
+                    ctx.lineTo(
+
+                        (
+                            water.x +
+                            water.width -
+                            cameraX
+                        ) *
+                        cameraZoom,
+
+                        (
+                            wy -
+                            cameraY
+                        ) *
+                        cameraZoom
+
+                    );
+
+
+                    ctx.stroke();
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================
+           DRAW GRID
+        ========================= */
+
+        function drawGrid() {
+
+            const startX =
+                Math.floor(
+                    cameraX /
+                    GRID_SIZE
+                ) *
+                GRID_SIZE;
+
+
+            const endX =
+                cameraX +
+                canvas.width /
+                cameraZoom +
+                GRID_SIZE;
+
+
+            const startY =
+                Math.floor(
+                    cameraY /
+                    GRID_SIZE
+                ) *
+                GRID_SIZE;
+
+
+            const endY =
+                cameraY +
+                canvas.height /
+                cameraZoom +
+                GRID_SIZE;
+
+
+            ctx.strokeStyle =
+                "rgba(60,130,70,.22)";
+
+
+            ctx.lineWidth =
+                1;
+
+
+            for (
+                let x =
+                    startX;
+
+                x <
+                endX;
+
+                x +=
+                    GRID_SIZE
+            ) {
+
+                const screenX =
+                    (
+                        x -
+                        cameraX
+                    ) *
+                    cameraZoom;
+
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    screenX,
+                    0
+                );
+
+                ctx.lineTo(
+                    screenX,
+                    canvas.height
+                );
+
+                ctx.stroke();
+
+            }
+
+
+            for (
+                let y =
+                    startY;
+
+                y <
+                endY;
+
+                y +=
+                    GRID_SIZE
+            ) {
+
+                const screenY =
+                    (
+                        y -
+                        cameraY
+                    ) *
+                    cameraZoom;
+
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    0,
+                    screenY
+                );
+
+                ctx.lineTo(
+                    canvas.width,
+                    screenY
+                );
+
+                ctx.stroke();
+
+            }
+
+        }
+
+
+        /* =========================
+           DRAW PATH
+        ========================= */
+
+        function drawPath() {
+
+            if (
+                levelPath.length <
+                2
+            ) {
+
+                return;
+
+            }
+
+
+            ctx.beginPath();
+
+
+            ctx.moveTo(
+
+                (
+                    levelPath[0].x -
+                    cameraX
+                ) *
+                cameraZoom,
+
+                (
+                    levelPath[0].y -
+                    cameraY
+                ) *
+                cameraZoom
+
+            );
+
+
+            for (
+                const point of
+                levelPath
+            ) {
+
+                ctx.lineTo(
+
+                    (
+                        point.x -
+                        cameraX
+                    ) *
+                    cameraZoom,
+
+                    (
+                        point.y -
+                        cameraY
+                    ) *
+                    cameraZoom
+
+                );
+
+            }
+
+
+            ctx.lineCap =
+                "round";
+
+
+            ctx.lineJoin =
+                "round";
+
+
+            ctx.lineWidth =
+                76 *
+                cameraZoom;
+
+
+            ctx.strokeStyle =
+                "#4b2d1c";
+
+
+            ctx.stroke();
+
+
+            ctx.lineWidth =
+                58 *
+                cameraZoom;
+
+
+            ctx.strokeStyle =
+                "#704323";
+
+
+            ctx.stroke();
+
+
+            ctx.lineWidth =
+                46 *
+                cameraZoom;
+
+
+            ctx.strokeStyle =
+                "#a06a38";
+
+
+            ctx.stroke();
+
+
+            const start =
+                levelPath[0];
+
+
+            const end =
+                levelPath[
+                    levelPath.length-1
+                ];
+
+
+            ctx.fillStyle =
+                "#22c55e";
+
+
+            ctx.beginPath();
+
+
+            ctx.arc(
+
+                (
+                    start.x -
+                    cameraX
+                ) *
+                cameraZoom,
+
+                (
+                    start.y -
+                    cameraY
+                ) *
+                cameraZoom,
+
+                25 *
+                cameraZoom,
+
+                0,
+                Math.PI*2
+
+            );
+
+
+            ctx.fill();
+
+
+            ctx.fillStyle =
+                "#ef4444";
+
+
+            ctx.beginPath();
+
+
+            ctx.arc(
+
+                (
+                    end.x -
+                    cameraX
+                ) *
+                cameraZoom,
+
+                (
+                    end.y -
+                    cameraY
+                ) *
+                cameraZoom,
+
+                25 *
+                cameraZoom,
+
+                0,
+                Math.PI*2
+
+            );
+
+
+            ctx.fill();
+
+        }
+
+
+        /* =========================
+           DRAW TOWERS
+        ========================= */
+
+        function drawTowers() {
+
+            for (
+                const tower of
+                towers
+            ) {
+
+                const x =
+                    (
+                        tower.x -
+                        cameraX
+                    ) *
+                    cameraZoom;
+
+
+                const y =
+                    (
+                        tower.y -
+                        cameraY
+                    ) *
+                    cameraZoom;
+
+
+                const size =
+                    34 *
+                    cameraZoom;
+
+
+                const data =
+                    towerData[
+                        tower.type
+                    ];
+
+
+                ctx.fillStyle =
+                    "rgba(0,0,0,.35)";
+
+
+                ctx.fillRect(
+
+                    x -
+                    size/2 +
+                    3,
+
+                    y -
+                    size/2 +
+                    4,
+
+                    size,
+
+                    size
+
+                );
+
+
+                ctx.fillStyle =
+                    data.color;
+
+
+                ctx.fillRect(
+
+                    x -
+                    size/2,
+
+                    y -
+                    size/2,
+
+                    size,
+
+                    size
+
+                );
+
+
+                ctx.fillStyle =
+                    "white";
+
+
+                ctx.font =
+                    `bold ${
+                        16 *
+                        cameraZoom
+                    }px Arial`;
+
+
+                ctx.textAlign =
+                    "center";
+
+
+                ctx.textBaseline =
+                    "middle";
+
+
+                const letters = {
+
+                    fire: "F",
+
+                    archer: "A",
+
+                    sniper: "S",
+
+                    water: "W",
+
+                    shock: "⚡"
+
+                };
+
+
+                ctx.fillText(
+
+                    letters[
+                        tower.type
+                    ],
+
+                    x,
+                    y
+
+                );
+
+
+                if (
+                    tower.level >
+                    0
+                ) {
+
+                    ctx.fillStyle =
+                        "#facc15";
+
+
+                    ctx.beginPath();
+
+
+                    ctx.arc(
+
+                        x +
+                        18 *
+                        cameraZoom,
+
+                        y -
+                        20 *
+                        cameraZoom,
+
+                        7 *
+                        cameraZoom,
+
+                        0,
+                        Math.PI*2
+
+                    );
+
+
+                    ctx.fill();
+
+
+                    ctx.fillStyle =
+                        "#17220f";
+
+
+                    ctx.font =
+                        `bold ${
+                            9 *
+                            cameraZoom
+                        }px Arial`;
+
+
+                    ctx.fillText(
+
+                        tower.level,
+
+                        x +
+                        18 *
+                        cameraZoom,
+
+                        y -
+                        20 *
+                        cameraZoom
+
+                    );
+
+                }
+
+
+                if (
+                    tower ===
+                    selectedTower
+                ) {
+
+                    ctx.strokeStyle =
+                        "#facc15";
+
+
+                    ctx.lineWidth = 3;
+
+
+                    ctx.strokeRect(
+
+                        x -
+                        21 *
+                        cameraZoom,
+
+                        y -
+                        24 *
+                        cameraZoom,
+
+                        42 *
+                        cameraZoom,
+
+                        42 *
+                        cameraZoom
+
+                    );
+
+
+                    if (
+                        tower.range <
+                        5000
+                    ) {
+
+                        ctx.beginPath();
+
+
+                        ctx.arc(
+
+                            x,
+                            y,
+
+                            tower.range *
+                            cameraZoom,
+
+                            0,
+                            Math.PI*2
+
+                        );
+
+
+                        ctx.strokeStyle =
+                            "rgba(250,204,21,.2)";
+
+
+                        ctx.lineWidth = 2;
+
+
+                        ctx.stroke();
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================
+           DRAW ENEMIES
+        ========================= */
+
+        function drawEnemies() {
+
+            for (
+                const enemy of
+                enemies
+            ) {
+
+                const x =
+                    (
+                        enemy.x -
+                        cameraX
+                    ) *
+                    cameraZoom;
+
+
+                const y =
+                    (
+                        enemy.y -
+                        cameraY
+                    ) *
+                    cameraZoom;
+
+
+                const radius =
+                    enemy.radius *
+                    cameraZoom;
+
+
+                ctx.fillStyle =
+                    "rgba(0,0,0,.35)";
+
+
+                ctx.beginPath();
+
+
+                ctx.arc(
+
+                    x +
+                    3 *
+                    cameraZoom,
+
+                    y +
+                    4 *
+                    cameraZoom,
+
+                    radius,
+
+                    0,
+                    Math.PI*2
+
+                );
+
+
+                ctx.fill();
+
+
+                ctx.fillStyle =
+                    enemy.color;
+
+
+                ctx.beginPath();
+
+
+                ctx.arc(
+
+                    x,
+                    y,
+
+                    radius,
+
+                    0,
+                    Math.PI*2
+
+                );
+
+
+                ctx.fill();
+
+
+                if (
+                    enemy.emoji
+                ) {
+
+                    ctx.font =
+                        `${
+                            enemy.radius *
+                            cameraZoom
+                        }px Arial`;
+
+
+                    ctx.textAlign =
+                        "center";
+
+
+                    ctx.textBaseline =
+                        "middle";
+
+
+                    ctx.fillText(
+
+                        enemy.emoji,
+
+                        x,
+                        y
+
+                    );
+
+                }
+
+
+                const hpWidth =
+                    enemy.radius *
+                    2.5 *
+                    cameraZoom;
+
+
+                const hpRatio =
+                    Math.max(
+                        0,
+                        enemy.hp /
+                        enemy.maxHp
+                    );
+
+
+                ctx.fillStyle =
+                    "#17220f";
+
+
+                ctx.fillRect(
+
+                    x -
+                    hpWidth/2,
+
+                    y -
+                    radius -
+                    10 *
+                    cameraZoom,
+
+                    hpWidth,
+
+                    5 *
+                    cameraZoom
+
+                );
+
+
+                ctx.fillStyle =
+                    "#22c55e";
+
+
+                ctx.fillRect(
+
+                    x -
+                    hpWidth/2,
+
+                    y -
+                    radius -
+                    10 *
+                    cameraZoom,
+
+                    hpWidth *
+                    hpRatio,
+
+                    5 *
+                    cameraZoom
+
+                );
+
+            }
+
+        }
+
+
+        /* =========================
+           PROJECTILES
+        ========================= */
+
+        function drawProjectiles() {
+
+            for (
+                const projectile of
+                projectiles
+            ) {
+
+                ctx.fillStyle =
+                    projectile.color;
+
+
+                ctx.beginPath();
+
+
+                ctx.arc(
+
+                    (
+                        projectile.x -
+                        cameraX
+                    ) *
+                    cameraZoom,
+
+                    (
+                        projectile.y -
+                        cameraY
+                    ) *
+                    cameraZoom,
+
+                    (
+                        projectile.chain
+                        ?
+                        6
+                        :
+                        5
+                    ) *
+                    cameraZoom,
+
+                    0,
+                    Math.PI*2
+
+                );
+
+
+                ctx.fill();
+
+            }
+
+        }
+
+
+        /* =========================
+           PARTICLES
+        ========================= */
+
+        function drawParticles() {
+
+            for (
+                const particle of
+                particles
+            ) {
+
+                ctx.globalAlpha =
+                    particle.life /
+                    25;
+
+
+                ctx.fillStyle =
+                    particle.color;
+
+
+                ctx.fillRect(
+
+                    (
+                        particle.x -
+                        cameraX
+                    ) *
+                    cameraZoom -
+
+                    3 *
+                    cameraZoom,
+
+                    (
+                        particle.y -
+                        cameraY
+                    ) *
+                    cameraZoom -
+
+                    3 *
+                    cameraZoom,
+
+                    6 *
+                    cameraZoom,
+
+                    6 *
+                    cameraZoom
+
+                );
+
+            }
+
+
+            ctx.globalAlpha = 1;
+
+        }
+
+
+        /* =========================
+           PLACEMENT PREVIEW
+        ========================= */
+
+        function drawPlacementPreview() {
+
+            if (
+                !selectedShopTower
+            ) {
+
+                return;
+
+            }
+
+
+            const data =
+                towerData[
+                    selectedShopTower
+                ];
+
+
+            const x =
+                Math.floor(
+                    mouseWorldX /
+                    GRID_SIZE
+                ) *
+                GRID_SIZE +
+                GRID_SIZE/2;
+
+
+            const y =
+                Math.floor(
+                    mouseWorldY /
+                    GRID_SIZE
+                ) *
+                GRID_SIZE +
+                GRID_SIZE/2;
+
+
+            const valid =
+                !isPath(x,y)
+
+                &&
+
+                !towers.some(
+                    tower =>
+                        Math.hypot(
+                            tower.x-x,
+                            tower.y-y
+                        ) <
+                        GRID_SIZE
+                )
+
+                &&
+
+                (
+                    selectedShopTower ===
+                    "water"
+
+                    ?
+
+                    isWater(x,y)
+
+                    :
+
+                    !isWater(x,y)
+                )
+
+                &&
+
+                money >=
+                data.cost;
+
+
+            ctx.fillStyle =
+                valid
+                ?
+                "rgba(34,197,94,.28)"
+                :
+                "rgba(239,68,68,.28)";
+
+
+            ctx.fillRect(
+
+                (
+                    x -
+                    23 -
+                    cameraX
+                ) *
+                cameraZoom,
+
+                (
+                    y -
+                    23 -
+                    cameraY
+                ) *
+                cameraZoom,
+
+                46 *
+                cameraZoom,
+
+                46 *
+                cameraZoom
+
+            );
+
+
+            ctx.strokeStyle =
+                valid
+                ?
+                "#22c55e"
+                :
+                "#ef4444";
+
+
+            ctx.lineWidth = 2;
+
+
+            ctx.strokeRect(
+
+                (
+                    x -
+                    23 -
+                    cameraX
+                ) *
+                cameraZoom,
+
+                (
+                    y -
+                    23 -
+                    cameraY
+                ) *
+                cameraZoom,
+
+                46 *
+                cameraZoom,
+
+                46 *
+                cameraZoom
+
+            );
+
+
+            if (
+                data.range <
+                5000
+            ) {
+
+                ctx.beginPath();
+
+
+                ctx.arc(
+
+                    (
+                        x -
+                        cameraX
+                    ) *
+                    cameraZoom,
+
+                    (
+                        y -
+                        cameraY
+                    ) *
+                    cameraZoom,
+
+                    data.range *
+                    cameraZoom,
+
+                    0,
+                    Math.PI*2
+
+                );
+
+
+                ctx.strokeStyle =
+                    "rgba(255,255,255,.12)";
+
+
+                ctx.stroke();
+
+            }
+
+        }
+
+
+        /* =========================
+           DRAW
+        ========================= */
+
+        function draw() {
+
+            ctx.clearRect(
+
+                0,
+                0,
+
+                canvas.width,
+                canvas.height
+
+            );
+
+
+            ctx.fillStyle =
+                "#182219";
+
+
+            ctx.fillRect(
+
+                0,
+                0,
+
+                canvas.width,
+                canvas.height
+
+            );
+
+
+            drawWater();
+
+            drawPath();
+
+            drawGrid();
+
+            drawTowers();
+
+            drawEnemies();
+
+            drawProjectiles();
+
+            drawParticles();
+
+            drawPlacementPreview();
+
+
+            /* WORLD BORDER */
+
+            ctx.strokeStyle =
+                "#3fa34d";
+
+
+            ctx.lineWidth = 5;
+
+
+            ctx.strokeRect(
+
+                -cameraX *
+                cameraZoom,
+
+                -cameraY *
+                cameraZoom,
+
+                WORLD_WIDTH *
+                cameraZoom,
+
+                WORLD_HEIGHT *
+                cameraZoom
+
+            );
+
+        }
+
+
+        /* =========================
+           CLICK
+        ========================= */
+
+        canvas.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    cameraDragging
+                ) {
+
+                    return;
+
+                }
+
+
+                const x =
+                    cameraX +
+                    event.clientX /
+                    cameraZoom;
+
+
+                const y =
+                    cameraY +
+                    event.clientY /
+                    cameraZoom;
+
+
+                const tower =
+                    getTowerAt(
+                        x,
+                        y
+                    );
+
+
+                if (
+                    tower
+                ) {
+
+                    selectedTower =
+                        tower;
+
+
+                    selectedShopTower =
+                        null;
+
+
+                    document
+                        .querySelectorAll(
+                            ".shopButton"
+                        )
+                        .forEach(
+                            button =>
+                                button.classList.remove(
+                                    "selected"
+                                )
+                        );
+
+
+                    document.getElementById(
+                        "towerPanel"
+                    ).style.display =
+                        "block";
+
+
+                    updateTowerPanel();
+
+
+                    return;
+
+                }
+
+
+                if (
+                    selectedShopTower
+                ) {
+
+                    placeTower(
+                        x,
+                        y
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =========================
+           UI
+        ========================= */
+
+        function updateUI() {
+
+            document.getElementById(
+                "money"
+            ).textContent =
+                Math.floor(
+                    money
+                );
+
+
+            document.getElementById(
+                "lives"
+            ).textContent =
+                lives;
+
+
+            document.getElementById(
+                "wave"
+            ).textContent =
+
+                currentWave +
+                " / " +
+                levels[
+                    currentLevel
+                ].waves;
+
+
+            document.getElementById(
+                "score"
+            ).textContent =
+                Math.floor(
+                    score
+                );
+
+
+            if (
+                selectedTower
+            ) {
+
+                updateTowerPanel();
+
+            }
+
+        }
+
+
+        /* =========================
+           GAME OVER
+        ========================= */
+
+        function endGame() {
+
+            gameRunning =
+                false;
+
+
+            document.getElementById(
+                "gameOver"
+            ).style.display =
+                "flex";
+
+        }
+
+
+        /* =========================
+           COMPLETE
+        ========================= */
+
+        function completeLevel() {
+
+            gameRunning =
+                false;
+
+
+            document.getElementById(
+                "completeText"
+            ).textContent =
+
+                `You finished ${
+                    levels[
+                        currentLevel
+                    ].name
+                } with ${
+                    lives
+                } lives remaining.
+
+                Score:
+                ${Math.floor(score)}`;
+
+
+            document.getElementById(
+                "levelComplete"
+            ).style.display =
+                "flex";
+
+        }
+
+
+        /* =========================
+           MAIN LOOP
+        ========================= */
+
+        function gameLoop() {
+
+            if (
+                gameRunning
+            ) {
+
+                updateCamera();
+
+                updateWaveLogic();
+
+
+                for (
+                    const enemy of
+                    [...enemies]
+                ) {
+
+                    moveEnemy(
+                        enemy
+                    );
+
+                }
+
+
+                updateBurn();
+
+
+                for (
+                    const tower of
+                    towers
+                ) {
+
+                    towerAttack(
+                        tower
+                    );
+
+                }
+
+
+                updateProjectiles();
+
+                updateParticles();
+
+            }
+
+
+            draw();
+
+
+            requestAnimationFrame(
+                gameLoop
+            );
+
+        }
+
+
+        /* =========================
+           START
+        ========================= */
+
+        loadLevel(1);
+
+
+        gameRunning =
+            false;
+
+
+        document.getElementById(
+            "mainMenu"
+        ).style.display =
+            "flex";
+
+
+        gameLoop();
+
+    </script>
+
+</body>
+
+</html>
