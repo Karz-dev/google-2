@@ -234,11 +234,23 @@
 
             bottom: 10px;
 
-            width: 215px;
+            width: 235px;
+
+            max-height: calc(100vh - 20px);
 
             padding: 10px;
 
             background: #173b20;
+
+            overflow-y: auto;
+
+            overflow-x: hidden;
+
+            overscroll-behavior: contain;
+
+            scrollbar-width: thin;
+
+            scrollbar-color: #3fa34d #102816;
 
             border:
                 3px solid #3fa34d;
@@ -253,14 +265,38 @@
         }
 
 
+        #shop::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #shop::-webkit-scrollbar-track {
+            background: #102816;
+            border-radius: 8px;
+        }
+
+        #shop::-webkit-scrollbar-thumb {
+            background: #3fa34d;
+            border-radius: 8px;
+        }
+
+        #shop::-webkit-scrollbar-thumb:hover {
+            background: #56c465;
+        }
+
         #shop h3 {
-            margin-bottom: 8px;
+            position: sticky;
+            top: -10px;
+            z-index: 5;
+            margin: -10px -10px 8px;
+            padding: 10px;
             color: #b8f5bd;
             font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 8px;
+            background: #173b20;
+            border-bottom: 1px solid rgba(63,163,77,.35);
         }
 
         #closeShopButton {
@@ -560,10 +596,30 @@
 
             z-index: 15;
 
-            pointer-events: none;
+            pointer-events: auto;
 
         }
 
+
+        #closeCameraHint {
+            position: absolute;
+            top: 2px;
+            right: 5px;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            border: 0;
+            border-radius: 4px;
+            background: rgba(0,0,0,.25);
+            color: white;
+            font-size: 19px;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        #closeCameraHint:hover {
+            background: rgba(0,0,0,.5);
+        }
 
         /* =========================
            OVERLAYS
@@ -1216,6 +1272,11 @@
         .upgradeButton.hotkeyButton {
             position: relative;
         }
+        #upgradeTooltip { position:fixed; z-index:5000; display:none; width:min(310px,82vw); padding:12px 14px; border:2px solid #3fa34d; border-radius:10px; background:rgba(10,20,14,.97); color:#fff; box-shadow:0 10px 30px rgba(0,0,0,.55); pointer-events:none; font-size:12px; line-height:1.45; }
+        #upgradeTooltip.show { display:block; }
+        #upgradeTooltip .tooltipTitle { color:#facc15; font-size:14px; font-weight:900; margin-bottom:5px; }
+        #upgradeTooltip .tooltipEffect { color:#d9ffe0; margin:2px 0; }
+        #upgradeTooltip .tooltipCost { color:#94a3b8; margin-top:7px; font-weight:700; }
 
         @media(max-width:700px) {
 
@@ -1396,6 +1457,8 @@
     <!-- CAMERA HELP -->
 
     <div id="cameraHint">
+
+        <button id="closeCameraHint" onclick="closeCameraHint(event)" aria-label="Close keybinds">×</button>
 
         WASD / Arrow Keys = Move Camera
         •
@@ -1698,6 +1761,8 @@
     <!-- =========================
          TOWER PANEL
     ========================= -->
+
+    <div id="upgradeTooltip" aria-hidden="true"></div>
 
     <div id="towerPanel">
 
@@ -3354,6 +3419,7 @@
         ========================= */
 
         let specialTime = 0;
+        let specialEffects = [];
 
         const towerData = {
 
@@ -4038,10 +4104,11 @@
             const gameOver = document.getElementById("gameOver");
             const levelComplete = document.getElementById("levelComplete");
             const skinsPanel = document.getElementById("skinsPanel");
+            const achievementPanel = document.getElementById("achievementPanel");
 
             const finalPanels = [document.getElementById("profilePanel"), document.getElementById("codexPanel"), document.getElementById("dailyPanel")];
 
-            [mainMenu, levelSelect, gameOver, levelComplete, skinsPanel, ...finalPanels].forEach(screen => {
+            [mainMenu, levelSelect, gameOver, levelComplete, skinsPanel, achievementPanel, ...finalPanels].forEach(screen => {
                 if (!screen) return;
                 screen.hidden = true;
                 screen.style.setProperty("display", "none", "important");
@@ -4765,24 +4832,52 @@
             applyUpgradeEffects(tower, upgrade.effects);
             createFloatingText(tower.x, tower.y - 35, `${upgrade.name}!`, "#facc15");
             createBurst(tower.x, tower.y, "#facc15");
+                spawnSpecialBurst("teslaBurst", tower.x, tower.y, 48);
             updateTowerPanel();
             updateUI();
         }
 
+        function describeUpgrade(upgrade) {
+            const e = upgrade.effects || {};
+            const lines = [];
+            const add = (label, value, suffix="") => { if (value !== undefined && value !== null && value !== 0) lines.push(`${label}: <strong>+${value}${suffix}</strong>`); };
+            add("Damage", e.damage); add("Range", e.range); add("Splash radius", e.splash); add("Chain targets", e.chain);
+            add("Stun", e.stun, " frames"); add("Burn", e.burn); add("Slow", Math.round((e.slow||0)*100), "%");
+            add("Global slow", Math.round((e.globalSlow||0)*100), "%"); add("Rewind power", e.rewindPower, " nodes");
+            add("Drone capacity", e.droneCap); add("Drone damage", e.droneDamage); add("Income", e.income); add("Wave bonus", e.waveBonus);
+            if (e.cooldown) lines.push(`Attack cooldown: <strong>${e.cooldown > 0 ? "+" : ""}${e.cooldown} frames</strong> <span>(negative = faster)</span>`);
+            if (e.incomeInterval) lines.push(`Income interval: <strong>${e.incomeInterval > 0 ? "+" : ""}${e.incomeInterval} frames</strong> <span>(lower = faster)</span>`);
+            if (e.droneSpeed) lines.push(`Drone speed: <strong>+${Math.round((e.droneSpeed-1)*100)}%</strong>`);
+            if (e.transmuteBonus) lines.push(`Kill cash bonus: <strong>+${Math.round(e.transmuteBonus*100)}%</strong>`);
+            return lines.length ? lines : ["Improves this tower."];
+        }
+
+        function positionUpgradeTooltip(event) {
+            const t=document.getElementById("upgradeTooltip"); if(!t) return;
+            const pad=12, r=t.getBoundingClientRect(); let x=event.clientX+16, y=event.clientY+16;
+            if(x+r.width>innerWidth-pad) x=event.clientX-r.width-16;
+            if(y+r.height>innerHeight-pad) y=event.clientY-r.height-16;
+            t.style.left=Math.max(pad,x)+"px"; t.style.top=Math.max(pad,y)+"px";
+        }
+
+        function showUpgradeTooltip(upgrade,event) {
+            const t=document.getElementById("upgradeTooltip"); if(!t||!upgrade) return;
+            t.innerHTML=`<div class="tooltipTitle">${upgrade.name}</div>${describeUpgrade(upgrade).map(x=>`<div class="tooltipEffect">• ${x}</div>`).join("")}<div class="tooltipCost">💰 Cost: $${upgrade.cost}</div>`;
+            t.classList.add("show"); t.setAttribute("aria-hidden","false"); positionUpgradeTooltip(event);
+        }
+        function hideUpgradeTooltip(){ const t=document.getElementById("upgradeTooltip"); if(t){t.classList.remove("show");t.setAttribute("aria-hidden","true");} }
+
         function setupUpgradeButton(id, tower, path) {
-            const button = document.getElementById(id);
-            const tree = upgradeTrees[tower.type];
-            if (!button || !tree) return;
-            const tier = tower.upgradeLevels[path - 1] || 0;
-            if (tier >= 3) {
-                button.textContent = `PATH ${path} — MAXED`;
-                button.disabled = true;
-                return;
-            }
-            const upgrade = tree[path - 1][tier];
-            button.innerHTML = `<span class="upgradePathLabel">PATH ${path} • TIER ${tier + 1}/3</span>${upgrade.name} — $${upgrade.cost}`;
-            button.disabled = money < upgrade.cost;
-            button.title = money < upgrade.cost ? `Need $${upgrade.cost - money} more` : `Buy ${upgrade.name}`;
+            const button=document.getElementById(id), tree=upgradeTrees[tower.type]; if(!button||!tree) return;
+            button.onmouseenter=null; button.onmousemove=null; button.onmouseleave=null;
+            const tier=tower.upgradeLevels[path-1]||0;
+            if(tier>=3){ button.textContent=`PATH ${path} — MAXED`; button.disabled=true; button.title="This upgrade path is maxed."; return; }
+            const upgrade=tree[path-1][tier];
+            button.innerHTML=`<span class="upgradePathLabel">PATH ${path} • TIER ${tier+1}/3</span>${upgrade.name} — $${upgrade.cost}`;
+            button.disabled=money<upgrade.cost; button.title="";
+            button.onmouseenter=e=>showUpgradeTooltip(upgrade,e);
+            button.onmousemove=positionUpgradeTooltip;
+            button.onmouseleave=hideUpgradeTooltip;
         }
 
         /* =========================
@@ -4818,10 +4913,8 @@
                 tower.level;
 
 
-            const abilityLabel = ({
-                fire:"Inferno", archer:"Volley", sniper:"Precision", water:"Tidal Blast", shock:"EMP",
-                economy:"Cash Injection", frost:"Freeze", mortar:"Barrage", support:"Overclock"
-            }[tower.type] || "Ability");
+            const panelAbilityNames = { fire:["🔥 INFERNO — Q","🔥 Inferno"], archer:["🏹 VOLLEY — Q","🏹 Volley"], sniper:["🎯 PRECISION — Q","🎯 Precision"], water:["💧 TIDAL BLAST — Q","💧 Tidal Blast"], shock:["⚡ EMP — Q","⚡ EMP"], economy:["💰 CASH INJECTION — Q","💰 Cash Injection"], bounty:["🎯 BOUNTY — Q","🎯 Bounty"], frost:["❄️ FREEZE — Q","❄️ Freeze"], mortar:["💥 BARRAGE — Q","💥 Barrage"], support:["📡 OVERCLOCK — Q","📡 Overclock"], void:["◈ RIFT — Q","◈ Rift"], chrono:["◷ TIME STOP — Q","◷ Time Stop"], tesla:["ϟ OVERLOAD — Q","ϟ Overload"], drone:["✦ SWARM — Q","✦ Swarm"], alchemist:["✧ TRANSMUTE — Q","✧ Transmute"] };
+            const panelAbilityInfo = panelAbilityNames[tower.type] || ["ABILITY — Q","Ability"];
 
             document.getElementById(
                 "towerStats"
@@ -4844,7 +4937,7 @@
                 ${tower.type === "drone" ? `<div><strong>Drones:</strong> ${tower.droneCount || 0}/${tower.droneCap || 2}</div>` : ""}
                 ${tower.type === "alchemist" ? `<div><strong>Transmute:</strong> +${Math.round((tower.transmuteBonus || .35)*100)}% kill cash</div>` : ""}
                 <div id="statsTable"><strong>Total Damage:</strong> ${Math.floor(tower.totalDamage || 0)}<br><strong>Kills:</strong> ${tower.kills || 0}<br><strong>Shots:</strong> ${tower.shots || 0}<br><strong>Abilities:</strong> ${tower.abilityUses || 0}</div>
-                <div><strong>Ability:</strong> ${abilityLabel}</div>
+                <div><strong>Ability:</strong> ${panelAbilityInfo[1]}</div>
             `;
 
 
@@ -5719,6 +5812,35 @@
            TARGETING
         ========================= */
 
+        const targetModes = ["first", "last", "strong", "close"];
+
+        function cycleTargeting() {
+            if (!selectedTower) return;
+            if (["economy", "support"].includes(selectedTower.type)) return;
+
+            const current = targetModes.indexOf(selectedTower.targetMode || "first");
+            selectedTower.targetMode = targetModes[(current + 1) % targetModes.length];
+
+            updateUI();
+        }
+
+        function closeCameraHint(event) {
+            event?.stopPropagation();
+            const hint = document.getElementById("cameraHint");
+            if (hint) hint.style.display = "none";
+        }
+
+        function getEnemyPathProgress(enemy) {
+            const route = levelRoutes[enemy.route || 0] || levelPath;
+            let progress = (enemy.pathIndex || 0) * GRID_SIZE;
+            const current = route[enemy.pathIndex || 0];
+            if (current) {
+                const distanceFromCurrent = Math.hypot(enemy.x - current.x, enemy.y - current.y);
+                progress -= Math.min(distanceFromCurrent, GRID_SIZE);
+            }
+            return progress;
+        }
+
         function findTarget(
             tower
         ) {
@@ -5727,9 +5849,9 @@
                 return null;
             }
 
-            let best = null;
-            let bestValue = null;
             const mode = tower.targetMode || "first";
+            let best = null;
+            let bestScore = null;
 
             for (const enemy of enemies) {
 
@@ -5738,54 +5860,31 @@
                     enemy.y - tower.y
                 );
 
-                if (distance > tower.range) {
-                    continue;
-                }
+                if (distance > tower.range) continue;
 
                 if (enemy.stealth && !enemy.revealed && tower.type !== "sniper" && tower.level < 9) {
                     continue;
                 }
 
-                let value;
+                let score;
 
                 if (mode === "close") {
-                    value = distance;
-                }
-                else if (mode === "strong") {
-                    value = enemy.hp;
-                }
-                else {
-                    value = enemy.pathIndex;
-
-                    const route = levelRoutes[enemy.route || 0] || levelPath;
-                    const next = route[enemy.pathIndex + 1];
-                    if (next) {
-                        const segment = Math.hypot(
-                            next.x - enemy.x,
-                            next.y - enemy.y
-                        );
-                        value += segment ? 1 - Math.min(segment / GRID_SIZE, 1) : 1;
-                    }
-
-                    if (mode === "last") {
-                        value = -value;
-                    }
+                    score = distance;
+                } else if (mode === "strong") {
+                    score = enemy.maxHp ?? enemy.hp;
+                } else {
+                    const progress = getEnemyPathProgress(enemy);
+                    score = mode === "first" ? progress : -progress;
                 }
 
                 if (best === null ||
-                    (mode === "close" && value < bestValue) ||
-                    (mode !== "close" && mode !== "strong" && value > bestValue) ||
-                    (mode === "strong" && value > bestValue)) {
-
+                    (mode === "close" ? score < bestScore : score > bestScore)) {
                     best = enemy;
-                    bestValue = value;
-
+                    bestScore = score;
                 }
-
             }
 
             return best;
-
         }
 
 
@@ -5852,7 +5951,325 @@
                     tower, x:sx, y:sy, target, damage:(tower.damage + tower.droneDamage) * (tower.droneBoost > 0 ? 1.45 : 1),
                     speed:14, color:"#cbd5e1", splash:0, burn:0, chain:0, stun:0, slow:0, slowDuration:0, rewind:0, globalSlow:0, specialType:"drone"
                 });
+                spawnSpecialEffect("droneLaser", {x:sx,y:sy}, 9, {tx:target.x, ty:target.y});
             }
+        }
+
+        /* =========================
+           EPIC SPECIAL EFFECTS
+        ========================= */
+
+        function spawnSpecialEffect(type, tower, duration = 45, extra = {}) {
+            specialEffects.push({
+                type,
+                x: tower.x,
+                y: tower.y,
+                life: duration,
+                maxLife: duration,
+                ...extra
+            });
+        }
+
+        function spawnSpecialBurst(type, x, y, duration = 42, extra = {}) {
+            specialEffects.push({
+                type,
+                x,
+                y,
+                life: duration,
+                maxLife: duration,
+                ...extra
+            });
+        }
+
+        function updateSpecialEffects() {
+            for (let i = specialEffects.length - 1; i >= 0; i--) {
+                const fx = specialEffects[i];
+                fx.life--;
+                if (fx.life <= 0) specialEffects.splice(i, 1);
+            }
+        }
+
+        function worldToScreen(x, y) {
+            return {
+                x: (x - cameraX) * cameraZoom,
+                y: (y - cameraY) * cameraZoom
+            };
+        }
+
+        function drawSpecialTowerEffects() {
+            ctx.save();
+            ctx.lineCap = "round";
+
+            for (const tower of towers) {
+                const p = worldToScreen(tower.x, tower.y);
+                const t = specialTime;
+
+                if (tower.type === "drone") {
+                    const count = Math.min(tower.droneCount || 0, 5);
+                    for (let i = 0; i < count; i++) {
+                        const a = t * .055 + i * (Math.PI * 2 / Math.max(1, count));
+                        const orbit = (30 + Math.sin(t * .045 + i) * 4) * cameraZoom;
+                        const dx = Math.cos(a) * orbit;
+                        const dy = Math.sin(a) * orbit;
+                        const size = 7 * cameraZoom;
+
+                        ctx.save();
+                        ctx.translate(p.x + dx, p.y + dy);
+                        ctx.rotate(a + Math.PI / 2);
+
+                        ctx.fillStyle = "rgba(226,232,240,.25)";
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 11 * cameraZoom, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        ctx.fillStyle = "#cbd5e1";
+                        ctx.fillRect(-size, -size * .55, size * 2, size * 1.1);
+                        ctx.fillStyle = "#38bdf8";
+                        ctx.fillRect(-size * .35, -size * .25, size * .7, size * .5);
+
+                        ctx.strokeStyle = "rgba(255,255,255,.8)";
+                        ctx.lineWidth = 1.5 * cameraZoom;
+                        ctx.beginPath();
+                        ctx.moveTo(-size * 1.3, -size * .9);
+                        ctx.lineTo(size * 1.3, -size * .9);
+                        ctx.moveTo(-size * 1.3, size * .9);
+                        ctx.lineTo(size * 1.3, size * .9);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+
+                if (tower.type === "chrono") {
+                    const pulse = (Math.sin(t * .07) + 1) * .5;
+                    ctx.strokeStyle = `rgba(34,211,238,${.12 + pulse * .12})`;
+                    ctx.lineWidth = 2 * cameraZoom;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (42 + pulse * 8) * cameraZoom, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.strokeStyle = "rgba(103,232,249,.22)";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 30 * cameraZoom, t * .01, t * .01 + Math.PI * 1.4);
+                    ctx.stroke();
+                }
+
+                if (tower.type === "void") {
+                    const pulse = 1 + Math.sin(t * .08) * .08;
+                    ctx.strokeStyle = "rgba(168,85,247,.18)";
+                    ctx.lineWidth = 2 * cameraZoom;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 29 * pulse * cameraZoom, 0, Math.PI * 2);
+                    ctx.stroke();
+                    for (let r = 1; r <= 2; r++) {
+                        ctx.strokeStyle = `rgba(15,23,42,${.35 - r * .08})`;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, (14 + r * 7 + Math.sin(t * .05 + r) * 2) * cameraZoom, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                }
+
+                if (tower.type === "tesla") {
+                    const pulse = 18 + Math.sin(t * .13) * 4;
+                    ctx.strokeStyle = "rgba(250,204,21,.18)";
+                    ctx.lineWidth = 2 * cameraZoom;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, pulse * cameraZoom, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                if (tower.type === "alchemist") {
+                    for (let i = 0; i < 3; i++) {
+                        const a = -t * .025 + i * Math.PI * 2 / 3;
+                        const r = 22 * cameraZoom;
+                        ctx.fillStyle = "rgba(251,191,36,.75)";
+                        ctx.beginPath();
+                        ctx.arc(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r, 3 * cameraZoom, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+            ctx.restore();
+        }
+
+        function drawSpecialEffects() {
+            ctx.save();
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+
+            for (const fx of specialEffects) {
+                const p = worldToScreen(fx.x, fx.y);
+                const progress = 1 - fx.life / fx.maxLife;
+                const alpha = Math.max(0, fx.life / fx.maxLife);
+                const scale = cameraZoom;
+
+                if (fx.type === "voidProjectile") {
+                    ctx.fillStyle = `rgba(5,5,15,${.95 * alpha})`;
+                    ctx.shadowBlur = 18 * scale;
+                    ctx.shadowColor = "#8b5cf6";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 7 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = `rgba(192,132,252,${alpha})`;
+                    ctx.lineWidth = 2 * scale;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (11 + Math.sin(specialTime * .2) * 2) * scale, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                if (fx.type === "chronoProjectile") {
+                    ctx.fillStyle = `rgba(34,211,238,${.9 * alpha})`;
+                    ctx.shadowBlur = 16 * scale;
+                    ctx.shadowColor = "#22d3ee";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 6 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = `rgba(165,243,252,${alpha})`;
+                    ctx.lineWidth = 1.5 * scale;
+                    for (let r = 0; r < 2; r++) {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, (10 + r * 7) * scale, specialTime * .04 + r, specialTime * .04 + r + Math.PI * 1.3);
+                        ctx.stroke();
+                    }
+                }
+
+                if (fx.type === "teslaProjectile") {
+                    ctx.fillStyle = `rgba(255,255,230,${alpha})`;
+                    ctx.shadowBlur = 20 * scale;
+                    ctx.shadowColor = "#facc15";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 5 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    for (let a = 0; a < 4; a++) {
+                        const ang = specialTime * .18 + a * Math.PI / 2;
+                        ctx.strokeStyle = `rgba(250,204,21,${.75 * alpha})`;
+                        ctx.lineWidth = 1.5 * scale;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p.x + Math.cos(ang) * 13 * scale, p.y + Math.sin(ang) * 13 * scale);
+                        ctx.stroke();
+                    }
+                }
+
+                if (fx.type === "droneLaser") {
+                    const tx = fx.tx ?? fx.x;
+                    const ty = fx.ty ?? fx.y;
+                    const target = worldToScreen(tx, ty);
+                    ctx.strokeStyle = `rgba(125,211,252,${.85 * alpha})`;
+                    ctx.lineWidth = 2 * scale;
+                    ctx.shadowBlur = 8 * scale;
+                    ctx.shadowColor = "#38bdf8";
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(target.x, target.y);
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                }
+
+                if (fx.type === "goldProjectile") {
+                    ctx.fillStyle = `rgba(251,191,36,${alpha})`;
+                    ctx.shadowBlur = 18 * scale;
+                    ctx.shadowColor = "#f59e0b";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 6 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = `rgba(255,247,237,${alpha})`;
+                    ctx.lineWidth = 1.5 * scale;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 10 * scale, progress * Math.PI * 2, progress * Math.PI * 2 + Math.PI * 1.5);
+                    ctx.stroke();
+                }
+
+                if (fx.type === "voidBurst") {
+                    ctx.strokeStyle = `rgba(168,85,247,${alpha})`;
+                    ctx.lineWidth = 4 * scale;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (25 + progress * 110) * scale, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.fillStyle = `rgba(3,7,18,${.72 * alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (8 + progress * 22) * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                    for (let i = 0; i < 8; i++) {
+                        const a = specialTime * .03 + i * Math.PI / 4;
+                        const r1 = (18 + progress * 35) * scale;
+                        const r2 = (45 + progress * 75) * scale;
+                        ctx.strokeStyle = `rgba(216,180,254,${alpha * .6})`;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x + Math.cos(a) * r1, p.y + Math.sin(a) * r1);
+                        ctx.lineTo(p.x + Math.cos(a) * r2, p.y + Math.sin(a) * r2);
+                        ctx.stroke();
+                    }
+                }
+
+                if (fx.type === "timeBurst") {
+                    ctx.strokeStyle = `rgba(34,211,238,${alpha})`;
+                    ctx.lineWidth = 3 * scale;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (30 + progress * 130) * scale, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (12 + progress * 65) * scale, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.fillStyle = `rgba(207,250,254,${alpha})`;
+                    ctx.font = `bold ${18 * scale}px Arial`;
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText("✦", p.x, p.y);
+                }
+
+                if (fx.type === "teslaBurst") {
+                    for (let i = 0; i < 14; i++) {
+                        const a = specialTime * .08 + i * Math.PI * 2 / 14;
+                        const r = (25 + progress * 120) * scale;
+                        const mx = p.x + Math.cos(a) * r * .55;
+                        const my = p.y + Math.sin(a) * r * .55;
+                        const ex = p.x + Math.cos(a) * r;
+                        const ey = p.y + Math.sin(a) * r;
+                        ctx.strokeStyle = `rgba(250,204,21,${alpha * .85})`;
+                        ctx.lineWidth = 2 * scale;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(mx + Math.sin(i * 3) * 8 * scale, my + Math.cos(i * 2) * 8 * scale);
+                        ctx.lineTo(ex, ey);
+                        ctx.stroke();
+                    }
+                }
+
+                if (fx.type === "droneBurst") {
+                    ctx.strokeStyle = `rgba(125,211,252,${alpha})`;
+                    ctx.lineWidth = 3 * scale;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (35 + progress * 120) * scale, 0, Math.PI * 2);
+                    ctx.stroke();
+                    for (let i = 0; i < 6; i++) {
+                        const a = specialTime * .07 + i * Math.PI / 3;
+                        const r = (20 + progress * 70) * scale;
+                        ctx.fillStyle = `rgba(226,232,240,${alpha})`;
+                        ctx.fillRect(p.x + Math.cos(a) * r - 3 * scale, p.y + Math.sin(a) * r - 3 * scale, 6 * scale, 6 * scale);
+                    }
+                }
+
+                if (fx.type === "goldBurst") {
+                    ctx.strokeStyle = `rgba(251,191,36,${alpha})`;
+                    ctx.lineWidth = 4 * scale;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (20 + progress * 100) * scale, 0, Math.PI * 2);
+                    ctx.stroke();
+                    for (let i = 0; i < 10; i++) {
+                        const a = specialTime * .04 + i * Math.PI * 2 / 10;
+                        const r = (15 + progress * 80) * scale;
+                        ctx.fillStyle = `rgba(255,247,237,${alpha})`;
+                        ctx.font = `bold ${12 * scale}px Arial`;
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+                        ctx.fillText("$", p.x + Math.cos(a) * r, p.y + Math.sin(a) * r);
+                    }
+                }
+            }
+            ctx.restore();
         }
 
         /* =========================
@@ -5976,6 +6393,11 @@
                 specialType: tower.type
 
             });
+
+            if (tower.type === "void") spawnSpecialEffect("voidProjectile", {x:tower.x,y:tower.y}, 16);
+            if (tower.type === "chrono") spawnSpecialEffect("chronoProjectile", {x:tower.x,y:tower.y}, 16);
+            if (tower.type === "tesla") spawnSpecialEffect("teslaProjectile", {x:tower.x,y:tower.y}, 14);
+            if (tower.type === "alchemist") spawnSpecialEffect("goldProjectile", {x:tower.x,y:tower.y}, 16);
 
             tower.flash = 5;
             createBurst(tower.x, tower.y, towerData[tower.type].color);
@@ -7528,54 +7950,104 @@ if (
         ========================= */
 
         function drawProjectiles() {
+            for (const projectile of projectiles) {
+                const p = worldToScreen(projectile.x, projectile.y);
+                const s = cameraZoom;
 
-            for (
-                const projectile of
-                projectiles
-            ) {
+                if (projectile.specialType === "void") {
+                    ctx.save();
+                    ctx.fillStyle = "#020617";
+                    ctx.shadowBlur = 22 * s;
+                    ctx.shadowColor = "#8b5cf6";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 7 * s, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = "#c084fc";
+                    ctx.lineWidth = 2 * s;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, (12 + Math.sin(specialTime * .18) * 2) * s, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.restore();
+                    continue;
+                }
 
-                ctx.fillStyle =
-                    projectile.color;
+                if (projectile.specialType === "chrono") {
+                    ctx.save();
+                    ctx.fillStyle = "#cffafe";
+                    ctx.shadowBlur = 18 * s;
+                    ctx.shadowColor = "#22d3ee";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 6 * s, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = "#22d3ee";
+                    ctx.lineWidth = 1.5 * s;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 11 * s, specialTime * .04, specialTime * .04 + Math.PI * 1.35);
+                    ctx.stroke();
+                    ctx.restore();
+                    continue;
+                }
 
+                if (projectile.specialType === "tesla") {
+                    ctx.save();
+                    ctx.fillStyle = "#fff7ae";
+                    ctx.shadowBlur = 22 * s;
+                    ctx.shadowColor = "#facc15";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 5 * s, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = "#facc15";
+                    ctx.lineWidth = 1.5 * s;
+                    for (let a = 0; a < 3; a++) {
+                        const ang = specialTime * .15 + a * Math.PI * 2 / 3;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p.x + Math.cos(ang) * 12 * s, p.y + Math.sin(ang) * 12 * s);
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                    continue;
+                }
 
+                if (projectile.specialType === "drone") {
+                    ctx.save();
+                    ctx.fillStyle = "#e2e8f0";
+                    ctx.shadowBlur = 12 * s;
+                    ctx.shadowColor = "#38bdf8";
+                    ctx.fillRect(p.x - 4*s, p.y - 2*s, 8*s, 4*s);
+                    ctx.fillStyle = "#38bdf8";
+                    ctx.fillRect(p.x - 1.5*s, p.y - 1.5*s, 3*s, 3*s);
+                    ctx.restore();
+                    continue;
+                }
+
+                if (projectile.specialType === "alchemist") {
+                    ctx.save();
+                    ctx.fillStyle = "#fbbf24";
+                    ctx.shadowBlur = 18 * s;
+                    ctx.shadowColor = "#f59e0b";
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 6 * s, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = "#fff7ed";
+                    ctx.lineWidth = 1.5 * s;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 10 * s, specialTime * .06, specialTime * .06 + Math.PI * 1.5);
+                    ctx.stroke();
+                    ctx.restore();
+                    continue;
+                }
+
+                ctx.fillStyle = projectile.color;
                 ctx.beginPath();
-
-
-                ctx.arc(
-
-                    (
-                        projectile.x -
-                        cameraX
-                    ) *
-                    cameraZoom,
-
-                    (
-                        projectile.y -
-                        cameraY
-                    ) *
-                    cameraZoom,
-
-                    (
-                        projectile.chain
-                        ?
-                        6
-                        :
-                        5
-                    ) *
-                    cameraZoom,
-
-                    0,
-                    Math.PI*2
-
-                );
-
-
+                ctx.arc(p.x, p.y, (projectile.chain ? 6 : 5) * s, 0, Math.PI * 2);
                 ctx.fill();
-
             }
-
         }
-
 
         /* =========================
            PARTICLES
@@ -7843,9 +8315,11 @@ if (
             drawHero();
 
             drawTowers();
+            drawSpecialTowerEffects();
 
             drawEnemies();
 
+            drawSpecialEffects();
             drawProjectiles();
 
             drawParticles();
@@ -8371,6 +8845,7 @@ if (
                 tower.abilityCooldown = 840;
                 createFloatingText(tower.x, tower.y - 35, "◈ RIFT STORM!", "#c084fc");
                 createBurst(tower.x, tower.y, "#8b5cf6");
+                spawnSpecialBurst("voidBurst", tower.x, tower.y, 55);
             }
 
             else if (tower.type === "chrono") {
@@ -8382,6 +8857,7 @@ if (
                 tower.abilityCooldown = 1050;
                 createFloatingText(tower.x, tower.y - 35, "◷ TIME STOP!", "#22d3ee");
                 createBurst(tower.x, tower.y, "#22d3ee");
+                spawnSpecialBurst("timeBurst", tower.x, tower.y, 65);
             }
 
             else if (tower.type === "tesla") {
@@ -8401,6 +8877,7 @@ if (
                 tower.abilityCooldown = 780;
                 createFloatingText(tower.x, tower.y - 35, "✦ DRONE SWARM!", "#e2e8f0");
                 createBurst(tower.x, tower.y, "#94a3b8");
+                spawnSpecialBurst("droneBurst", tower.x, tower.y, 58);
             }
 
             else if (tower.type === "alchemist") {
@@ -8415,6 +8892,7 @@ if (
                 tower.abilityCooldown = 960;
                 createFloatingText(tower.x, tower.y - 35, `✧ TRANSMUTE +$${bonus}!`, "#fbbf24");
                 createBurst(tower.x, tower.y, "#fbbf24");
+                spawnSpecialBurst("goldBurst", tower.x, tower.y, 58);
             }
 
             else if (tower.type === "support") {
@@ -8584,6 +9062,13 @@ if (
         function openAchievements() {
             const panel = document.getElementById("achievementPanel");
             const list = document.getElementById("achievementList");
+            if (!panel || !list) return;
+            gameRunning = false;
+            if (typeof hideAllScreens === "function") hideAllScreens();
+            panel.hidden = false;
+            panel.style.setProperty("display", "flex", "important");
+            panel.style.setProperty("visibility", "visible", "important");
+            panel.style.setProperty("pointer-events", "auto", "important");
             const unlocked = JSON.parse(localStorage.getItem("blockDefenseAchievements") || "[]");
             list.innerHTML = achievements.map(([id,name,desc]) => {
                 const done = unlocked.includes(id);
@@ -8591,11 +9076,16 @@ if (
             }).join("");
             const mastery = JSON.parse(localStorage.getItem("blockDefenseMastery") || "{}");
             list.innerHTML += `<div id="masteryPanel"><h3>⭐ Tower Mastery & Skins</h3>${Object.entries(towerData).map(([id,data]) => { const kills = mastery[id] || 0; const level = kills >= 250 ? 3 : kills >= 100 ? 2 : kills >= 25 ? 1 : 0; const skin = level >= 3 ? "👑 Golden Skin" : level >= 2 ? "✨ Elite Skin" : level >= 1 ? "🎨 Veteran Skin" : "Locked"; return `<div class="masteryRow"><span><strong>${data.name}</strong><br>${kills} kills • Mastery ${level} • ${skin}</span><span>${level >= 3 ? "MAX" : `${Math.min(kills, 250)} / ${level === 0 ? 25 : level === 1 ? 100 : 250}`}</span></div>`; }).join("")}</div>`;
-            panel.style.display = "flex";
         }
 
         function closeAchievements() {
-            document.getElementById("achievementPanel").style.display = "none";
+            const panel = document.getElementById("achievementPanel");
+            if (!panel) return;
+            panel.hidden = true;
+            panel.style.setProperty("display", "none", "important");
+            panel.style.setProperty("visibility", "hidden", "important");
+            panel.style.setProperty("pointer-events", "none", "important");
+            showMainMenu();
         }
 
         function togglePause() {
@@ -8770,6 +9260,7 @@ if (
 
 
                         updateProjectiles();
+                        updateSpecialEffects();
                         updateParticles();
                         updateFloatingTexts();
                         checkAchievements();
