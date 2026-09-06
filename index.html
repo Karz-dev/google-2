@@ -559,6 +559,17 @@
            OVERLAYS
         ========================= */
 
+        [hidden] {
+            display: none !important;
+        }
+
+        [hidden] {
+
+            display: none !important;
+
+        }
+
+
         .overlay {
 
             position: fixed;
@@ -1583,6 +1594,7 @@
         id="levelSelect"
         class="overlay"
         style="display:none;"
+        hidden
     >
 
         <div class="panel">
@@ -3118,13 +3130,12 @@
                 "none";
 
 
-            document.getElementById(
-                "levelSelect"
-            ).style.setProperty(
-                "display",
-                "none",
-                "important"
-            );
+            const levelSelect = document.getElementById("levelSelect");
+            if (levelSelect) {
+                levelSelect.hidden = true;
+                levelSelect.style.display = "none";
+                levelSelect.classList.add("levelSelectClosed");
+            }
 
 
             document.getElementById(
@@ -3172,10 +3183,12 @@
                 "none";
 
 
-            document.getElementById(
-                "levelSelect"
-            ).style.display =
-                "flex";
+            const levelSelect = document.getElementById("levelSelect");
+            if (levelSelect) {
+                levelSelect.classList.remove("levelSelectClosed");
+                levelSelect.hidden = false;
+                levelSelect.style.display = "flex";
+            }
 
         }
 
@@ -3200,10 +3213,12 @@
                 "none";
 
 
-            document.getElementById(
-                "levelSelect"
-            ).style.display =
-                "none";
+            const levelSelect = document.getElementById("levelSelect");
+            if (levelSelect) {
+                levelSelect.hidden = true;
+                levelSelect.style.display = "none";
+                levelSelect.classList.add("levelSelectClosed");
+            }
 
 
             document.getElementById(
