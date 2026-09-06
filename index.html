@@ -1553,6 +1553,7 @@
     <div
         id="mainMenu"
         class="overlay"
+        style="display:flex;"
     >
 
         <div class="panel">
@@ -1620,7 +1621,7 @@
 
             <div id="levelGrid"></div>
 
-            <button class="bigButton" onclick="loadLevel(6, true)">♾ ENDLESS MODE</button>
+            <button class="bigButton" onclick="selectLevel(6, true)">♾ ENDLESS MODE</button>
 
             <button class="bigButton secondaryButton" onclick="openAchievements()">🏆 ACHIEVEMENTS</button>
 
@@ -3020,6 +3021,17 @@
 
         function loadLevel(level, endless = false) {
 
+            // Keep level loading independent from the selector UI.
+            // The selector is already closed by selectLevel(), but closing it
+            // again here makes loadLevel safe to call from anywhere in the game.
+            closeLevelSelect();
+
+            const mainMenu = document.getElementById("mainMenu");
+            if (mainMenu) {
+                mainMenu.hidden = true;
+                mainMenu.style.setProperty("display", "none", "important");
+            }
+
             currentLevel =
                 level;
 
@@ -3126,23 +3138,10 @@
             ).style.display =
                 "none";
             document.getElementById("heroPanel").style.display = "none";
-            document.getElementById("heroPlaceButton").textContent = "★ Place Hero";
-
-
             document.getElementById(
                 "mainMenu"
             ).style.display =
                 "none";
-
-
-            const levelSelect = document.getElementById("levelSelect");
-            if (levelSelect) {
-                levelSelect.classList.add("levelSelectClosed");
-                levelSelect.hidden = true;
-                levelSelect.style.setProperty("display", "none", "important");
-                levelSelect.style.setProperty("visibility", "hidden", "important");
-                levelSelect.style.setProperty("pointer-events", "none", "important");
-            }
 
 
             document.getElementById(
@@ -3166,84 +3165,106 @@
            MENU
         ========================= */
 
+        function hideAllScreens() {
+
+            const mainMenu = document.getElementById("mainMenu");
+            const levelSelect = document.getElementById("levelSelect");
+            const gameOver = document.getElementById("gameOver");
+            const levelComplete = document.getElementById("levelComplete");
+
+            [mainMenu, levelSelect, gameOver, levelComplete].forEach(screen => {
+                if (!screen) return;
+                screen.hidden = true;
+                screen.style.setProperty("display", "none", "important");
+                screen.style.setProperty("visibility", "hidden", "important");
+                screen.style.setProperty("pointer-events", "none", "important");
+            });
+
+        }
+
+
+        function showMainMenu() {
+
+            gameRunning = false;
+            hideAllScreens();
+
+            const mainMenu = document.getElementById("mainMenu");
+            if (!mainMenu) return;
+
+            mainMenu.hidden = false;
+            mainMenu.style.setProperty("display", "flex", "important");
+            mainMenu.style.setProperty("visibility", "visible", "important");
+            mainMenu.style.setProperty("pointer-events", "auto", "important");
+
+        }
+
+
         function openLevelSelect() {
 
-            gameRunning =
-                false;
-
-
-            document.getElementById(
-                "mainMenu"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "gameOver"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "levelComplete"
-            ).style.display =
-                "none";
-
+            gameRunning = false;
+            hideAllScreens();
 
             const levelSelect = document.getElementById("levelSelect");
-            if (levelSelect) {
-                levelSelect.classList.remove("levelSelectClosed");
-                levelSelect.hidden = false;
-                levelSelect.style.display = "flex";
+            if (!levelSelect) return;
+
+            levelSelect.classList.remove("levelSelectClosed");
+            levelSelect.hidden = false;
+            levelSelect.style.setProperty("display", "flex", "important");
+            levelSelect.style.setProperty("visibility", "visible", "important");
+            levelSelect.style.setProperty("pointer-events", "auto", "important");
+
+            updateCampaignInfo();
+
+        }
+
+
+        function closeLevelSelect() {
+
+            const levelSelect = document.getElementById("levelSelect");
+            if (!levelSelect) return;
+
+            levelSelect.classList.add("levelSelectClosed");
+            levelSelect.hidden = true;
+            levelSelect.style.setProperty("display", "none", "important");
+            levelSelect.style.setProperty("visibility", "hidden", "important");
+            levelSelect.style.setProperty("pointer-events", "none", "important");
+
+        }
+
+
+        function selectLevel(level, endless = false) {
+
+            // Close the map screen FIRST. This happens before level setup so
+            // a later game error can never leave the map selector covering the game.
+            closeLevelSelect();
+
+            const mainMenu = document.getElementById("mainMenu");
+            if (mainMenu) {
+                mainMenu.hidden = true;
+                mainMenu.style.setProperty("display", "none", "important");
             }
+
+            loadLevel(level, endless);
 
         }
 
 
         function returnToMenu() {
 
-            gameRunning =
-                false;
+            selectedTower = null;
+            selectedShopTower = null;
+            selectedHero = null;
+            heroPlacing = false;
+            bountySelecting = false;
+            bountyTarget = null;
+            gameRunning = false;
 
+            const towerPanel = document.getElementById("towerPanel");
+            const heroPanel = document.getElementById("heroPanel");
+            if (towerPanel) towerPanel.style.display = "none";
+            if (heroPanel) heroPanel.style.display = "none";
 
-            selectedTower =
-                null;
-
-
-            selectedShopTower =
-                null;
-
-
-            document.getElementById(
-                "towerPanel"
-            ).style.display =
-                "none";
-
-
-            const levelSelect = document.getElementById("levelSelect");
-            if (levelSelect) {
-                levelSelect.hidden = true;
-                levelSelect.style.display = "none";
-                levelSelect.classList.add("levelSelectClosed");
-            }
-
-
-            document.getElementById(
-                "gameOver"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "levelComplete"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "mainMenu"
-            ).style.display =
-                "flex";
+            showMainMenu();
 
         }
 
@@ -3332,7 +3353,7 @@
 
                 button.onclick =
                     () =>
-                        loadLevel(i);
+                        selectLevel(i);
 
 
                 grid.appendChild(
@@ -3356,6 +3377,7 @@
         }
 
         buildLevelButtons();
+        showMainMenu();
 
         /* =========================
            HELP
@@ -7627,18 +7649,28 @@
            START
         ========================= */
 
-        loadLevel(1);
-
-
+        // Start at the main menu. Do NOT load a level automatically.
+        // The player must click PLAY and then choose a map.
         gameRunning =
             false;
 
+        // Keep the menu visible even if another UI routine runs during startup.
+        document.body.classList.remove("gameStarted");
 
-        document.getElementById(
-            "mainMenu"
-        ).style.display =
-            "flex";
+        const initialMainMenu = document.getElementById("mainMenu");
+        const initialLevelSelect = document.getElementById("levelSelect");
 
+        if (initialMainMenu) {
+            initialMainMenu.style.display = "flex";
+        }
+
+        if (initialLevelSelect) {
+            initialLevelSelect.classList.add("levelSelectClosed");
+            initialLevelSelect.hidden = true;
+            initialLevelSelect.style.setProperty("display", "none", "important");
+            initialLevelSelect.style.setProperty("visibility", "hidden", "important");
+            initialLevelSelect.style.setProperty("pointer-events", "none", "important");
+        }
 
         gameLoop();
 
