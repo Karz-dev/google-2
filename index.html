@@ -563,10 +563,15 @@
             display: none !important;
         }
 
-        [hidden] {
-
+        #levelSelect.levelSelectClosed {
             display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
 
+        #levelSelect:not(.levelSelectClosed) {
+            visibility: visible;
+            pointer-events: auto;
         }
 
 
@@ -3132,9 +3137,11 @@
 
             const levelSelect = document.getElementById("levelSelect");
             if (levelSelect) {
-                levelSelect.hidden = true;
-                levelSelect.style.display = "none";
                 levelSelect.classList.add("levelSelectClosed");
+                levelSelect.hidden = true;
+                levelSelect.style.setProperty("display", "none", "important");
+                levelSelect.style.setProperty("visibility", "hidden", "important");
+                levelSelect.style.setProperty("pointer-events", "none", "important");
             }
 
 
