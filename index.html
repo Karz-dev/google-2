@@ -254,13 +254,49 @@
 
 
         #shop h3 {
-
             margin-bottom: 8px;
-
             color: #b8f5bd;
-
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
 
+        #closeShopButton {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            background: #713030;
+            border: 2px solid #a34b4b;
+            border-radius: 4px;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #closeShopButton:hover {
+            background: #914040;
+        }
+
+        #openShopButton {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            padding: 9px 15px;
+            background: #173b20;
+            border: 3px solid #3fa34d;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,.45);
+            z-index: 20;
+            display: none;
+        }
+
+        #openShopButton:hover {
+            background: #286b34;
         }
 
 
@@ -707,6 +743,17 @@
         }
 
 
+        #closeAchievementsButton {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
         #closeHelp {
 
             position: absolute;
@@ -749,6 +796,125 @@
 
         }
 
+
+        #waveControls {
+            position: fixed;
+            left: 50%;
+            top: 76px;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 7px;
+            z-index: 18;
+            pointer-events: auto;
+        }
+
+        #nextWaveButton, #earlyWaveButton, #achievementButton {
+            border: 2px solid #3fa34d;
+            background: rgba(23,59,32,.94);
+            color: #d9ffe0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,.3);
+        }
+
+        #nextWaveButton:hover, #earlyWaveButton:hover, #achievementButton:hover {
+            background: #286b34;
+        }
+
+        #nextWaveButton:disabled, #earlyWaveButton:disabled {
+            opacity: .4;
+            cursor: default;
+        }
+
+        #waveCountdown {
+            position: fixed;
+            left: 50%;
+            top: 125px;
+            transform: translateX(-50%);
+            color: #facc15;
+            font-weight: bold;
+            font-size: 15px;
+            text-shadow: 0 2px 5px #000;
+            z-index: 18;
+            pointer-events: none;
+        }
+
+        #achievementPanel {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,.72);
+            z-index: 100;
+        }
+
+        #achievementBox {
+            width: min(680px, 90vw);
+            max-height: 82vh;
+            overflow: auto;
+            padding: 24px;
+            background: #173b20;
+            border: 3px solid #3fa34d;
+            border-radius: 8px;
+            box-shadow: 0 10px 35px rgba(0,0,0,.55);
+        }
+
+        .achievementItem {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            margin: 7px 0;
+            background: rgba(0,0,0,.18);
+            border: 1px solid #356d3d;
+            border-radius: 5px;
+        }
+
+        .achievementItem.locked { opacity: .45; }
+        .achievementItem strong { color: #facc15; }
+
+        #statsTable {
+            margin-top: 7px;
+            border-top: 1px solid rgba(255,255,255,.12);
+            padding-top: 7px;
+        }
+
+        .upgradePathLabel {
+            display: block;
+            font-size: 10px;
+            opacity: .7;
+            margin-bottom: 2px;
+        }
+
+        @media(max-width:700px) {
+            #waveControls { top: 112px; }
+            #waveCountdown { top: 160px; }
+        }
+
+        .abilityButton {
+            display: none;
+            background: #2563eb;
+            color: white;
+            border: 2px solid #60a5fa;
+            border-radius: 6px;
+            padding: 9px;
+            margin-top: 7px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .abilityButton:disabled {
+            opacity: .45;
+            cursor: default;
+        }
+
+        .upgradeButton.hotkeyButton {
+            position: relative;
+        }
 
         @media(max-width:700px) {
 
@@ -889,6 +1055,14 @@
 
     </div>
 
+    <div id="waveControls">
+        <button id="nextWaveButton" onclick="manualNextWave()">▶ Next Wave [N]</button>
+        <button id="earlyWaveButton" onclick="startWave(true)">⚡ Early Start +$0</button>
+        <button id="achievementButton" onclick="openAchievements()">🏆 Achievements</button>
+    </div>
+
+    <div id="waveCountdown"></div>
+
 
     <!-- CAMERA HELP -->
 
@@ -898,7 +1072,7 @@
         •
         Mouse Wheel = Zoom
         •
-        Middle Mouse = Drag<br>1-6 = Select Tower • P = Pause • Esc = Deselect
+        Middle Mouse = Drag<br>1-9 = Select Tower • E = Upgrade • X = Sell • R = Target • Q = Ability • P = Pause • Esc = Deselect
 
     </div>
 
@@ -910,7 +1084,8 @@
     <div id="shop">
 
         <h3>
-            🏗 Towers
+            <span>🏗 Towers</span>
+            <button id="closeShopButton" onclick="closeShop()" title="Close shop">×</button>
         </h3>
 
 
@@ -1039,7 +1214,73 @@
 
         </button>
 
+
+        <button
+            class="shopButton"
+            id="shop-frost"
+            onclick="selectShopTower('frost')"
+        >
+
+            <div class="shopName">
+
+                ❄️ Frost Tower — $200
+
+            </div>
+
+            <div class="shopInfo">
+
+                Slows enemies • Hotkey: 7
+
+            </div>
+
+        </button>
+
+
+        <button
+            class="shopButton"
+            id="shop-mortar"
+            onclick="selectShopTower('mortar')"
+        >
+
+            <div class="shopName">
+
+                💥 Mortar — $350
+
+            </div>
+
+            <div class="shopInfo">
+
+                Heavy splash damage • Hotkey: 8
+
+            </div>
+
+        </button>
+
+
+        <button
+            class="shopButton"
+            id="shop-support"
+            onclick="selectShopTower('support')"
+        >
+
+            <div class="shopName">
+
+                📡 Support Tower — $400
+
+            </div>
+
+            <div class="shopInfo">
+
+                Buffs nearby towers • Hotkey: 9
+
+            </div>
+
+        </button>
+
+
     </div>
+
+    <button id="openShopButton" onclick="openShop()">🛒 Shop</button>
 
 
     <!-- =========================
@@ -1084,6 +1325,17 @@
         >
 
             Target: First
+
+        </button>
+
+
+        <button
+            class="abilityButton"
+            id="abilityButton"
+            onclick="activateAbility()"
+        >
+
+            Ability
 
         </button>
 
@@ -1170,6 +1422,9 @@
 
             <div id="levelGrid"></div>
 
+            <button class="bigButton" onclick="loadLevel(6, true)">♾ ENDLESS MODE</button>
+
+            <button class="bigButton secondaryButton" onclick="openAchievements()">🏆 ACHIEVEMENTS</button>
 
             <button
                 class="bigButton secondaryButton"
@@ -1248,7 +1503,15 @@
 
                 <br><br>
 
-                🎯 Click Target to cycle First, Last, Strong and Close.
+                ⌨️ E upgrades, X sells, R changes targeting, Q uses abilities, N starts the next wave, K opens achievements.
+
+                <br><br>
+
+                ❄️ Frost Towers slow enemies. 💥 Mortars deal huge splash damage. 📡 Support Towers buff nearby towers.
+
+                <br><br>
+
+                🎯 Click Target to cycle First, Last, Strong and Close. Upgrades now have three branching paths, each with three tiers.
 
                 <br><br>
 
@@ -1350,6 +1613,15 @@
 
     </div>
 
+
+    <div id="achievementPanel">
+        <div id="achievementBox">
+            <button id="closeAchievementsButton" onclick="closeAchievements()">×</button>
+            <h2>🏆 Achievements & Challenges</h2>
+            <p>Milestones are saved in this browser.</p>
+            <div id="achievementList"></div>
+        </div>
+    </div>
 
     <script>
 
@@ -1826,7 +2098,15 @@
         let enemiesDefeated = 0;
         let totalMoneyEarned = 0;
         let totalTowersPlaced = 0;
+        let totalTowerSpent = 0;
         let waveRewardsEarned = 0;
+        let totalDamageDealt = 0;
+        let totalAbilityUses = 0;
+        let totalBossesDefeated = 0;
+        let waveStartBonus = 0;
+        let waveStartedThisCycle = false;
+        let endlessMode = false;
+        let currentMapVariant = 0;
 
 
         let selectedShopTower =
@@ -1855,6 +2135,7 @@
 
 
         let levelPath = [];
+        let levelRoutes = [];
 
         let waterZones = [];
 
@@ -2414,6 +2695,71 @@
             },
 
 
+            frost: {
+
+                name:
+                    "Frost Tower",
+
+                cost: 200,
+
+                damage: 8,
+
+                range: 200,
+
+                cooldown: 35,
+
+                slow: .45,
+
+                slowDuration: 100,
+
+                color:
+                    "#67e8f9"
+
+            },
+
+
+            mortar: {
+
+                name:
+                    "Mortar",
+
+                cost: 350,
+
+                damage: 75,
+
+                range: 330,
+
+                cooldown: 105,
+
+                splash: 90,
+
+                color:
+                    "#f97316"
+
+            },
+
+
+            support: {
+
+                name:
+                    "Support Tower",
+
+                cost: 400,
+
+                damage: 0,
+
+                range: 170,
+
+                cooldown: 999999,
+
+                aura: true,
+
+                color:
+                    "#14b8a6"
+
+            },
+
+
             economy: {
 
                 name:
@@ -2443,10 +2789,12 @@
            LOAD LEVEL
         ========================= */
 
-        function loadLevel(level) {
+        function loadLevel(level, endless = false) {
 
             currentLevel =
                 level;
+
+            endlessMode = endless;
 
 
             const data =
@@ -2478,7 +2826,13 @@
             enemiesDefeated = 0;
             totalMoneyEarned = 0;
             totalTowersPlaced = 0;
+            totalTowerSpent = 0;
             waveRewardsEarned = 0;
+            totalDamageDealt = 0;
+            totalAbilityUses = 0;
+            totalBossesDefeated = 0;
+            waveStartBonus = 0;
+            waveStartedThisCycle = false;
 
 
             selectedTower =
@@ -2491,6 +2845,12 @@
 
             levelPath =
                 createPath(level);
+
+            levelRoutes = [levelPath];
+            if (level === 4 || level === 6) {
+                const routeOffset = level === 4 ? 650 : 750;
+                levelRoutes.push(levelPath.map(point => ({ x: point.x, y: point.y + routeOffset })));
+            }
 
 
             waterZones =
@@ -2521,7 +2881,7 @@
             document.getElementById(
                 "levelName"
             ).textContent =
-                data.name;
+                data.name + (endlessMode ? " — ENDLESS" : "");
 
 
             document.getElementById(
@@ -2717,7 +3077,7 @@
                     </div>
 
                     <div class="levelDifficulty">
-                        ${level.difficulty}
+                        ${level.difficulty} • ${level.waves} waves
                     </div>
 
                 `;
@@ -2792,28 +3152,32 @@
 
         function isPath(x,y) {
 
-            for (
-                const point of
-                levelPath
-            ) {
-
-                if (
-                    Math.hypot(
-                        point.x-x,
-                        point.y-y
-                    ) <
-                    GRID_SIZE*.75
-                ) {
-
-                    return true;
-
+            for (const route of levelRoutes.length ? levelRoutes : [levelPath]) {
+                for (const point of route) {
+                    if (Math.hypot(point.x-x, point.y-y) < GRID_SIZE*.75) {
+                        return true;
+                    }
                 }
-
             }
 
 
             return false;
 
+        }
+
+
+        /* =========================
+           SHOP VISIBILITY
+        ========================= */
+
+        function closeShop() {
+            document.getElementById("shop").style.display = "none";
+            document.getElementById("openShopButton").style.display = "block";
+        }
+
+        function openShop() {
+            document.getElementById("shop").style.display = "block";
+            document.getElementById("openShopButton").style.display = "none";
         }
 
 
@@ -2970,6 +3334,7 @@
 
 
             totalTowersPlaced++;
+            totalTowerSpent += data.cost;
 
             towers.push({
 
@@ -3013,6 +3378,22 @@
                 incomeTimer:
                     data.incomeInterval ||
                     300,
+
+                slow:
+                    data.slow ||
+                    0,
+
+                slowDuration:
+                    data.slowDuration ||
+                    0,
+
+                abilityCooldown: 0,
+                abilityUses: 0,
+                totalDamage: 0,
+                kills: 0,
+                shots: 0,
+                overclock: 0,
+                upgradeLevels: [0, 0, 0],
 
                 targetMode:
                     "first",
@@ -3074,459 +3455,122 @@
            UPGRADES
         ========================= */
 
-        function upgradeTower(
-            level
-        ) {
+        const upgradeTrees = {
+            fire: [
+                [
+                    {name:"Ember Reach", cost:90, effects:{range:45}},
+                    {name:"Scorch", cost:150, effects:{damage:12,burn:5}},
+                    {name:"Inferno Core", cost:260, effects:{damage:28,burn:8,splash:35}}
+                ],
+                [
+                    {name:"Rapid Flame", cost:110, effects:{cooldown:-7}},
+                    {name:"Blazing Tempo", cost:180, effects:{cooldown:-7}},
+                    {name:"Heat Wave", cost:300, effects:{cooldown:-6,splash:25}}
+                ],
+                [
+                    {name:"Firestorm", cost:125, effects:{splash:45}},
+                    {name:"Molten Burst", cost:210, effects:{splash:35,damage:18}},
+                    {name:"Ashfall", cost:360, effects:{splash:50,burn:6}}
+                ]
+            ],
+            archer: [
+                [{name:"Longbow",cost:90,effects:{range:50}},{name:"Eagle Eye",cost:150,effects:{range:55,damage:5}},{name:"Skyline",cost:260,effects:{range:70,damage:10}}],
+                [{name:"Heavy Arrows",cost:120,effects:{damage:10}},{name:"Piercing Volley",cost:190,effects:{damage:15,chain:1}},{name:"Rain of Arrows",cost:320,effects:{damage:20,cooldown:-9}}],
+                [{name:"Quick Draw",cost:100,effects:{cooldown:-7}},{name:"Rapid Fire",cost:175,effects:{cooldown:-8}},{name:"Machine Bow",cost:300,effects:{cooldown:-8,damage:12}}]
+            ],
+            sniper: [
+                [{name:"AP Rounds",cost:200,effects:{damage:100}},{name:"Heavy Caliber",cost:350,effects:{damage:180}},{name:"Executioner",cost:550,effects:{damage:260}}],
+                [{name:"Long Scope",cost:170,effects:{range:450}},{name:"Eagle Scope",cost:280,effects:{range:550}},{name:"Mapwide Scope",cost:450,effects:{range:10000}}],
+                [{name:"Quick Reload",cost:220,effects:{cooldown:-25}},{name:"Rapid Bolt",cost:350,effects:{cooldown:-25}},{name:"Deadeye",cost:500,effects:{cooldown:-20,damage:120}}]
+            ],
+            water: [
+                [{name:"Pressure",cost:120,effects:{range:50}},{name:"High Pressure",cost:170,effects:{damage:18}},{name:"Hydraulic Crush",cost:280,effects:{damage:30,splash:30}}],
+                [{name:"Wide Stream",cost:130,effects:{splash:35}},{name:"Tidal Arc",cost:210,effects:{splash:40,slow:.15}},{name:"Tsunami",cost:360,effects:{splash:55,damage:25}}],
+                [{name:"Fast Pump",cost:120,effects:{cooldown:-7}},{name:"Pressure Cycle",cost:190,effects:{cooldown:-8}},{name:"Flood Cannon",cost:320,effects:{cooldown:-7,damage:20}}]
+            ],
+            shock: [
+                [{name:"Overcharge",cost:125,effects:{damage:15}},{name:"High Voltage",cost:190,effects:{damage:20}},{name:"Thunder Core",cost:320,effects:{damage:35,stun:20}}],
+                [{name:"Chain Link",cost:150,effects:{chain:2}},{name:"Arc Network",cost:230,effects:{chain:2}},{name:"Lightning Web",cost:360,effects:{chain:3,damage:15}}],
+                [{name:"Rapid Pulse",cost:150,effects:{cooldown:-20}},{name:"Overclocked Pulse",cost:240,effects:{cooldown:-18}},{name:"EMP Engine",cost:380,effects:{cooldown:-15,stun:25}}]
+            ],
+            economy: [
+                [{name:"Cash Payout",cost:150,effects:{income:12}},{name:"Investor",cost:240,effects:{income:20}},{name:"Mega Investor",cost:380,effects:{income:30}}],
+                [{name:"Faster Banking",cost:170,effects:{incomeInterval:-50}},{name:"Compound Interest",cost:260,effects:{income:25,incomeInterval:-40}},{name:"Turbo Banking",cost:420,effects:{income:35,incomeInterval:-35}}],
+                [{name:"Wave Bonus",cost:180,effects:{waveBonus:40}},{name:"Market Boom",cost:280,effects:{waveBonus:50}},{name:"Golden Quarter",cost:450,effects:{waveBonus:75}}]
+            ],
+            frost: [
+                [{name:"Deep Freeze",cost:125,effects:{range:35,slow:.08}},{name:"Ice Lock",cost:200,effects:{slow:.12,slowDuration:45}},{name:"Absolute Zero",cost:330,effects:{slow:.12,stun:25}}],
+                [{name:"Cold Snap",cost:120,effects:{damage:8}},{name:"Frozen Shards",cost:190,effects:{damage:12,splash:25}},{name:"Glacier Burst",cost:320,effects:{damage:20,splash:35}}],
+                [{name:"Fast Chill",cost:130,effects:{cooldown:-7}},{name:"Blizzard",cost:220,effects:{cooldown:-8,splash:20}},{name:"Permafrost",cost:360,effects:{cooldown:-7,slow:.08}}]
+            ],
+            mortar: [
+                [{name:"Heavy Shells",cost:175,effects:{damage:35,splash:25}},{name:"Siege Shells",cost:300,effects:{damage:65,splash:20}},{name:"Doom Shell",cost:480,effects:{damage:100,splash:30}}],
+                [{name:"Explosive Core",cost:190,effects:{splash:45}},{name:"Cluster Burst",cost:300,effects:{splash:45,damage:30}},{name:"Mega Blast",cost:480,effects:{splash:60,damage:45}}],
+                [{name:"Rapid Barrage",cost:160,effects:{cooldown:-20}},{name:"Fast Loader",cost:260,effects:{cooldown:-18}},{name:"Artillery Cycle",cost:420,effects:{cooldown:-15,damage:35}}]
+            ],
+            support: [
+                [{name:"Signal Boost",cost:200,effects:{range:40,auraDamage:.20,auraCooldown:.15}},{name:"Relay Tower",cost:300,effects:{range:45,auraDamage:.12,auraCooldown:.08}},{name:"Global Relay",cost:500,effects:{range:80,auraDamage:.15,auraCooldown:.10}}],
+                [{name:"Damage Uplink",cost:190,effects:{auraDamage:.12}},{name:"Power Grid",cost:300,effects:{auraDamage:.15}},{name:"Command Network",cost:500,effects:{auraDamage:.18}}],
+                [{name:"Speed Uplink",cost:190,effects:{auraCooldown:.10}},{name:"Turbo Network",cost:300,effects:{auraCooldown:.12}},{name:"Overclock Matrix",cost:500,effects:{auraCooldown:.15}}]
+            ]
+        };
 
-            if (
-                !selectedTower
-            ) {
-
-                return;
-
+        function applyUpgradeEffects(tower, effects) {
+            for (const [key, value] of Object.entries(effects)) {
+                if (key === "cooldown") tower.cooldown = Math.max(5, tower.cooldown + value);
+                else if (key === "range") tower.range += value;
+                else if (key === "damage") tower.damage += value;
+                else if (key === "splash") tower.splash = (tower.splash || 0) + value;
+                else if (key === "chain") tower.chain = (tower.chain || 0) + value;
+                else if (key === "stun") tower.stun = (tower.stun || 0) + value;
+                else if (key === "burn") tower.fireBurn = (tower.fireBurn || 0) + value;
+                else if (key === "slow") tower.slow = Math.min(.9, (tower.slow || 0) + value);
+                else if (key === "slowDuration") tower.slowDuration = (tower.slowDuration || 0) + value;
+                else if (key === "income") tower.income = (tower.income || 0) + value;
+                else if (key === "incomeInterval") tower.incomeInterval = Math.max(45, (tower.incomeInterval || 300) + value);
+                else if (key === "waveBonus") tower.waveBonus = (tower.waveBonus || 0) + value;
+                else if (key === "auraDamage") tower.auraDamage = (tower.auraDamage || 0) + value;
+                else if (key === "auraCooldown") tower.auraCooldown = (tower.auraCooldown || 0) + value;
             }
-
-
-            const tower =
-                selectedTower;
-
-
-            let cost = 0;
-
-            const upgradeCosts = {
-                fire: [100,150,225],
-                archer: [90,140,190],
-                sniper: [200,350,500],
-                water: [120,160,220],
-                shock: [125,200,300],
-                economy: [150,250,450]
-            };
-
-            if (
-                upgradeCosts[tower.type] &&
-                upgradeCosts[tower.type][level - 1] &&
-                money < upgradeCosts[tower.type][level - 1]
-            ) {
-
-                return;
-
-            }
-
-
-            if (
-                tower.type ===
-                "fire"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    cost = 100;
-
-                    if (
-                        tower.level >= 1
-                    )
-                        return;
-
-                    tower.range += 40;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    cost = 150;
-
-                    if (
-                        tower.level < 1 ||
-                        tower.fireBurn
-                    )
-                        return;
-
-                    tower.fireBurn = 5;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    cost = 225;
-
-                    if (
-                        !tower.fireBurn ||
-                        tower.burnLevel
-                    )
-                        return;
-
-                    tower.fireBurn = 9;
-
-                    tower.burnLevel = 1;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "archer"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    cost = 90;
-
-                    if (
-                        tower.level >= 1
-                    )
-                        return;
-
-                    tower.range += 50;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    cost = 140;
-
-                    if (
-                        tower.level < 1 ||
-                        tower.damageLevel
-                    )
-                        return;
-
-                    tower.damage += 8;
-
-                    tower.damageLevel = 1;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    cost = 190;
-
-                    if (
-                        tower.level < 1 ||
-                        tower.speedLevel
-                    )
-                        return;
-
-                    tower.cooldown =
-                        Math.max(
-                            7,
-                            tower.cooldown-7
-                        );
-
-                    tower.speedLevel = 1;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "sniper"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    cost = 200;
-
-                    if (
-                        tower.damageLevel
-                    )
-                        return;
-
-                    tower.damage += 100;
-
-                    tower.damageLevel = 1;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    cost = 350;
-
-                    if (
-                        !tower.damageLevel ||
-                        tower.damageLevel2
-                    )
-                        return;
-
-                    tower.damage += 200;
-
-                    tower.damageLevel2 = 1;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    cost = 500;
-
-                    if (
-                        tower.speedLevel
-                    )
-                        return;
-
-                    tower.cooldown =
-                        Math.max(
-                            50,
-                            tower.cooldown-35
-                        );
-
-                    tower.speedLevel = 1;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "water"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    cost = 120;
-
-                    if (
-                        tower.level >= 1
-                    )
-                        return;
-
-                    tower.range += 50;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    cost = 160;
-
-                    if (
-                        tower.level < 1 ||
-                        tower.damageLevel
-                    )
-                        return;
-
-                    tower.damage += 15;
-
-                    tower.damageLevel = 1;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    cost = 220;
-
-                    if (
-                        tower.level < 1 ||
-                        tower.splash
-                    )
-                        return;
-
-                    tower.splash = 55;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "shock"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    cost = 125;
-
-                    if (
-                        tower.level >= 1
-                    )
-                        return;
-
-                    tower.damage += 15;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    cost = 200;
-
-                    if (
-                        tower.level < 1 ||
-                        tower.chainLevel
-                    )
-                        return;
-
-                    tower.chain += 2;
-
-                    tower.stun = 45;
-
-                    tower.chainLevel = 1;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    cost = 300;
-
-                    if (
-                        tower.level < 1 ||
-                        tower.speedLevel
-                    )
-                        return;
-
-                    tower.cooldown =
-                        Math.max(
-                            25,
-                            tower.cooldown-25
-                        );
-
-                    tower.speedLevel = 1;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "economy"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    cost = 150;
-
-                    if (
-                        tower.level >= 1
-                    )
-                        return;
-
-                    tower.income += 12;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    cost = 250;
-
-                    if (
-                        tower.level < 1 ||
-                        tower.incomeLevel
-                    )
-                        return;
-
-                    tower.income += 18;
-
-                    tower.incomeInterval =
-                        240;
-
-                    tower.incomeLevel = 1;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    cost = 450;
-
-                    if (
-                        tower.level < 1 ||
-                        !tower.incomeLevel ||
-                        tower.boomLevel
-                    )
-                        return;
-
-                    tower.income += 30;
-
-                    tower.incomeInterval =
-                        180;
-
-                    tower.waveBonus = 75;
-                    tower.boomLevel = 1;
-
-                }
-
-            }
-
-
-            if (
-                money < cost
-            ) {
-
-                return;
-
-            }
-
-
-            money -= cost;
-
-
-            tower.totalSpent +=
-                cost;
-
-
-            tower.level =
-                Math.max(
-                    tower.level,
-                    level
-                );
-
-
-            updateTowerPanel();
-
-            updateUI();
-
         }
 
+        function upgradeTower(path) {
+            if (!selectedTower) return;
+            const tower = selectedTower;
+            const tree = upgradeTrees[tower.type];
+            if (!tree || !tree[path - 1]) return;
+            const tier = tower.upgradeLevels[path - 1] || 0;
+            if (tier >= 3) return;
+            const upgrade = tree[path - 1][tier];
+            if (money < upgrade.cost) return;
+
+            money -= upgrade.cost;
+            tower.totalSpent += upgrade.cost;
+            totalTowerSpent += upgrade.cost;
+            tower.upgradeLevels[path - 1] = tier + 1;
+            tower.level = tower.upgradeLevels.reduce((a,b) => a + b, 0);
+            applyUpgradeEffects(tower, upgrade.effects);
+            createFloatingText(tower.x, tower.y - 35, `${upgrade.name}!`, "#facc15");
+            createBurst(tower.x, tower.y, "#facc15");
+            updateTowerPanel();
+            updateUI();
+        }
+
+        function setupUpgradeButton(id, tower, path) {
+            const button = document.getElementById(id);
+            const tree = upgradeTrees[tower.type];
+            if (!button || !tree) return;
+            const tier = tower.upgradeLevels[path - 1] || 0;
+            if (tier >= 3) {
+                button.textContent = `PATH ${path} — MAXED`;
+                button.disabled = true;
+                return;
+            }
+            const upgrade = tree[path - 1][tier];
+            button.innerHTML = `<span class="upgradePathLabel">PATH ${path} • TIER ${tier + 1}/3</span>${upgrade.name} — $${upgrade.cost}`;
+            button.disabled = money < upgrade.cost;
+            button.title = money < upgrade.cost ? `Need $${upgrade.cost - money} more` : `Buy ${upgrade.name}`;
+        }
 
         /* =========================
            TOWER PANEL
@@ -3561,86 +3605,27 @@
                 tower.level;
 
 
+            const abilityLabel = ({
+                fire:"Inferno", archer:"Volley", sniper:"Precision", water:"Tidal Blast", shock:"EMP",
+                economy:"Cash Injection", frost:"Freeze", mortar:"Barrage", support:"Overclock"
+            }[tower.type] || "Ability");
+
             document.getElementById(
                 "towerStats"
             ).innerHTML = `
-
-                Damage:
-                ${Math.round(
-                    tower.damage
-                )}
-
-                <br>
-
-                Range:
-                ${
-                    tower.range >
-                    5000
-                    ?
-                    "MAPWIDE"
-                    :
-                    Math.round(
-                        tower.range
-                    )
-                }
-
-                <br>
-
-                Attack:
-                ${(
-                    60 /
-                    tower.cooldown
-                ).toFixed(1)}
-                /sec
-
-                ${
-                    tower.splash
-                    ?
-                    `<br>Splash:
-                    ${tower.splash}`
-                    :
-                    ""
-                }
-
-                ${
-                    tower.chain
-                    ?
-                    `<br>Chain:
-                    ${tower.chain}`
-                    :
-                    ""
-                }
-
-                ${
-                    tower.stun
-                    ?
-                    `<br>Stun:
-                    ${(tower.stun / 60).toFixed(2)}s`
-                    :
-                    ""
-                }
-
-                ${
-                    tower.type === "economy"
-                    ? `<br>Income: +$${tower.income} every ${(tower.incomeInterval / 60).toFixed(1)}s`
-                    : ""
-                }
-
-                ${
-                    tower.waveBonus
-                    ? `<br>Wave Bonus: +$${tower.waveBonus}`
-                    : ""
-                }
-
-                ${
-                    tower.fireBurn
-                    ?
-                    `<br>Burn:
-                    ${tower.fireBurn}`
-                    :
-                    ""
-                }
-
+                <div><strong>Damage:</strong> ${Math.round(tower.damage)}</div>
+                <div><strong>Range:</strong> ${tower.range > 5000 ? "MAPWIDE" : Math.round(tower.range)}</div>
+                <div><strong>Attack Speed:</strong> ${(60 / tower.cooldown).toFixed(1)} /sec</div>
+                ${tower.splash ? `<div><strong>Splash:</strong> ${Math.round(tower.splash)}</div>` : ""}
+                ${tower.chain ? `<div><strong>Chain:</strong> ${tower.chain}</div>` : ""}
+                ${tower.stun ? `<div><strong>Stun:</strong> ${(tower.stun / 60).toFixed(2)}s</div>` : ""}
+                ${tower.fireBurn ? `<div><strong>Burn:</strong> ${Math.round(tower.fireBurn)}</div>` : ""}
+                ${tower.slow ? `<div><strong>Slow:</strong> ${Math.round(tower.slow * 100)}%</div>` : ""}
+                ${tower.type === "economy" ? `<div><strong>Income:</strong> +$${tower.income} / ${(tower.incomeInterval / 60).toFixed(1)}s</div>` : ""}
+                ${tower.waveBonus ? `<div><strong>Wave Bonus:</strong> +$${tower.waveBonus}</div>` : ""}
+                ${tower.type === "support" ? `<div><strong>Aura:</strong> +${Math.round((tower.auraDamage || 0)*100)}% dmg / +${Math.round((tower.auraCooldown || 0)*100)}% speed</div>` : ""}
+                <div id="statsTable"><strong>Total Damage:</strong> ${Math.floor(tower.totalDamage || 0)}<br><strong>Kills:</strong> ${tower.kills || 0}<br><strong>Shots:</strong> ${tower.shots || 0}<br><strong>Abilities:</strong> ${tower.abilityUses || 0}</div>
+                <div><strong>Ability:</strong> ${abilityLabel}</div>
             `;
 
 
@@ -3664,6 +3649,10 @@
                 3
             );
 
+            document.getElementById("upgrade1").style.display = "block";
+            document.getElementById("upgrade2").style.display = "block";
+            document.getElementById("upgrade3").style.display = "block";
+
 
             const targetButton =
                 document.getElementById(
@@ -3671,7 +3660,7 @@
                 );
 
             targetButton.style.display =
-                tower.type === "economy"
+                ["economy", "support"].includes(tower.type)
                 ? "none"
                 : "block";
 
@@ -3684,359 +3673,29 @@
                     close: "Close"
                 }[tower.targetMode || "first"]);
 
-        }
 
-
-        function setupUpgradeButton(
-            id,
-            tower,
-            level
-        ) {
-
-            const button =
-                document.getElementById(
-                    id
-                );
-
-
-            let text = "";
-
-            let cost = 0;
-
-            let locked = false;
-
-
-            if (
-                tower.type ===
-                "fire"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    text =
-                        "🔥 Inferno Range — $100";
-
-                    cost = 100;
-
-                    locked =
-                        tower.level >= 1;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    text =
-                        "🔥 Ignite — $150";
-
-                    cost = 150;
-
-                    locked =
-                        tower.level < 1 ||
-                        !!tower.fireBurn;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    text =
-                        "🔥 Deep Burn — $225";
-
-                    cost = 225;
-
-                    locked =
-                        !tower.fireBurn ||
-                        !!tower.burnLevel;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "archer"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    text =
-                        "🏹 Longbow — $90";
-
-                    cost = 90;
-
-                    locked =
-                        tower.level >= 1;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    text =
-                        "🏹 Heavy Arrows — $140";
-
-                    cost = 140;
-
-                    locked =
-                        tower.level < 1 ||
-                        !!tower.damageLevel;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    text =
-                        "🏹 Rapid Fire — $190";
-
-                    cost = 190;
-
-                    locked =
-                        tower.level < 1 ||
-                        !!tower.speedLevel;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "sniper"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    text =
-                        "🎯 AP Rounds — $200";
-
-                    cost = 200;
-
-                    locked =
-                        !!tower.damageLevel;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    text =
-                        "🎯 Heavy Caliber — $350";
-
-                    cost = 350;
-
-                    locked =
-                        !tower.damageLevel ||
-                        !!tower.damageLevel2;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    text =
-                        "🎯 Quick Reload — $500";
-
-                    cost = 500;
-
-                    locked =
-                        !!tower.speedLevel;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "water"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    text =
-                        "💧 Pressure — $120";
-
-                    cost = 120;
-
-                    locked =
-                        tower.level >= 1;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    text =
-                        "💧 High Pressure — $160";
-
-                    cost = 160;
-
-                    locked =
-                        tower.level < 1 ||
-                        !!tower.damageLevel;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    text =
-                        "💧 Splash — $220";
-
-                    cost = 220;
-
-                    locked =
-                        tower.level < 1 ||
-                        !!tower.splash;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "economy"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    text =
-                        "💰 Cash Payout +$12 — $150";
-
-                    cost = 150;
-
-                    locked =
-                        tower.level >= 1;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    text =
-                        "💰 Compound Interest — $250";
-
-                    cost = 250;
-
-                    locked =
-                        tower.level < 1 ||
-                        !!tower.incomeLevel;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    text =
-                        "💰 Market Boom + Wave Bonus — $450";
-
-                    cost = 450;
-
-                    locked =
-                        tower.level < 1 ||
-                        !tower.incomeLevel ||
-                        !!tower.boomLevel;
-
-                }
-
-            }
-
-
-            if (
-                tower.type ===
-                "shock"
-            ) {
-
-                if (
-                    level === 1
-                ) {
-
-                    text =
-                        "⚡ Overcharge — $125";
-
-                    cost = 125;
-
-                    locked =
-                        tower.level >= 1;
-
-                }
-
-
-                if (
-                    level === 2
-                ) {
-
-                    text =
-                        "⚡ Chain +2 + Stun — $200";
-
-                    cost = 200;
-
-                    locked =
-                        tower.level < 1 ||
-                        !!tower.chainLevel;
-
-                }
-
-
-                if (
-                    level === 3
-                ) {
-
-                    text =
-                        "⚡ Rapid Pulse — $300";
-
-                    cost = 300;
-
-                    locked =
-                        tower.level < 1 ||
-                        !!tower.speedLevel;
-
-                }
-
-            }
-
-
-            button.textContent =
-                text;
-
-
-            button.disabled =
-                locked ||
-                money < cost;
+            const abilityButton =
+                document.getElementById("abilityButton");
+
+            abilityButton.style.display = "block";
+            abilityButton.disabled = tower.abilityCooldown > 0;
+
+            const abilityNames = {
+                fire: ["🔥 INFERNO — Q", "🔥 Inferno"],
+                archer: ["🏹 VOLLEY — Q", "🏹 Volley"],
+                sniper: ["🎯 PRECISION — Q", "🎯 Precision"],
+                water: ["💧 TIDAL BLAST — Q", "💧 Tidal Blast"],
+                shock: ["⚡ EMP — Q", "⚡ EMP"],
+                economy: ["💰 CASH INJECTION — Q", "💰 Cash Injection"],
+                frost: ["❄️ FREEZE — Q", "❄️ Freeze"],
+                mortar: ["💥 BARRAGE — Q", "💥 Barrage"],
+                support: ["📡 OVERCLOCK — Q", "📡 Overclock"]
+            };
+
+            const abilityInfo = abilityNames[tower.type] || ["ABILITY — Q", "Ability"];
+            abilityButton.textContent = tower.abilityCooldown > 0
+                ? `${abilityInfo[1]} — ${(tower.abilityCooldown / 60).toFixed(1)}s`
+                : abilityInfo[0];
 
         }
 
@@ -4168,6 +3827,54 @@
                     healTimer: 90,
                     color: "#a855f7",
                     emoji: "+"
+                };
+
+            }
+
+
+            else if (
+                type ===
+                "splitter"
+            ) {
+
+                enemy = {
+                    type: "splitter",
+                    x: start.x,
+                    y: start.y,
+                    pathIndex: 0,
+                    stun: 0,
+                    hp: 85 + currentWave * 10,
+                    maxHp: 85 + currentWave * 10,
+                    speed: .95 + currentWave * .02,
+                    radius: 16,
+                    reward: 38,
+                    color: "#fb923c",
+                    emoji: "S"
+                };
+
+            }
+
+
+            else if (
+                type ===
+                "shielded"
+            ) {
+
+                enemy = {
+                    type: "shielded",
+                    x: start.x,
+                    y: start.y,
+                    pathIndex: 0,
+                    stun: 0,
+                    hp: 110 + currentWave * 13,
+                    maxHp: 110 + currentWave * 13,
+                    shield: 90 + currentWave * 8,
+                    maxShield: 90 + currentWave * 8,
+                    speed: 1.0 + currentWave * .02,
+                    radius: 17,
+                    reward: 48,
+                    color: "#38bdf8",
+                    emoji: "◇"
                 };
 
             }
@@ -4367,6 +4074,13 @@
             }
 
 
+            const routeChoices = levelRoutes.length ? levelRoutes : [levelPath];
+            enemy.route = routeChoices.length > 1 ? Math.floor(Math.random() * routeChoices.length) : 0;
+            const routeStart = routeChoices[enemy.route][0];
+            enemy.x = routeStart.x;
+            enemy.y = routeStart.y;
+            enemy.pathIndex = 0;
+
             enemies.push(
                 enemy
             );
@@ -4378,19 +4092,18 @@
            WAVE LOGIC
         ========================= */
 
-        function startWave() {
+        function startWave(manual = false) {
 
-            if (
-                currentWave >=
-                levels[
-                    currentLevel
-                ].waves
-            ) {
+            if (!endlessMode && currentWave >= levels[currentLevel].waves) return;
+            if (enemiesToSpawn > 0 || enemies.length > 0) return;
 
-                return;
-
+            if (manual && currentWave > 0 && waveDelay > 0) {
+                const bonus = Math.max(0, Math.floor(waveDelay * 0.35));
+                money += bonus;
+                totalMoneyEarned += bonus;
+                waveStartBonus += bonus;
+                if (bonus > 0) createFloatingText(cameraX + canvas.width / cameraZoom / 2, cameraY + 120, `Early Start +$${bonus}`, "#facc15");
             }
-
 
             currentWave++;
 
@@ -4415,13 +4128,15 @@
                 enemiesToSpawn =
                     7 +
                     currentWave *
-                    2;
+                    2 +
+                    (endlessMode ? Math.floor(currentWave / 10) * 2 : 0);
 
             }
 
 
             spawnTimer = 0;
-
+            waveDelay = 90;
+            waveStartedThisCycle = true;
 
             updateUI();
 
@@ -4430,10 +4145,7 @@
 
         function updateWaveLogic() {
 
-            if (
-                currentWave === 0
-            ) {
-
+            if (currentWave === 0) {
                 waveDelay--;
 
 
@@ -4515,6 +4227,26 @@
                         }
 
                         else if (
+                            currentWave >= 9 &&
+                            roll < .24
+                        ) {
+
+                            type =
+                                "splitter";
+
+                        }
+
+                        else if (
+                            currentWave >= 11 &&
+                            roll < .34
+                        ) {
+
+                            type =
+                                "shielded";
+
+                        }
+
+                        else if (
                             currentWave >= 4 &&
                             roll < .45
                         ) {
@@ -4556,17 +4288,9 @@
                 enemies.length === 0
             ) {
 
-                if (
-                    currentWave >=
-                    levels[
-                        currentLevel
-                    ].waves
-                ) {
-
+                if (!endlessMode && currentWave >= levels[currentLevel].waves) {
                     completeLevel();
-
                     return;
-
                 }
 
 
@@ -4633,6 +4357,12 @@
             enemy
         ) {
 
+            if (enemy.slowTimer > 0) {
+                enemy.slowTimer--;
+                if (enemy.slowTimer <= 0) enemy.slowFactor = 1;
+            }
+
+
             if (
                 enemy.stun >
                 0
@@ -4645,10 +4375,8 @@
             }
 
 
-            const target =
-                levelPath[
-                    enemy.pathIndex + 1
-                ];
+            const route = levelRoutes[enemy.route || 0] || levelPath;
+            const target = route[enemy.pathIndex + 1];
 
 
             if (!target) {
@@ -4697,10 +4425,13 @@
                     dy
                 );
 
+            const moveSpeed =
+                enemy.speed * (enemy.slowFactor || 1);
+
 
             if (
                 distance <
-                enemy.speed
+                moveSpeed
             ) {
 
                 enemy.x =
@@ -4718,13 +4449,13 @@
                 enemy.x +=
                     dx /
                     distance *
-                    enemy.speed;
+                    moveSpeed;
 
 
                 enemy.y +=
                     dy /
                     distance *
-                    enemy.speed;
+                    moveSpeed;
 
             }
 
@@ -4769,7 +4500,8 @@
                 else {
                     value = enemy.pathIndex;
 
-                    const next = levelPath[enemy.pathIndex + 1];
+                    const route = levelRoutes[enemy.route || 0] || levelPath;
+                    const next = route[enemy.pathIndex + 1];
                     if (next) {
                         const segment = Math.hypot(
                             next.x - enemy.x,
@@ -4840,7 +4572,7 @@
             tower
         ) {
 
-            if (tower.type === "economy") {
+            if (tower.type === "economy" || tower.type === "support") {
                 return;
             }
 
@@ -4873,11 +4605,23 @@
             }
 
 
-            tower.timer =
-                tower.cooldown;
+            const supportTowers = towers.filter(other =>
+                other.type === "support" &&
+                Math.hypot(other.x - tower.x, other.y - tower.y) <= other.range
+            );
+
+            const speedBuff = supportTowers.reduce((sum, other) => sum + (other.auraCooldown || 0), 0) + (tower.overclock > 0 ? .45 : 0);
+            const damageBuff = supportTowers.reduce((sum, other) => sum + (other.auraDamage || 0), 0);
+
+            const effectiveCooldown = Math.max(5, tower.cooldown * (1 - Math.min(.65, speedBuff)));
+
+            tower.timer = effectiveCooldown;
 
 
+            tower.shots = (tower.shots || 0) + 1;
             projectiles.push({
+
+                tower,
 
                 x:
                     tower.x,
@@ -4888,7 +4632,7 @@
                 target,
 
                 damage:
-                    tower.damage,
+                    tower.damage * (1 + Math.min(.9, damageBuff)),
 
                 speed:
                     tower.type ===
@@ -4917,6 +4661,14 @@
 
                 stun:
                     tower.stun ||
+                    0,
+
+                slow:
+                    tower.slow ||
+                    0,
+
+                slowDuration:
+                    tower.slowDuration ||
                     0
 
             });
@@ -5031,11 +4783,24 @@
             projectile
         ) {
 
+            let rawDamage = projectile.damage;
+
+            if (enemy.shield > 0) {
+                const shieldDamage = Math.min(enemy.shield, rawDamage);
+                enemy.shield -= shieldDamage;
+                rawDamage -= shieldDamage;
+                createFloatingText(enemy.x, enemy.y - enemy.radius - 28, `-${Math.max(1, Math.round(shieldDamage))} SHIELD`, "#7dd3fc");
+            }
+
             const dealtDamage =
-                projectile.damage *
+                rawDamage *
                 (1 - (enemy.armor || 0));
 
             enemy.hp -= dealtDamage;
+            if (projectile.tower) {
+                projectile.tower.totalDamage = (projectile.tower.totalDamage || 0) + Math.max(0, dealtDamage);
+                totalDamageDealt += Math.max(0, dealtDamage);
+            }
 
             createFloatingText(
                 enemy.x,
@@ -5052,6 +4817,12 @@
                 enemy.burn =
                     projectile.burn;
 
+            }
+
+
+            if (projectile.slow > 0) {
+                enemy.slowFactor = Math.min(enemy.slowFactor || 1, 1 - projectile.slow);
+                enemy.slowTimer = Math.max(enemy.slowTimer || 0, projectile.slowDuration || 60);
             }
 
 
@@ -5200,12 +4971,35 @@
 
                 totalMoneyEarned += enemy.reward;
                 enemiesDefeated++;
+                if (projectile.tower) projectile.tower.kills = (projectile.tower.kills || 0) + 1;
+                if (enemy.type === "boss") totalBossesDefeated++;
                 createFloatingText(enemy.x, enemy.y - enemy.radius - 8, `+$${enemy.reward}`, "#facc15");
 
 
                 score +=
                     enemy.reward *
                     10;
+
+
+                if (enemy.type === "splitter") {
+                    for (let child = 0; child < 2; child++) {
+                        enemies.push({
+                            type: "runner",
+                            x: enemy.x,
+                            y: enemy.y,
+                            pathIndex: enemy.pathIndex,
+                            route: enemy.route || 0,
+                            stun: 0,
+                            hp: 24 + currentWave * 3,
+                            maxHp: 24 + currentWave * 3,
+                            speed: 2.6 + currentWave * .035,
+                            radius: 9,
+                            reward: 8,
+                            color: "#fbbf24",
+                            emoji: ">"
+                        });
+                    }
+                }
 
 
                 enemies =
@@ -5709,178 +5503,49 @@
 
         function drawPath() {
 
-            if (
-                levelPath.length <
-                2
-            ) {
+            const routes = levelRoutes.length ? levelRoutes : [levelPath];
 
-                return;
+            for (const route of routes) {
+                if (route.length < 2) continue;
 
+                ctx.beginPath();
+                ctx.moveTo((route[0].x-cameraX)*cameraZoom, (route[0].y-cameraY)*cameraZoom);
+                for (const point of route) {
+                    ctx.lineTo((point.x-cameraX)*cameraZoom, (point.y-cameraY)*cameraZoom);
+                }
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                ctx.lineWidth = 76 * cameraZoom;
+                ctx.strokeStyle = "#4b2d1c";
+                ctx.stroke();
+                ctx.lineWidth = 58 * cameraZoom;
+                ctx.strokeStyle = "#704323";
+                ctx.stroke();
+                ctx.lineWidth = 46 * cameraZoom;
+                ctx.strokeStyle = "#a06a38";
+                ctx.stroke();
+
+                const start = route[0];
+                const end = route[route.length - 1];
+                ctx.fillStyle = "#22c55e";
+                ctx.beginPath();
+                ctx.arc((start.x-cameraX)*cameraZoom, (start.y-cameraY)*cameraZoom, 25*cameraZoom, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = "#ef4444";
+                ctx.beginPath();
+                ctx.arc((end.x-cameraX)*cameraZoom, (end.y-cameraY)*cameraZoom, 25*cameraZoom, 0, Math.PI*2);
+                ctx.fill();
             }
 
-
-            ctx.beginPath();
-
-
-            ctx.moveTo(
-
-                (
-                    levelPath[0].x -
-                    cameraX
-                ) *
-                cameraZoom,
-
-                (
-                    levelPath[0].y -
-                    cameraY
-                ) *
-                cameraZoom
-
-            );
-
-
-            for (
-                const point of
-                levelPath
-            ) {
-
-                ctx.lineTo(
-
-                    (
-                        point.x -
-                        cameraX
-                    ) *
-                    cameraZoom,
-
-                    (
-                        point.y -
-                        cameraY
-                    ) *
-                    cameraZoom
-
-                );
-
+            if (routes.length > 1) {
+                ctx.font = "bold 12px Arial";
+                ctx.textAlign = "center";
+                ctx.fillStyle = "rgba(255,255,255,.55)";
+                routes.forEach((route, index) => {
+                    const start = route[0];
+                    ctx.fillText(`ROUTE ${index + 1}`, (start.x-cameraX+65)*cameraZoom, (start.y-cameraY-42)*cameraZoom);
+                });
             }
-
-
-            ctx.lineCap =
-                "round";
-
-
-            ctx.lineJoin =
-                "round";
-
-
-            ctx.lineWidth =
-                76 *
-                cameraZoom;
-
-
-            ctx.strokeStyle =
-                "#4b2d1c";
-
-
-            ctx.stroke();
-
-
-            ctx.lineWidth =
-                58 *
-                cameraZoom;
-
-
-            ctx.strokeStyle =
-                "#704323";
-
-
-            ctx.stroke();
-
-
-            ctx.lineWidth =
-                46 *
-                cameraZoom;
-
-
-            ctx.strokeStyle =
-                "#a06a38";
-
-
-            ctx.stroke();
-
-
-            const start =
-                levelPath[0];
-
-
-            const end =
-                levelPath[
-                    levelPath.length-1
-                ];
-
-
-            ctx.fillStyle =
-                "#22c55e";
-
-
-            ctx.beginPath();
-
-
-            ctx.arc(
-
-                (
-                    start.x -
-                    cameraX
-                ) *
-                cameraZoom,
-
-                (
-                    start.y -
-                    cameraY
-                ) *
-                cameraZoom,
-
-                25 *
-                cameraZoom,
-
-                0,
-                Math.PI*2
-
-            );
-
-
-            ctx.fill();
-
-
-            ctx.fillStyle =
-                "#ef4444";
-
-
-            ctx.beginPath();
-
-
-            ctx.arc(
-
-                (
-                    end.x -
-                    cameraX
-                ) *
-                cameraZoom,
-
-                (
-                    end.y -
-                    cameraY
-                ) *
-                cameraZoom,
-
-                25 *
-                cameraZoom,
-
-                0,
-                Math.PI*2
-
-            );
-
-
-            ctx.fill();
 
         }
 
@@ -5994,7 +5659,13 @@
 
                     shock: "⚡",
 
-                    economy: "$"
+                    economy: "$",
+
+                    frost: "❄",
+
+                    mortar: "M",
+
+                    support: "+"
 
                 };
 
@@ -6089,6 +5760,22 @@
 
                 }
 
+
+                if (tower.type === "support") {
+                    ctx.beginPath();
+                    ctx.arc(x, y, tower.range * cameraZoom, 0, Math.PI*2);
+                    ctx.strokeStyle = "rgba(45,212,191,.18)";
+                    ctx.lineWidth = 2 * cameraZoom;
+                    ctx.stroke();
+                }
+
+                if (tower.overclock > 0) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 26 * cameraZoom, 0, Math.PI*2);
+                    ctx.strokeStyle = "rgba(96,165,250,.85)";
+                    ctx.lineWidth = 3 * cameraZoom;
+                    ctx.stroke();
+                }
 
                 if (
                     tower ===
@@ -6243,6 +5930,25 @@
 
                 ctx.fill();
 
+                if (enemy.shield > 0) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius + 5 * cameraZoom, 0, Math.PI * 2);
+                    ctx.strokeStyle = "rgba(125,211,252,.9)";
+                    ctx.lineWidth = 3 * cameraZoom;
+                    ctx.stroke();
+                }
+
+                const hpWidth = enemy.type === "boss" ? 100 * cameraZoom : enemy.radius * 2.5 * cameraZoom;
+                const barY = y - radius - (enemy.type === "boss" ? 18 : 10) * cameraZoom;
+                ctx.fillStyle = "#17220f";
+                ctx.fillRect(x - hpWidth/2, barY, hpWidth, 5 * cameraZoom);
+                ctx.fillStyle = enemy.type === "boss" ? "#ef4444" : "#22c55e";
+                ctx.fillRect(x - hpWidth/2, barY, hpWidth * Math.max(0, enemy.hp/enemy.maxHp), 5 * cameraZoom);
+                if (enemy.shield > 0) {
+                    ctx.fillStyle = "#38bdf8";
+                    ctx.fillRect(x - hpWidth/2, barY - 6*cameraZoom, hpWidth * Math.max(0, enemy.shield/enemy.maxShield), 3*cameraZoom);
+                }
+
 
                 if (
                     enemy.emoji
@@ -6273,65 +5979,6 @@
                     );
 
                 }
-
-
-                const hpWidth =
-                    enemy.radius *
-                    2.5 *
-                    cameraZoom;
-
-
-                const hpRatio =
-                    Math.max(
-                        0,
-                        enemy.hp /
-                        enemy.maxHp
-                    );
-
-
-                ctx.fillStyle =
-                    "#17220f";
-
-
-                ctx.fillRect(
-
-                    x -
-                    hpWidth/2,
-
-                    y -
-                    radius -
-                    10 *
-                    cameraZoom,
-
-                    hpWidth,
-
-                    5 *
-                    cameraZoom
-
-                );
-
-
-                ctx.fillStyle =
-                    "#22c55e";
-
-
-                ctx.fillRect(
-
-                    x -
-                    hpWidth/2,
-
-                    y -
-                    radius -
-                    10 *
-                    cameraZoom,
-
-                    hpWidth *
-                    hpRatio,
-
-                    5 *
-                    cameraZoom
-
-                );
 
             }
 
@@ -6487,39 +6134,12 @@
                 GRID_SIZE/2;
 
 
-            const valid =
-                !isPath(x,y)
-
-                &&
-
-                !towers.some(
-                    tower =>
-                        Math.hypot(
-                            tower.x-x,
-                            tower.y-y
-                        ) <
-                        GRID_SIZE
-                )
-
-                &&
-
-                (
-                    selectedShopTower ===
-                    "water"
-
-                    ?
-
-                    isWater(x,y)
-
-                    :
-
-                    !isWater(x,y)
-                )
-
-                &&
-
-                money >=
-                data.cost;
+            const onPath = isPath(x,y);
+            const occupied = towers.some(tower => Math.hypot(tower.x-x, tower.y-y) < GRID_SIZE);
+            const wrongTerrain = selectedShopTower === "water" ? !isWater(x,y) : isWater(x,y);
+            const tooExpensive = money < data.cost;
+            const valid = !onPath && !occupied && !wrongTerrain && !tooExpensive;
+            const reason = onPath ? "Path" : occupied ? "Occupied" : wrongTerrain ? (selectedShopTower === "water" ? "Needs water" : "Water zone") : tooExpensive ? `Need $${data.cost - money}` : "READY";
 
 
             ctx.fillStyle =
@@ -6589,6 +6209,17 @@
                 cameraZoom
 
             );
+
+            ctx.beginPath();
+            ctx.arc((x-cameraX)*cameraZoom, (y-cameraY)*cameraZoom, Math.min(data.range || 0, 900)*cameraZoom, 0, Math.PI*2);
+            ctx.strokeStyle = valid ? "rgba(34,197,94,.28)" : "rgba(239,68,68,.18)";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.font = "bold 12px Arial";
+            ctx.textAlign = "center";
+            ctx.fillStyle = valid ? "#86efac" : "#fca5a5";
+            ctx.fillText(reason, (x-cameraX)*cameraZoom, (y-cameraY)*cameraZoom - 32*cameraZoom);
 
 
             if (
@@ -6727,6 +6358,16 @@
                 return;
             }
 
+            if (key === "n") {
+                manualNextWave();
+                return;
+            }
+
+            if (key === "k") {
+                openAchievements();
+                return;
+            }
+
             if (key === "escape") {
                 selectedShopTower = null;
                 selectedTower = null;
@@ -6741,6 +6382,37 @@
             if (key === "4") selectShopTower("water");
             if (key === "5") selectShopTower("shock");
             if (key === "6") selectShopTower("economy");
+            if (key === "7") selectShopTower("frost");
+            if (key === "8") selectShopTower("mortar");
+            if (key === "9") selectShopTower("support");
+
+            if (key === "e") {
+                if (selectedTower) {
+                    const buttons = [
+                        document.getElementById("upgrade1"),
+                        document.getElementById("upgrade2"),
+                        document.getElementById("upgrade3")
+                    ];
+                    const button = buttons.find(item => !item.disabled);
+                    if (button) button.click();
+                }
+                return;
+            }
+
+            if (key === "x") {
+                if (selectedTower) sellTower();
+                return;
+            }
+
+            if (key === "r") {
+                if (selectedTower && selectedTower.type !== "economy" && selectedTower.type !== "support") cycleTargeting();
+                return;
+            }
+
+            if (key === "q") {
+                if (selectedTower) activateAbility();
+                return;
+            }
 
         });
 
@@ -6830,6 +6502,189 @@
         );
 
 
+        function activateAbility() {
+
+            if (!selectedTower || selectedTower.abilityCooldown > 0) {
+                return;
+            }
+
+            const tower = selectedTower;
+            tower.abilityUses = (tower.abilityUses || 0) + 1;
+            totalAbilityUses++;
+            const inRange = enemy =>
+                Math.hypot(enemy.x - tower.x, enemy.y - tower.y) <= tower.range;
+
+            if (tower.type === "fire") {
+                for (const enemy of enemies.filter(inRange)) {
+                    hitEnemy(enemy, {
+                        tower,
+                        damage: 45 + tower.level * 15,
+                        splash: 0,
+                        burn: 10 + tower.level * 3,
+                        chain: 0,
+                        stun: 0,
+                        slow: 0,
+                        slowDuration: 0,
+                        color: towerData.fire.color
+                    });
+                }
+                tower.abilityCooldown = 720;
+                createFloatingText(tower.x, tower.y - 35, "🔥 INFERNO!", "#ef4444");
+                createBurst(tower.x, tower.y, "#ef4444");
+            }
+
+            else if (tower.type === "archer") {
+                const targets = [...enemies].sort((a, b) => {
+                    const da = Math.hypot(a.x - tower.x, a.y - tower.y);
+                    const db = Math.hypot(b.x - tower.x, b.y - tower.y);
+                    return da - db;
+                }).filter(inRange).slice(0, 8);
+
+                for (const enemy of targets) {
+                    hitEnemy(enemy, {
+                        tower,
+                        damage: tower.damage * 3,
+                        splash: 0,
+                        burn: 0,
+                        chain: 0,
+                        stun: 0,
+                        slow: 0,
+                        slowDuration: 0,
+                        color: towerData.archer.color
+                    });
+                }
+                tower.abilityCooldown = 540;
+                createFloatingText(tower.x, tower.y - 35, "🏹 VOLLEY!", "#3b82f6");
+                createBurst(tower.x, tower.y, "#3b82f6");
+            }
+
+            else if (tower.type === "sniper") {
+                const target = [...enemies]
+                    .sort((a, b) => b.hp - a.hp)
+                    .find(inRange);
+
+                if (target) {
+                    hitEnemy(target, {
+                        tower,
+                        damage: tower.damage * 3,
+                        splash: 0,
+                        burn: 0,
+                        chain: 0,
+                        stun: 90,
+                        slow: 0,
+                        slowDuration: 0,
+                        color: towerData.sniper.color
+                    });
+                }
+                tower.abilityCooldown = 900;
+                createFloatingText(tower.x, tower.y - 35, "🎯 PRECISION!", "#a855f7");
+                createBurst(tower.x, tower.y, "#a855f7");
+            }
+
+            else if (tower.type === "water") {
+                for (const enemy of enemies.filter(inRange)) {
+                    hitEnemy(enemy, {
+                        tower,
+                        damage: tower.damage * 2,
+                        splash: tower.splash + 50,
+                        burn: 0,
+                        chain: 0,
+                        stun: 0,
+                        slow: .55,
+                        slowDuration: 180,
+                        color: towerData.water.color
+                    });
+                    enemy.slowFactor = Math.min(enemy.slowFactor || 1, .45);
+                    enemy.slowTimer = Math.max(enemy.slowTimer || 0, 180);
+                }
+                tower.abilityCooldown = 660;
+                createFloatingText(tower.x, tower.y - 35, "💧 TIDAL BLAST!", "#06b6d4");
+                createBurst(tower.x, tower.y, "#06b6d4");
+            }
+
+            else if (tower.type === "shock") {
+                for (const enemy of enemies.filter(inRange)) {
+                    hitEnemy(enemy, {
+                        tower,
+                        damage: tower.damage * 1.5,
+                        splash: 0,
+                        burn: 0,
+                        chain: 0,
+                        stun: 150,
+                        slow: 0,
+                        slowDuration: 0,
+                        color: towerData.shock.color
+                    });
+                }
+                tower.abilityCooldown = 780;
+                createFloatingText(tower.x, tower.y - 35, "⚡ EMP!", "#facc15");
+                createBurst(tower.x, tower.y, "#facc15");
+            }
+
+            else if (tower.type === "economy") {
+                const payout = 125 + tower.level * 50;
+                money += payout;
+                totalMoneyEarned += payout;
+                tower.abilityCooldown = 900;
+                createFloatingText(tower.x, tower.y - 35, `💰 +$${payout}!`, "#facc15");
+                createBurst(tower.x, tower.y, "#eab308");
+            }
+
+            else if (tower.type === "frost") {
+                for (const enemy of enemies) {
+                    if (inRange(enemy)) {
+                        enemy.stun = Math.max(enemy.stun || 0, 90);
+                        enemy.slowFactor = .2;
+                        enemy.slowTimer = 150;
+                    }
+                }
+                tower.abilityCooldown = 600;
+                createFloatingText(tower.x, tower.y - 35, "❄️ FREEZE!", "#67e8f9");
+                createBurst(tower.x, tower.y, "#67e8f9");
+            }
+
+            else if (tower.type === "mortar") {
+                const targets = [...enemies]
+                    .sort((a, b) => b.hp - a.hp)
+                    .slice(0, 5);
+
+                for (const enemy of targets) {
+                    hitEnemy(enemy, {
+                        tower,
+                        damage: tower.damage * 1.8,
+                        splash: tower.splash + 35,
+                        burn: 0,
+                        chain: 0,
+                        stun: 0,
+                        slow: 0,
+                        slowDuration: 0,
+                        color: towerData.mortar.color
+                    });
+                }
+
+                tower.abilityCooldown = 720;
+                createFloatingText(tower.x, tower.y - 35, "💥 BARRAGE!", "#fb923c");
+                createBurst(tower.x, tower.y, "#fb923c");
+            }
+
+            else if (tower.type === "support") {
+                for (const other of towers) {
+                    if (other === tower) continue;
+                    if (Math.hypot(other.x - tower.x, other.y - tower.y) <= tower.range) {
+                        other.timer = 0;
+                        other.overclock = 180;
+                    }
+                }
+
+                tower.abilityCooldown = 900;
+                createFloatingText(tower.x, tower.y - 35, "📡 OVERCLOCK!", "#2dd4bf");
+                createBurst(tower.x, tower.y, "#2dd4bf");
+            }
+
+            updateTowerPanel();
+            updateUI();
+        }
+
         /* =========================
            UI
         ========================= */
@@ -6846,6 +6701,8 @@
             if (waveNumber >= 3) parts.push("Runner");
             if (waveNumber >= 5) parts.push("Armored");
             if (waveNumber >= 7) parts.push("Healer");
+            if (waveNumber >= 9) parts.push("Splitter");
+            if (waveNumber >= 11) parts.push("Shielded");
             if (waveNumber >= 4) parts.push("Tank");
 
             if (parts.length === 0) {
@@ -6875,13 +6732,9 @@
 
             document.getElementById(
                 "wave"
-            ).textContent =
-
-                currentWave +
-                " / " +
-                levels[
-                    currentLevel
-                ].waves;
+            ).textContent = endlessMode
+                ? `${currentWave} / ∞`
+                : `${currentWave} / ${levels[currentLevel].waves}`;
 
 
             document.getElementById(
@@ -6895,7 +6748,7 @@
             const nextWave =
                 document.getElementById("nextWave");
 
-            if (currentWave >= levels[currentLevel].waves) {
+            if (!endlessMode && currentWave >= levels[currentLevel].waves) {
                 nextWave.textContent = " • Final";
             }
             else if (currentWave === 0) {
@@ -6914,6 +6767,19 @@
             document.getElementById("speedButton").textContent =
                 "▶ " + gameSpeed + "x";
 
+            const nextButton = document.getElementById("nextWaveButton");
+            const earlyButton = document.getElementById("earlyWaveButton");
+            const countdown = document.getElementById("waveCountdown");
+            const canStart = gameRunning && !gamePaused && enemies.length === 0 && enemiesToSpawn === 0;
+            nextButton.disabled = !canStart || (!endlessMode && currentWave >= levels[currentLevel].waves);
+            earlyButton.disabled = !canStart || currentWave === 0 || (!endlessMode && currentWave >= levels[currentLevel].waves);
+            earlyButton.textContent = `⚡ Early Start +$${Math.max(0, Math.floor(waveDelay * .35))}`;
+            if (canStart && (currentWave === 0 || endlessMode || currentWave < levels[currentLevel].waves)) {
+                countdown.textContent = waveDelay > 0 ? `${currentWave === 0 ? "First wave" : "Next wave"} in ${(waveDelay / 60).toFixed(1)}s — press N to start` : "Starting wave...";
+            } else {
+                countdown.textContent = "";
+            }
+
 
             if (
                 selectedTower
@@ -6925,6 +6791,54 @@
 
         }
 
+
+        function manualNextWave() {
+            if (!gameRunning || gamePaused) return;
+            if (enemies.length || enemiesToSpawn) return;
+            if (!endlessMode && currentWave >= levels[currentLevel].waves) return;
+            startWave(currentWave > 0);
+        }
+
+        const achievements = [
+            ["first", "First Blood", "Defeat your first enemy", () => enemiesDefeated >= 1],
+            ["builder", "Builder", "Place 10 towers", () => totalTowersPlaced >= 10],
+            ["spender", "Big Spender", "Spend $5,000 on towers", () => totalTowerSpent >= 5000],
+            ["boss", "Boss Hunter", "Defeat 10 bosses", () => totalBossesDefeated >= 10],
+            ["abilities", "Ability Master", "Use abilities 25 times", () => totalAbilityUses >= 25],
+            ["damage", "Damage Dealer", "Deal 50,000 total damage", () => totalDamageDealt >= 50000],
+            ["veteran", "Veteran", "Complete 3 levels", () => Number(localStorage.getItem("blockDefenseLevelsWon") || 0) >= 3],
+            ["endless", "Endless Warrior", "Reach wave 20 in Endless Mode", () => endlessMode && currentWave >= 20],
+            ["noLeak", "Clean Run", "Finish a level with 15+ lives", () => !endlessMode && currentWave >= levels[currentLevel].waves && lives >= 15],
+            ["support", "Networked", "Use Support Overclock 10 times", () => towers.some(t => t.type === "support" && (t.abilityUses || 0) >= 10)]
+        ];
+
+        function checkAchievements() {
+            const unlocked = JSON.parse(localStorage.getItem("blockDefenseAchievements") || "[]");
+            let changed = false;
+            for (const [id, name, desc, test] of achievements) {
+                if (!unlocked.includes(id) && test()) {
+                    unlocked.push(id);
+                    changed = true;
+                    createFloatingText(cameraX + canvas.width / cameraZoom / 2, cameraY + 170, `🏆 ${name}!`, "#facc15");
+                }
+            }
+            if (changed) localStorage.setItem("blockDefenseAchievements", JSON.stringify(unlocked));
+        }
+
+        function openAchievements() {
+            const panel = document.getElementById("achievementPanel");
+            const list = document.getElementById("achievementList");
+            const unlocked = JSON.parse(localStorage.getItem("blockDefenseAchievements") || "[]");
+            list.innerHTML = achievements.map(([id,name,desc]) => {
+                const done = unlocked.includes(id);
+                return `<div class="achievementItem ${done ? "" : "locked"}"><span>${done ? "🏆" : "🔒"} <strong>${name}</strong><br>${desc}</span><span>${done ? "UNLOCKED" : "LOCKED"}</span></div>`;
+            }).join("");
+            panel.style.display = "flex";
+        }
+
+        function closeAchievements() {
+            document.getElementById("achievementPanel").style.display = "none";
+        }
 
         function togglePause() {
 
@@ -6993,6 +6907,9 @@
             const previousBest = Number(localStorage.getItem(bestKey) || 0);
             const bestScore = Math.max(previousBest, Math.floor(score));
             localStorage.setItem(bestKey, bestScore);
+            const wins = Number(localStorage.getItem("blockDefenseLevelsWon") || 0) + 1;
+            localStorage.setItem("blockDefenseLevelsWon", wins);
+            checkAchievements();
 
             document.getElementById(
                 "completeText"
@@ -7002,7 +6919,9 @@
                 🏆 Best Score: <strong>${bestScore}</strong>${score >= previousBest && score > 0 ? " — NEW BEST!" : ""}<br>
                 👾 Enemies Defeated: <strong>${enemiesDefeated}</strong><br>
                 💰 Money Earned: <strong>$${Math.floor(totalMoneyEarned)}</strong><br>
-                🏗 Towers Placed: <strong>${totalTowersPlaced}</strong>`;
+                🏗 Towers Placed: <strong>${totalTowersPlaced}</strong><br>
+                💥 Total Damage: <strong>${Math.floor(totalDamageDealt)}</strong><br>
+                ⚡ Ability Uses: <strong>${totalAbilityUses}</strong>`;
 
 
             document.getElementById(
@@ -7054,6 +6973,14 @@
                             towers
                         ) {
 
+                            if (tower.abilityCooldown > 0) {
+                                tower.abilityCooldown--;
+                            }
+
+                            if (tower.overclock > 0) {
+                                tower.overclock--;
+                            }
+
                             towerAttack(
                                 tower
                             );
@@ -7064,6 +6991,7 @@
                         updateProjectiles();
                         updateParticles();
                         updateFloatingTexts();
+                        checkAchievements();
 
                     }
 
