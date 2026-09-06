@@ -331,6 +331,16 @@
         }
 
 
+        .specialShopButton {
+            border-color: rgba(250, 204, 21, .45);
+            background: linear-gradient(135deg, rgba(124, 58, 237, .16), rgba(14, 116, 144, .12));
+        }
+
+        .specialShopButton:hover {
+            border-color: #facc15;
+            transform: translateY(-1px);
+        }
+
         .shopButton.selected {
 
             background: #3d8748;
@@ -789,6 +799,162 @@
         }
 
 
+        /* =========================
+           SKINS
+        ========================= */
+
+        #skinsPanel {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(5,15,7,.88);
+            z-index: 160;
+        }
+
+        #skinsBox {
+            position: relative;
+            width: min(900px, 92vw);
+            max-height: 86vh;
+            overflow: auto;
+            padding: 28px;
+            background: #173b20;
+            border: 3px solid #3fa34d;
+            border-radius: 8px;
+            box-shadow: 0 10px 50px rgba(0,0,0,.6);
+        }
+
+        #skinsBox h2 {
+            margin-bottom: 7px;
+            color: #b8f5bd;
+            font-size: 28px;
+        }
+
+        #skinsIntro {
+            margin-bottom: 18px;
+            color: #b9d8bd;
+            font-size: 13px;
+        }
+
+        #closeSkins {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .skinTower {
+            margin: 12px 0;
+            padding: 14px;
+            background: rgba(0,0,0,.16);
+            border: 1px solid #356d3d;
+            border-radius: 7px;
+        }
+
+        .skinTowerHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .skinTowerName {
+            font-size: 16px;
+            font-weight: bold;
+            color: #e7ffe9;
+        }
+
+        .skinMastery {
+            color: #9fc8a7;
+            font-size: 11px;
+        }
+
+        .skinChoices {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .skinCard {
+            padding: 11px;
+            border: 2px solid #347c3e;
+            border-radius: 6px;
+            background: #24572d;
+            color: white;
+            text-align: left;
+        }
+
+        .skinCard.locked {
+            opacity: .42;
+            filter: grayscale(.7);
+        }
+
+        .skinCard.equipped {
+            border-color: #facc15;
+            box-shadow: 0 0 0 1px #facc15;
+        }
+
+        .skinPreview {
+            width: 38px;
+            height: 38px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            border: 2px solid rgba(255,255,255,.45);
+        }
+
+        .skinName {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .skinRequirement {
+            margin-top: 4px;
+            min-height: 27px;
+            color: #b9d8bd;
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .skinEquipButton {
+            width: 100%;
+            margin-top: 7px;
+            padding: 6px;
+            border: 1px solid #3fa34d;
+            border-radius: 4px;
+            background: #286b34;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .skinEquipButton:hover {
+            background: #3d8748;
+        }
+
+        .skinEquipButton:disabled {
+            opacity: .45;
+            cursor: default;
+        }
+
+        @media(max-width:700px) {
+            .skinChoices {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+
         #helpBox h2 {
 
             margin-bottom: 15px;
@@ -1102,7 +1268,33 @@
 
         }
 
-    </style>
+    
+
+        /* FINAL UPDATE UI */
+        .finalOverlay {
+            position:fixed; inset:0; z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72); backdrop-filter:blur(7px);
+        }
+        .finalBox {
+            position:relative; width:min(720px,94vw); max-height:88vh; overflow:auto; padding:28px; border-radius:20px; background:linear-gradient(180deg,#172033,#0b1220); border:1px solid rgba(255,255,255,.14); box-shadow:0 20px 80px rgba(0,0,0,.55); color:white;
+        }
+        .wideFinalBox { width:min(980px,95vw); }
+        .closeFinal { position:absolute; right:16px; top:12px; border:0; background:transparent; color:#fff; font-size:30px; cursor:pointer; }
+        .profileGrid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0; }
+        .statCard { padding:16px; border-radius:14px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); text-align:center; }
+        .statCard b { display:block; font-size:22px; margin-bottom:6px; }
+        .statCard span { color:#94a3b8; font-size:12px; }
+        .saveButtons { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+        .codexCard { display:flex; gap:14px; align-items:center; padding:13px; margin:8px 0; border-radius:13px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.07); }
+        .codexIcon { width:48px; height:48px; border-radius:12px; display:grid; place-items:center; color:#fff; font-weight:900; font-size:20px; flex:none; }
+        .codexCard span,.codexCard small { color:#aab7ca; font-size:12px; }
+        .dailyBadge { display:inline-block; padding:7px 10px; border-radius:999px; background:rgba(250,204,21,.14); color:#fde68a; font-weight:800; font-size:12px; }
+        .dailyReward { padding:15px; margin:18px 0; border-radius:13px; background:rgba(250,204,21,.08); border:1px solid rgba(250,204,21,.2); }
+        #finalToast { position:fixed; left:50%; bottom:30px; transform:translate(-50%,20px); opacity:0; pointer-events:none; z-index:3000; padding:12px 18px; border-radius:12px; background:#111827; color:#fff; border:1px solid rgba(255,255,255,.15); box-shadow:0 10px 30px rgba(0,0,0,.4); transition:.2s; font-weight:800; }
+        #finalToast.show { opacity:1; transform:translate(-50%,0); }
+        @media(max-width:700px){ .profileGrid,.saveButtons{grid-template-columns:1fr 1fr;} .finalBox{padding:22px 16px;} }
+        @media(max-width:480px){ .profileGrid,.saveButtons{grid-template-columns:1fr;} }
+
+</style>
 
 </head>
 
@@ -1414,6 +1606,33 @@
 
         </button>
 
+        <div class="shopSectionLabel">✨ SPECIAL TOWERS — UNIQUE POWERS</div>
+
+        <button class="shopButton specialShopButton" id="shop-void" onclick="selectShopTower('void')">
+            <div class="shopName">◈ Void Mage — $700</div>
+            <div class="shopInfo">Rewinds enemies along the path • Rift Storm ability</div>
+        </button>
+
+        <button class="shopButton specialShopButton" id="shop-chrono" onclick="selectShopTower('chrono')">
+            <div class="shopName">◷ Chrono Core — $850</div>
+            <div class="shopInfo">Time field slows enemies • Time Stop ability</div>
+        </button>
+
+        <button class="shopButton specialShopButton" id="shop-tesla" onclick="selectShopTower('tesla')">
+            <div class="shopName">ϟ Tesla Coil — $900</div>
+            <div class="shopInfo">Massive chain lightning • Overload ability</div>
+        </button>
+
+        <button class="shopButton specialShopButton" id="shop-drone" onclick="selectShopTower('drone')">
+            <div class="shopName">✦ Drone Bay — $1,000</div>
+            <div class="shopInfo">Deploys attack drones • Drone Swarm ability</div>
+        </button>
+
+        <button class="shopButton specialShopButton" id="shop-alchemist" onclick="selectShopTower('alchemist')">
+            <div class="shopName">✧ Gold Alchemist — $1,100</div>
+            <div class="shopInfo">Turns kills into extra cash • Transmute ability</div>
+        </button>
+
         <div class="shopSectionLabel">★ HEROES — ONE PER GAME</div>
 
         <button
@@ -1580,6 +1799,20 @@
 
             <button
                 class="bigButton secondaryButton"
+                onclick="openSkins()"
+            >
+
+                🎨 SKINS
+
+            </button>
+
+
+            <button class="bigButton secondaryButton" onclick="openAchievements()">🏆 ACHIEVEMENTS</button>
+            <button class="bigButton secondaryButton" onclick="openCodex()">📖 CODEX</button>
+            <button class="bigButton secondaryButton" onclick="openDaily()">📅 DAILY CHALLENGE</button>
+            <button class="bigButton secondaryButton" onclick="openProfile()">👤 PROFILE / SAVES</button>
+            <button
+                class="bigButton secondaryButton"
                 onclick="openHelp()"
             >
 
@@ -1624,6 +1857,8 @@
             <button class="bigButton" onclick="selectLevel(6, true)">♾ ENDLESS MODE</button>
 
             <button class="bigButton secondaryButton" onclick="openAchievements()">🏆 ACHIEVEMENTS</button>
+            <button class="bigButton secondaryButton" onclick="openCodex()">📖 CODEX</button>
+            <button class="bigButton secondaryButton" onclick="openDaily()">📅 DAILY CHALLENGE</button>
 
             <button
                 class="bigButton secondaryButton"
@@ -1633,6 +1868,29 @@
                 ← BACK
 
             </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SKINS
+    ========================= -->
+
+    <div id="skinsPanel">
+
+        <div id="skinsBox">
+
+            <button id="closeSkins" onclick="closeSkins()">×</button>
+
+            <h2>🎨 Tower Skins</h2>
+
+            <p id="skinsIntro">
+                Unlock skins through tower mastery, then equip them manually.
+            </p>
+
+            <div id="skinsList"></div>
 
         </div>
 
@@ -1821,6 +2079,35 @@
             <div id="achievementList"></div>
         </div>
     </div>
+
+    <div id="profilePanel" class="finalOverlay" hidden>
+        <div class="finalBox">
+            <button class="closeFinal" onclick="closeProfile()">×</button>
+            <h2>👤 Player Profile</h2>
+            <p>Your permanent Block Defense stats.</p>
+            <div id="profileStats" class="profileGrid"></div>
+            <div class="saveButtons"><button class="bigButton" onclick="exportSave()">💾 EXPORT SAVE</button><button class="bigButton secondaryButton" onclick="importSave()">📥 IMPORT SAVE</button><button class="bigButton secondaryButton" onclick="resetAllSaveData()">🗑 RESET PROGRESS</button></div>
+            <input id="saveImportInput" type="file" accept="application/json" hidden onchange="handleSaveImport(event)">
+        </div>
+    </div>
+
+    <div id="codexPanel" class="finalOverlay" hidden>
+        <div class="finalBox wideFinalBox">
+            <button class="closeFinal" onclick="closeCodex()">×</button>
+            <h2>📖 Tower & Enemy Codex</h2>
+            <p>Everything you've discovered in one place.</p>
+            <div id="codexList"></div>
+        </div>
+    </div>
+
+    <div id="dailyPanel" class="finalOverlay" hidden>
+        <div class="finalBox">
+            <button class="closeFinal" onclick="closeDaily()">×</button>
+            <div id="dailyContent"></div>
+        </div>
+    </div>
+
+    <div id="finalToast"></div>
 
     <script>
 
@@ -2190,6 +2477,13 @@
                     event.key === "Escape"
                 ) {
 
+                    const skinsPanel = document.getElementById("skinsPanel");
+
+                    if (skinsPanel && skinsPanel.style.display === "flex") {
+                        closeSkins();
+                        return;
+                    }
+
                     selectedTower = null;
 
                     selectedShopTower = null;
@@ -2297,6 +2591,7 @@
         let enemiesDefeated = 0;
         let totalMoneyEarned = 0;
         let totalTowersPlaced = 0;
+        let specialTowersPlaced = new Set();
         let totalTowerSpent = 0;
         let waveRewardsEarned = 0;
         let totalDamageDealt = 0;
@@ -2314,10 +2609,256 @@
         let selectedHero = null;
         let campaignCompleted = JSON.parse(localStorage.getItem("blockDefenseCompletedLevels") || "[]");
 
+        /* =========================
+           FINAL UPDATE PROFILE / DAILY / CODEX
+        ========================= */
+
+        let dailyMode = false;
+        let dailyChallengeId = "";
+        let dailyChallengeCompleted = false;
+        let sessionStartTime = 0;
+        let fastestWin = Number(localStorage.getItem("blockDefenseFastestWin") || 0);
+        let totalGamesPlayed = Number(localStorage.getItem("blockDefenseGamesPlayed") || 0);
+
+        const dailyChallenges = [
+            { id:"lowcash", name:"Low Cash", desc:"Start with 55% of the normal cash, but earn 40% more from enemies.", cash:.55, reward:750, score:1.25 },
+            { id:"speedrun", name:"Speed Run", desc:"Enemies move 28% faster. Finish the level for a huge reward.", speed:1.28, reward:900, score:1.35 },
+            { id:"iron", name:"Iron Fortress", desc:"You have fewer lives, but tower damage is increased by 20%.", lives:.65, towerDamage:1.2, reward:850, score:1.3 },
+            { id:"triple", name:"Triple Threat", desc:"Only three tower types are allowed today.", limited:true, reward:1000, score:1.5 },
+            { id:"bossrush", name:"Boss Rush", desc:"Boss waves arrive more often and pay double.", bossRush:true, reward:1200, score:1.6 }
+        ];
+
+        const codexEnemies = [
+            ["normal","Basic Enemy","A standard enemy with balanced speed and health.","🟢"],
+            ["runner","Runner","Fast but fragile. Excellent at slipping through weak defenses.","🏃"],
+            ["armored","Armored","Reduces incoming damage with heavy armor.","🛡️"],
+            ["tank","Tank","Slow, bulky enemy with lots of health.","🟧"],
+            ["healer","Healer","Restores nearby enemies over time.","💚"],
+            ["splitter","Splitter","Splits into two smaller runners when defeated.","🔶"],
+            ["shielded","Shielded","Starts with a separate energy shield.","🔷"],
+            ["boss","Boss","Massive enemy with multiple phases.","☠️"],
+            ["stealth","Stealth","Late-game enemies can hide until revealed by suitable effects.","👻"],
+            ["regen","Regenerator","Late-game enemies can slowly recover health.","♻️"]
+        ];
+
+        function getDailyChallenge() {
+            const d = new Date();
+            const key = d.getUTCFullYear() * 372 + (d.getUTCMonth()+1) * 31 + d.getUTCDate();
+            return dailyChallenges[key % dailyChallenges.length];
+        }
+
+        function dailyStorageKey() {
+            const d = new Date();
+            return `blockDefenseDaily_${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
+        }
+
+        function refreshDailyState() {
+            const c = getDailyChallenge();
+            dailyChallengeId = c.id;
+            dailyChallengeCompleted = localStorage.getItem(dailyStorageKey()) === "1";
+        }
+
+        function saveProfileStats() {
+            localStorage.setItem("blockDefenseGamesPlayed", String(totalGamesPlayed));
+            localStorage.setItem("blockDefenseFastestWin", String(fastestWin || 0));
+        }
+
+        function getPrestigeData() {
+            try { return JSON.parse(localStorage.getItem("blockDefensePrestige") || "{}"); }
+            catch { return {}; }
+        }
+
+        function savePrestigeData(data) {
+            localStorage.setItem("blockDefensePrestige", JSON.stringify(data));
+        }
+
+        function getPrestigeCount(type) {
+            return getPrestigeData()[type] || 0;
+        }
+
+        function prestigeTower(type) {
+            const kills = getMasteryKills(type);
+            if (kills < 250) return;
+            const data = getPrestigeData();
+            data[type] = (data[type] || 0) + 1;
+            savePrestigeData(data);
+            createFloatingText(cameraX + canvas.width / cameraZoom / 2, cameraY + 180, `⭐ ${towerData[type].name} PRESTIGE ${data[type]}!`, "#facc15");
+            renderSkins();
+            openAchievements();
+        }
+
+        function exportSave() {
+            const payload = {
+                version: 3,
+                exportedAt: new Date().toISOString(),
+                completedLevels: JSON.parse(localStorage.getItem("blockDefenseCompletedLevels") || "[]"),
+                levelsWon: Number(localStorage.getItem("blockDefenseLevelsWon") || 0),
+                achievements: JSON.parse(localStorage.getItem("blockDefenseAchievements") || "[]"),
+                mastery: JSON.parse(localStorage.getItem("blockDefenseMastery") || "{}"),
+                equippedSkins: JSON.parse(localStorage.getItem("blockDefenseEquippedSkins") || "{}"),
+                prestige: getPrestigeData(),
+                gamesPlayed: Number(localStorage.getItem("blockDefenseGamesPlayed") || 0),
+                fastestWin: Number(localStorage.getItem("blockDefenseFastestWin") || 0)
+            };
+            const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "block-defense-save.json";
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function importSave() {
+            document.getElementById("saveImportInput")?.click();
+        }
+
+        function handleSaveImport(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const data = JSON.parse(reader.result);
+                    if (!data || typeof data !== "object") throw new Error("Invalid save");
+                    if (Array.isArray(data.completedLevels)) localStorage.setItem("blockDefenseCompletedLevels", JSON.stringify(data.completedLevels));
+                    if (typeof data.levelsWon === "number") localStorage.setItem("blockDefenseLevelsWon", String(data.levelsWon));
+                    if (Array.isArray(data.achievements)) localStorage.setItem("blockDefenseAchievements", JSON.stringify(data.achievements));
+                    if (data.mastery && typeof data.mastery === "object") localStorage.setItem("blockDefenseMastery", JSON.stringify(data.mastery));
+                    if (data.equippedSkins && typeof data.equippedSkins === "object") localStorage.setItem("blockDefenseEquippedSkins", JSON.stringify(data.equippedSkins));
+                    if (data.prestige && typeof data.prestige === "object") localStorage.setItem("blockDefensePrestige", JSON.stringify(data.prestige));
+                    if (typeof data.gamesPlayed === "number") localStorage.setItem("blockDefenseGamesPlayed", String(data.gamesPlayed));
+                    if (typeof data.fastestWin === "number") localStorage.setItem("blockDefenseFastestWin", String(data.fastestWin));
+                    campaignCompleted = JSON.parse(localStorage.getItem("blockDefenseCompletedLevels") || "[]");
+                    loadEquippedSkins();
+                    updateCampaignInfo();
+                    renderSkins();
+                    renderCodex();
+                    updateProfile();
+                    messageToast("💾 Save imported successfully!");
+                } catch {
+                    messageToast("❌ That save file is not valid.");
+                }
+                event.target.value = "";
+            };
+            reader.readAsText(file);
+        }
+
+        function resetAllSaveData() {
+            const keys = [
+                "blockDefenseCompletedLevels","blockDefenseLevelsWon","blockDefenseAchievements",
+                "blockDefenseMastery","blockDefenseEquippedSkins","blockDefensePrestige",
+                "blockDefenseGamesPlayed","blockDefenseFastestWin"
+            ];
+            keys.forEach(k => localStorage.removeItem(k));
+            campaignCompleted = [];
+            loadEquippedSkins();
+            refreshDailyState();
+            updateCampaignInfo();
+            renderSkins();
+            updateProfile();
+            messageToast("🗑 Save data reset.");
+        }
+
+        function messageToast(text) {
+            let toast = document.getElementById("finalToast");
+            if (!toast) return;
+            toast.textContent = text;
+            toast.classList.add("show");
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove("show"), 2400);
+        }
+
+        function openProfile() {
+            gameRunning = false;
+            hideAllScreens();
+            const panel = document.getElementById("profilePanel");
+            panel.hidden = false; panel.style.display = "flex"; panel.style.visibility = "visible"; panel.style.pointerEvents = "auto";
+            updateProfile();
+        }
+
+        function closeProfile() {
+            const panel = document.getElementById("profilePanel");
+            panel.hidden = true; panel.style.display = "none"; panel.style.visibility = "hidden"; panel.style.pointerEvents = "none";
+            showMainMenu();
+        }
+
+        function updateProfile() {
+            const achievements = JSON.parse(localStorage.getItem("blockDefenseAchievements") || "[]");
+            const mastery = JSON.parse(localStorage.getItem("blockDefenseMastery") || "{}");
+            const prestige = getPrestigeData();
+            const kills = Object.values(mastery).reduce((a,b)=>a+b,0);
+            const prestiges = Object.values(prestige).reduce((a,b)=>a+b,0);
+            const el = document.getElementById("profileStats");
+            if (!el) return;
+            el.innerHTML = `
+                <div class="statCard"><b>🏆 ${achievements.length}</b><span>Achievements</span></div>
+                <div class="statCard"><b>👾 ${kills.toLocaleString()}</b><span>Total Tower Kills</span></div>
+                <div class="statCard"><b>⭐ ${prestiges}</b><span>Prestiges</span></div>
+                <div class="statCard"><b>🎮 ${Number(localStorage.getItem("blockDefenseGamesPlayed")||0).toLocaleString()}</b><span>Games Played</span></div>
+                <div class="statCard"><b>🗺️ ${campaignCompleted.length}/6</b><span>Campaign</span></div>
+                <div class="statCard"><b>⏱️ ${fastestWin ? (fastestWin/1000).toFixed(1)+"s" : "—"}</b><span>Fastest Win</span></div>`;
+        }
+
+        function openCodex() {
+            gameRunning = false; hideAllScreens();
+            const panel = document.getElementById("codexPanel");
+            panel.hidden=false; panel.style.display="flex"; panel.style.visibility="visible"; panel.style.pointerEvents="auto";
+            renderCodex();
+        }
+
+        function closeCodex() {
+            const panel=document.getElementById("codexPanel");
+            panel.hidden=true; panel.style.display="none"; panel.style.visibility="hidden"; panel.style.pointerEvents="none";
+            showMainMenu();
+        }
+
+        function renderCodex() {
+            const list=document.getElementById("codexList"); if(!list) return;
+            const mastery=JSON.parse(localStorage.getItem("blockDefenseMastery")||"{}");
+            list.innerHTML = `<h3>🗼 Towers</h3>` + Object.entries(towerData).map(([id,t])=>{
+                const p=getPrestigeCount(id);
+                return `<div class="codexCard"><div class="codexIcon" style="background:${t.color}">${towerLetters[id]||"?"}</div><div><b>${t.name}</b><br><span>${t.damage ? `Base damage ${t.damage}` : "Utility tower"} • Range ${t.range || "—"}</span><br><small>⭐ ${mastery[id]||0} kills • Prestige ${p}</small></div></div>`;
+            }).join("") + `<h3>👾 Enemies</h3>` + codexEnemies.map(e=>`<div class="codexCard enemyCodex"><div class="codexIcon">${e[3]}</div><div><b>${e[1]}</b><br><span>${e[2]}</span></div></div>`).join("");
+        }
+
+        function openDaily() {
+            gameRunning=false; hideAllScreens(); refreshDailyState();
+            const c=getDailyChallenge();
+            const panel=document.getElementById("dailyPanel");
+            panel.hidden=false; panel.style.display="flex"; panel.style.visibility="visible"; panel.style.pointerEvents="auto";
+            document.getElementById("dailyContent").innerHTML=`<div class="dailyBadge">📅 TODAY'S CHALLENGE</div><h2>${c.name}</h2><p>${c.desc}</p><div class="dailyReward">🏆 Reward: <b>$${c.reward}</b> + score multiplier</div><p>${dailyChallengeCompleted ? "✅ Completed today! Come back tomorrow." : "Not completed yet."}</p><button class="bigButton" onclick="startDailyChallenge()" ${dailyChallengeCompleted?"disabled":""}>▶ PLAY DAILY</button>`;
+        }
+
+        function closeDaily() {
+            const panel=document.getElementById("dailyPanel"); panel.hidden=true; panel.style.display="none"; panel.style.visibility="hidden"; panel.style.pointerEvents="none"; showMainMenu();
+        }
+
+        function startDailyChallenge() {
+            refreshDailyState(); if(dailyChallengeCompleted) return;
+            dailyMode=true;
+            dailyChallengeId=getDailyChallenge().id;
+            selectLevel(Math.min(6, Math.max(1, Math.min(campaignCompleted.length+1,6))), false);
+        }
+
+        function finishDailyChallenge() {
+            if (!dailyMode || dailyChallengeCompleted) return;
+            dailyChallengeCompleted=true;
+            localStorage.setItem(dailyStorageKey(), "1");
+            const c=getDailyChallenge();
+            money += c.reward; totalMoneyEarned += c.reward;
+            createFloatingText(cameraX + canvas.width/cameraZoom/2, cameraY + 160, `📅 DAILY COMPLETE +$${c.reward}!`, "#facc15");
+            messageToast(`📅 Daily challenge complete! +$${c.reward}`);
+            dailyMode=false;
+        }
+
         const mapVariants = [
-            { name: "Classic", money: 1, lives: 1, enemySpeed: 1, enemyHp: 1 },
-            { name: "Nightfall", money: 1.10, lives: .9, enemySpeed: 1.06, enemyHp: 1.05 },
-            { name: "Prosperity", money: 1.20, lives: 1, enemySpeed: .96, enemyHp: 1.10 }
+            { name: "Classic", icon: "🌿", money: 1, lives: 1, enemySpeed: 1, enemyHp: 1, bg: "#182219", water: "#185c72", path: "#8b6f47" },
+            { name: "Nightfall", icon: "🌙", money: 1.10, lives: .9, enemySpeed: 1.06, enemyHp: 1.05, bg: "#080d1b", water: "#12304d", path: "#46516b" },
+            { name: "Prosperity", icon: "💰", money: 1.20, lives: 1, enemySpeed: .96, enemyHp: 1.10, bg: "#16220e", water: "#1b6b58", path: "#7f7541" },
+            { name: "Frostbite", icon: "❄️", money: .95, lives: 1.15, enemySpeed: .90, enemyHp: 1.18, bg: "#dbeafe", water: "#60a5fa", path: "#94a3b8" },
+            { name: "Volcanic", icon: "🌋", money: 1.05, lives: .85, enemySpeed: 1.12, enemyHp: 1.22, bg: "#24110d", water: "#7f1d1d", path: "#78350f" },
+            { name: "Void", icon: "🌀", money: 1.35, lives: .75, enemySpeed: 1.18, enemyHp: 1.28, bg: "#13091f", water: "#3b1d5a", path: "#4c3a61" }
         ];
 
         const heroData = {
@@ -2812,6 +3353,8 @@
            TOWER DATA
         ========================= */
 
+        let specialTime = 0;
+
         const towerData = {
 
             fire: {
@@ -2990,6 +3533,62 @@
             },
 
 
+            void: {
+                name: "Void Mage",
+                cost: 700,
+                damage: 42,
+                range: 250,
+                cooldown: 55,
+                color: "#8b5cf6",
+                special: "rewind",
+                emoji: "◈"
+            },
+
+            chrono: {
+                name: "Chrono Core",
+                cost: 850,
+                damage: 18,
+                range: 280,
+                cooldown: 42,
+                color: "#22d3ee",
+                special: "time",
+                emoji: "◷"
+            },
+
+            tesla: {
+                name: "Tesla Coil",
+                cost: 900,
+                damage: 30,
+                range: 240,
+                cooldown: 48,
+                chain: 6,
+                color: "#facc15",
+                special: "overload",
+                emoji: "ϟ"
+            },
+
+            drone: {
+                name: "Drone Bay",
+                cost: 1000,
+                damage: 12,
+                range: 320,
+                cooldown: 80,
+                color: "#94a3b8",
+                special: "drones",
+                emoji: "✦"
+            },
+
+            alchemist: {
+                name: "Gold Alchemist",
+                cost: 1100,
+                damage: 28,
+                range: 230,
+                cooldown: 58,
+                color: "#fbbf24",
+                special: "transmute",
+                emoji: "✧"
+            },
+
             economy: {
 
                 name:
@@ -3015,6 +3614,252 @@
         };
 
 
+
+        /* =========================
+           TOWER SKINS
+        ========================= */
+
+        const skinData = {
+            default: {
+                name: "Default",
+                rarity: "Default",
+                unlock: 0,
+                requirement: "Always unlocked"
+            },
+
+            veteran: {
+                name: "Veteran",
+                rarity: "Veteran",
+                unlock: 25,
+                requirement: "25 tower kills"
+            },
+
+            elite: {
+                name: "Elite",
+                rarity: "Elite",
+                unlock: 100,
+                requirement: "100 tower kills"
+            },
+
+            golden: {
+                name: "Golden",
+                rarity: "Golden",
+                unlock: 250,
+                requirement: "250 tower kills"
+            }
+        };
+
+        const towerLetters = {
+            fire: "F",
+            archer: "A",
+            sniper: "S",
+            water: "W",
+            shock: "⚡",
+            economy: "$",
+            frost: "❄",
+            mortar: "M",
+            support: "+",
+            bounty: "B",
+            void: "◈",
+            chrono: "◷",
+            tesla: "ϟ",
+            drone: "✦",
+            alchemist: "✧"
+        };
+
+        const skinTowerTypes = Object.keys(towerData);
+        let equippedSkins = {};
+
+        function loadEquippedSkins() {
+            try {
+                const saved = JSON.parse(
+                    localStorage.getItem("blockDefenseEquippedSkins") || "{}"
+                );
+
+                equippedSkins = {};
+
+                for (const type of skinTowerTypes) {
+                    equippedSkins[type] =
+                        skinData[saved[type]] ? saved[type] : "default";
+                }
+            } catch {
+                equippedSkins = {};
+                for (const type of skinTowerTypes) {
+                    equippedSkins[type] = "default";
+                }
+            }
+        }
+
+        function saveEquippedSkins() {
+            localStorage.setItem(
+                "blockDefenseEquippedSkins",
+                JSON.stringify(equippedSkins)
+            );
+        }
+
+        function getMasteryKills(type) {
+            try {
+                const mastery = JSON.parse(
+                    localStorage.getItem("blockDefenseMastery") || "{}"
+                );
+                return mastery[type] || 0;
+            } catch {
+                return 0;
+            }
+        }
+
+        function isSkinUnlocked(type, skinId) {
+            return !!skinData[skinId] &&
+                   !!towerData[type] &&
+                   getMasteryKills(type) >= skinData[skinId].unlock;
+        }
+
+        function getEquippedSkin(type) {
+            const id = equippedSkins[type] || "default";
+            return isSkinUnlocked(type, id) ? id : "default";
+        }
+
+        function getSkinVisual(type, skinId = getEquippedSkin(type)) {
+            const base = towerData[type];
+
+            if (skinId === "golden") {
+                return {
+                    fill: "#facc15",
+                    accent: "#fff7b2",
+                    label: "G"
+                };
+            }
+
+            if (skinId === "elite") {
+                return {
+                    fill: "#d1d5db",
+                    accent: "#ffffff",
+                    label: "E"
+                };
+            }
+
+            if (skinId === "veteran") {
+                return {
+                    fill: "#8b5cf6",
+                    accent: "#ddd6fe",
+                    label: "V"
+                };
+            }
+
+            return {
+                fill: base.color,
+                accent: "#ffffff",
+                label: ""
+            };
+        }
+
+        function equipSkin(type, skinId) {
+            if (!isSkinUnlocked(type, skinId)) return;
+
+            equippedSkins[type] = skinId;
+            saveEquippedSkins();
+            renderSkins();
+            updateUI();
+        }
+
+        function openSkins() {
+            gameRunning = false;
+            hideAllScreens();
+
+            const panel = document.getElementById("skinsPanel");
+            if (!panel) return;
+
+            panel.hidden = false;
+            panel.style.display = "flex";
+            panel.style.visibility = "visible";
+            panel.style.pointerEvents = "auto";
+
+            renderSkins();
+        }
+
+        function closeSkins() {
+            const panel = document.getElementById("skinsPanel");
+            if (!panel) return;
+
+            panel.hidden = true;
+            panel.style.display = "none";
+            panel.style.visibility = "hidden";
+            panel.style.pointerEvents = "none";
+
+            showMainMenu();
+        }
+
+        function renderSkins() {
+            const list = document.getElementById("skinsList");
+            if (!list) return;
+
+            loadEquippedSkins();
+
+            list.innerHTML = skinTowerTypes.map(type => {
+                const data = towerData[type];
+                const kills = getMasteryKills(type);
+                const equipped = getEquippedSkin(type);
+
+                const choices = Object.entries(skinData).map(([id, skin]) => {
+                    const unlocked = isSkinUnlocked(type, id);
+                    const selected = equipped === id;
+                    const visual = getSkinVisual(type, id);
+
+                    return `
+                        <div class="skinCard ${unlocked ? "" : "locked"} ${selected ? "equipped" : ""}">
+                            <div
+                                class="skinPreview"
+                                style="background:${visual.fill};box-shadow:0 0 12px ${visual.accent};"
+                            >
+                                ${towerLetters[type] || "?"}
+                            </div>
+
+                            <div class="skinName">
+                                ${skin.rarity === "Golden" ? "👑 " : ""}
+                                ${skin.rarity === "Elite" ? "✨ " : ""}
+                                ${skin.rarity === "Veteran" ? "🎨 " : ""}
+                                ${skin.name}
+                            </div>
+
+                            <div class="skinRequirement">
+                                ${unlocked ? skin.requirement : `🔒 ${skin.requirement}`}
+                            </div>
+
+                            <button
+                                class="skinEquipButton"
+                                ${!unlocked || selected ? "disabled" : ""}
+                                onclick="equipSkin('${type}','${id}')"
+                            >
+                                ${selected ? "✓ EQUIPPED" : unlocked ? "EQUIP" : "LOCKED"}
+                            </button>
+                        </div>
+                    `;
+                }).join("");
+
+                return `
+                    <div class="skinTower">
+                        <div class="skinTowerHeader">
+                            <div>
+                                <div class="skinTowerName">${data.name}</div>
+                                <div class="skinMastery">
+                                    ${kills} mastery kills • Current: ${skinData[equipped].name}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skinChoices">
+                            ${choices}
+                        </div>
+                        <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border-radius:10px;background:rgba(250,204,21,.06);">
+                            <span style="font-size:12px;color:#cbd5e1;">⭐ Prestige ${getPrestigeCount(type)} • requires 250 kills</span>
+                            <button class="skinEquipButton" ${kills < 250 ? "disabled" : ""} onclick="prestigeTower('${type}')">${kills >= 250 ? "⭐ PRESTIGE" : "LOCKED"}</button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+
         /* =========================
            LOAD LEVEL
         ========================= */
@@ -3025,6 +3870,17 @@
             // The selector is already closed by selectLevel(), but closing it
             // again here makes loadLevel safe to call from anywhere in the game.
             closeLevelSelect();
+
+            const victoryScreen = document.getElementById("levelComplete");
+            const gameOverScreen = document.getElementById("gameOver");
+
+            [victoryScreen, gameOverScreen].forEach(screen => {
+                if (!screen) return;
+                screen.hidden = true;
+                screen.style.setProperty("display", "none", "important");
+                screen.style.setProperty("visibility", "hidden", "important");
+                screen.style.setProperty("pointer-events", "none", "important");
+            });
 
             const mainMenu = document.getElementById("mainMenu");
             if (mainMenu) {
@@ -3052,6 +3908,16 @@
 
             lives =
                 Math.max(1, Math.floor(data.lives * variant.lives));
+
+            if (dailyMode) {
+                const challenge = getDailyChallenge();
+                money = Math.floor(money * (challenge.cash || 1));
+                lives = Math.max(1, Math.floor(lives * (challenge.lives || 1)));
+            }
+
+            totalGamesPlayed++;
+            saveProfileStats();
+            sessionStartTime = performance.now();
 
 
             score = 0;
@@ -3171,8 +4037,11 @@
             const levelSelect = document.getElementById("levelSelect");
             const gameOver = document.getElementById("gameOver");
             const levelComplete = document.getElementById("levelComplete");
+            const skinsPanel = document.getElementById("skinsPanel");
 
-            [mainMenu, levelSelect, gameOver, levelComplete].forEach(screen => {
+            const finalPanels = [document.getElementById("profilePanel"), document.getElementById("codexPanel"), document.getElementById("dailyPanel")];
+
+            [mainMenu, levelSelect, gameOver, levelComplete, skinsPanel, ...finalPanels].forEach(screen => {
                 if (!screen) return;
                 screen.hidden = true;
                 screen.style.setProperty("display", "none", "important");
@@ -3234,9 +4103,16 @@
 
         function selectLevel(level, endless = false) {
 
-            // Close the map screen FIRST. This happens before level setup so
-            // a later game error can never leave the map selector covering the game.
+            // Close every menu overlay before the game begins.
             closeLevelSelect();
+            ["dailyPanel", "profilePanel", "codexPanel", "achievementPanel", "skinsPanel"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.hidden = true;
+                el.style.display = "none";
+                el.style.visibility = "hidden";
+                el.style.pointerEvents = "none";
+            });
 
             const mainMenu = document.getElementById("mainMenu");
             if (mainMenu) {
@@ -3526,6 +4402,14 @@
                     selectedShopTower
                 ];
 
+            if (dailyMode && getDailyChallenge().limited) {
+                const allowed = ["archer", "fire", "economy"];
+                if (!allowed.includes(selectedShopTower)) {
+                    messageToast("📅 Daily rule: only Archer, Fire Mage and Bank are allowed!");
+                    return;
+                }
+            }
+
 
             x =
                 Math.floor(
@@ -3614,6 +4498,9 @@
 
             totalTowersPlaced++;
             totalTowerSpent += data.cost;
+            if (["void","chrono","tesla","drone","alchemist"].includes(selectedShopTower)) {
+                specialTowersPlaced.add(selectedShopTower);
+            }
 
             towers.push({
 
@@ -3683,7 +4570,13 @@
                     data.cost,
                 bountyKills: 0,
                 bountyMultiplier: selectedShopTower === "bounty" ? 3 : 0,
-                bountyRewardMultiplier: selectedShopTower === "bounty" ? 5 : 0
+                bountyRewardMultiplier: selectedShopTower === "bounty" ? 5 : 0,
+                rewindPower: selectedShopTower === "void" ? 2 : 0,
+                globalSlow: selectedShopTower === "chrono" ? .12 : 0,
+                droneCount: 0,
+                droneTimer: 0,
+                transmuteBonus: selectedShopTower === "alchemist" ? .35 : 0,
+                specialCharge: 0
 
             });
 
@@ -3775,6 +4668,31 @@
                 [{name:"Chain Link",cost:150,effects:{chain:2}},{name:"Arc Network",cost:230,effects:{chain:2}},{name:"Lightning Web",cost:360,effects:{chain:3,damage:15}}],
                 [{name:"Rapid Pulse",cost:150,effects:{cooldown:-20}},{name:"Overclocked Pulse",cost:240,effects:{cooldown:-18}},{name:"EMP Engine",cost:380,effects:{cooldown:-15,stun:25}}]
             ],
+            void: [
+                [{name:"Rift Reach",cost:300,effects:{range:55}},{name:"Gravity Well",cost:450,effects:{damage:24,rewindPower:1}},{name:"Event Horizon",cost:700,effects:{damage:45,rewindPower:1,splash:45}}],
+                [{name:"Void Bolt",cost:280,effects:{damage:30}},{name:"Null Pulse",cost:430,effects:{damage:38,stun:25}},{name:"Reality Tear",cost:680,effects:{damage:55,chain:2}}],
+                [{name:"Backstep",cost:260,effects:{cooldown:-8,rewindPower:1}},{name:"Time Fracture",cost:420,effects:{cooldown:-8,slow:.10}},{name:"Singularity",cost:650,effects:{cooldown:-7,splash:35,damage:30}}]
+            ],
+            chrono: [
+                [{name:"Clockwork Lens",cost:320,effects:{range:55}},{name:"Temporal Lens",cost:470,effects:{damage:22,globalSlow:.08}},{name:"Time Domain",cost:720,effects:{damage:35,globalSlow:.10,range:50}}],
+                [{name:"Tick Faster",cost:300,effects:{cooldown:-7}},{name:"Second Hand",cost:460,effects:{cooldown:-8,damage:18}},{name:"Time Cascade",cost:700,effects:{cooldown:-7,stun:20}}],
+                [{name:"Slow Field",cost:280,effects:{globalSlow:.08}},{name:"Chrono Field",cost:440,effects:{globalSlow:.10,slow:.08}},{name:"Frozen Moment",cost:680,effects:{globalSlow:.12,stun:35}}]
+            ],
+            tesla: [
+                [{name:"Copper Core",cost:300,effects:{damage:22}},{name:"High Voltage",cost:450,effects:{damage:35,chain:2}},{name:"Thunder Engine",cost:700,effects:{damage:50,chain:2,stun:18}}],
+                [{name:"Arc Jump",cost:280,effects:{chain:2}},{name:"Arc Storm",cost:430,effects:{chain:3}},{name:"Chain Reaction",cost:680,effects:{chain:4,damage:18}}],
+                [{name:"Fast Charge",cost:270,effects:{cooldown:-8}},{name:"Overcharge",cost:420,effects:{cooldown:-8,damage:15}},{name:"Unlimited Power",cost:650,effects:{cooldown:-7,stun:20}}]
+            ],
+            drone: [
+                [{name:"Extra Drone",cost:350,effects:{droneCap:1}},{name:"Drone Squad",cost:500,effects:{droneCap:2,damage:8}},{name:"Air Armada",cost:750,effects:{droneCap:2,damage:15,range:45}}],
+                [{name:"Combat AI",cost:300,effects:{cooldown:-8,droneDamage:5}},{name:"Hunter AI",cost:470,effects:{cooldown:-9,droneDamage:8}},{name:"War AI",cost:700,effects:{cooldown:-8,droneDamage:12}}],
+                [{name:"Repair Bay",cost:280,effects:{droneSpeed:1.15}},{name:"Rapid Launch",cost:430,effects:{droneSpeed:1.25}},{name:"Quantum Hangar",cost:680,effects:{droneCap:1,droneSpeed:1.35}}]
+            ],
+            alchemist: [
+                [{name:"Golden Touch",cost:320,effects:{damage:22,transmuteBonus:.10}},{name:"Gold Dust",cost:480,effects:{damage:30,transmuteBonus:.12}},{name:"Midas Core",cost:750,effects:{damage:45,transmuteBonus:.18}}],
+                [{name:"Quick Mix",cost:300,effects:{cooldown:-7}},{name:"Rapid Reaction",cost:460,effects:{cooldown:-8,damage:18}},{name:"Master Formula",cost:700,effects:{cooldown:-7,transmuteBonus:.12}}],
+                [{name:"Long Flask",cost:280,effects:{range:45}},{name:"Golden Flask",cost:440,effects:{range:50,damage:18}},{name:"Philosopher Stone",cost:680,effects:{range:60,transmuteBonus:.20}}]
+            ],
             economy: [
                 [{name:"Cash Payout",cost:150,effects:{income:12}},{name:"Investor",cost:240,effects:{income:20}},{name:"Mega Investor",cost:380,effects:{income:30}}],
                 [{name:"Faster Banking",cost:170,effects:{incomeInterval:-50}},{name:"Compound Interest",cost:260,effects:{income:25,incomeInterval:-40}},{name:"Turbo Banking",cost:420,effects:{income:35,incomeInterval:-35}}],
@@ -3820,6 +4738,12 @@
                 else if (key === "auraCooldown") tower.auraCooldown = (tower.auraCooldown || 0) + value;
                 else if (key === "bountyMultiplier") tower.bountyMultiplier = (tower.bountyMultiplier || 3) + value;
                 else if (key === "bountyRewardMultiplier") tower.bountyRewardMultiplier = (tower.bountyRewardMultiplier || 5) + value;
+                else if (key === "rewindPower") tower.rewindPower = (tower.rewindPower || 0) + value;
+                else if (key === "globalSlow") tower.globalSlow = Math.min(.65, (tower.globalSlow || 0) + value);
+                else if (key === "droneCap") tower.droneCap = (tower.droneCap || 2) + value;
+                else if (key === "droneDamage") tower.droneDamage = (tower.droneDamage || 0) + value;
+                else if (key === "droneSpeed") tower.droneSpeed = (tower.droneSpeed || 1) * value;
+                else if (key === "transmuteBonus") tower.transmuteBonus = (tower.transmuteBonus || 0) + value;
             }
         }
 
@@ -3914,6 +4838,11 @@
                 ${tower.waveBonus ? `<div><strong>Wave Bonus:</strong> +$${tower.waveBonus}</div>` : ""}
                 ${tower.type === "support" ? `<div><strong>Aura:</strong> +${Math.round((tower.auraDamage || 0)*100)}% dmg / +${Math.round((tower.auraCooldown || 0)*100)}% speed</div>` : ""}
                 ${tower.type === "bounty" ? `<div><strong>Kill Cash:</strong> 3x</div><div><strong>Bounties:</strong> ${tower.bountyKills || 0}</div>` : ""}
+                ${tower.type === "void" ? `<div><strong>Rift:</strong> Rewinds enemies ${tower.rewindPower || 2} nodes</div>` : ""}
+                ${tower.type === "chrono" ? `<div><strong>Time Field:</strong> ${Math.round((tower.globalSlow || .12)*100)}% slow</div>` : ""}
+                ${tower.type === "tesla" ? `<div><strong>Arc:</strong> Chains ${tower.chain || 6} targets</div>` : ""}
+                ${tower.type === "drone" ? `<div><strong>Drones:</strong> ${tower.droneCount || 0}/${tower.droneCap || 2}</div>` : ""}
+                ${tower.type === "alchemist" ? `<div><strong>Transmute:</strong> +${Math.round((tower.transmuteBonus || .35)*100)}% kill cash</div>` : ""}
                 <div id="statsTable"><strong>Total Damage:</strong> ${Math.floor(tower.totalDamage || 0)}<br><strong>Kills:</strong> ${tower.kills || 0}<br><strong>Shots:</strong> ${tower.shots || 0}<br><strong>Abilities:</strong> ${tower.abilityUses || 0}</div>
                 <div><strong>Ability:</strong> ${abilityLabel}</div>
             `;
@@ -3980,7 +4909,12 @@
                 bounty: ["🎯 BOUNTY — Q", "🎯 Bounty"],
                 frost: ["❄️ FREEZE — Q", "❄️ Freeze"],
                 mortar: ["💥 BARRAGE — Q", "💥 Barrage"],
-                support: ["📡 OVERCLOCK — Q", "📡 Overclock"]
+                support: ["📡 OVERCLOCK — Q", "📡 Overclock"],
+                void: ["◈ RIFT — Q", "◈ Rift"],
+                chrono: ["◷ TIME STOP — Q", "◷ Time Stop"],
+                tesla: ["ϟ OVERLOAD — Q", "ϟ Overload"],
+                drone: ["✦ SWARM — Q", "✦ Swarm"],
+                alchemist: ["✧ TRANSMUTE — Q", "✧ Transmute"]
             };
 
             const abilityInfo = abilityNames[tower.type] || ["ABILITY — Q", "Ability"];
@@ -4371,6 +5305,7 @@
             enemy.hp = Math.floor(enemy.hp * variant.enemyHp);
             enemy.maxHp = Math.floor(enemy.maxHp * variant.enemyHp);
             enemy.speed *= variant.enemySpeed;
+            if (dailyMode) enemy.speed *= (getDailyChallenge().speed || 1);
 
             if (currentWave >= 12 && Math.random() < Math.min(.08 + currentWave * .002, .22) && !["boss", "shielded"].includes(enemy.type)) {
                 enemy.regen = true;
@@ -4388,6 +5323,12 @@
             enemy.x = routeStart.x;
             enemy.y = routeStart.y;
             enemy.pathIndex = 0;
+
+            try {
+                const seen = JSON.parse(localStorage.getItem("blockDefenseEnemyCodex") || "[]");
+                const key = enemy.type;
+                if (!seen.includes(key)) { seen.push(key); localStorage.setItem("blockDefenseEnemyCodex", JSON.stringify(seen)); }
+            } catch {}
 
             enemies.push(
                 enemy
@@ -4485,6 +5426,10 @@
 
                     let type =
                         "normal";
+
+                    if (dailyMode && getDailyChallenge().bossRush && currentWave % 4 === 0) {
+                        type = "boss";
+                    }
 
 
                     if (
@@ -4877,6 +5822,40 @@
 
 
         /* =========================
+           SPECIAL TOWER HELPERS
+        ========================= */
+
+        function updateDroneBay(tower) {
+            if (tower.type !== "drone") return;
+            tower.droneCap = tower.droneCap || 2;
+            tower.droneDamage = tower.droneDamage || 0;
+            tower.droneSpeed = tower.droneSpeed || 1;
+            tower.droneCount = Math.min(tower.droneCount || 0, tower.droneCap + 3);
+            tower.droneTimer = (tower.droneTimer || 0) - 1;
+            if (tower.droneTimer <= 0 && tower.droneCount < tower.droneCap + (tower.droneBoost > 0 ? 3 : 0)) {
+                tower.droneCount++;
+                tower.droneTimer = 150;
+            }
+            if (tower.droneBoost > 0) tower.droneBoost--;
+        }
+
+        function fireDroneAttack(tower) {
+            if (tower.type !== "drone" || (tower.droneCount || 0) <= 0) return;
+            const target = findTarget(tower);
+            if (!target) return;
+            const drones = Math.min(tower.droneCount, 5);
+            for (let i = 0; i < drones; i++) {
+                const angle = specialTime * .05 + i * (Math.PI * 2 / Math.max(1, drones));
+                const sx = tower.x + Math.cos(angle) * 24;
+                const sy = tower.y + Math.sin(angle) * 24;
+                projectiles.push({
+                    tower, x:sx, y:sy, target, damage:(tower.damage + tower.droneDamage) * (tower.droneBoost > 0 ? 1.45 : 1),
+                    speed:14, color:"#cbd5e1", splash:0, burn:0, chain:0, stun:0, slow:0, slowDuration:0, rewind:0, globalSlow:0, specialType:"drone"
+                });
+            }
+        }
+
+        /* =========================
            ATTACK
         ========================= */
 
@@ -4903,6 +5882,14 @@
 
             }
 
+
+            if (tower.type === "drone") {
+                updateDroneBay(tower);
+                fireDroneAttack(tower);
+                tower.timer = Math.max(12, tower.cooldown);
+                tower.flash = 4;
+                return;
+            }
 
             const target =
                 findTarget(
@@ -4982,7 +5969,11 @@
 
                 slowDuration:
                     tower.slowDuration ||
-                    0
+                    0,
+
+                rewind: tower.type === "void" ? (tower.rewindPower || 2) : 0,
+                globalSlow: tower.type === "chrono" ? (tower.globalSlow || .12) : 0,
+                specialType: tower.type
 
             });
 
@@ -5098,6 +6089,11 @@
 
             let rawDamage = projectile.damage;
 
+            if (projectile.tower) {
+                rawDamage *= 1 + getPrestigeCount(projectile.tower.type) * .05;
+                if (dailyMode && getDailyChallenge().towerDamage) rawDamage *= getDailyChallenge().towerDamage;
+            }
+
             if (enemy.shield > 0) {
                 const shieldDamage = Math.min(enemy.shield, rawDamage);
                 enemy.shield -= shieldDamage;
@@ -5157,6 +6153,24 @@
                 enemy.slowTimer = Math.max(enemy.slowTimer || 0, projectile.slowDuration || 60);
             }
 
+
+            if (projectile.rewind > 0 && enemy.type !== "boss") {
+                const route = levelRoutes[enemy.route || 0] || levelPath;
+                enemy.pathIndex = Math.max(0, enemy.pathIndex - projectile.rewind);
+                const pos = route[enemy.pathIndex];
+                if (pos) {
+                    enemy.x = pos.x;
+                    enemy.y = pos.y;
+                }
+                createFloatingText(enemy.x, enemy.y - enemy.radius - 28, `◈ RIFT -${projectile.rewind}`, "#c084fc");
+            }
+
+            if (projectile.globalSlow > 0) {
+                for (const other of enemies) {
+                    other.slowFactor = Math.min(other.slowFactor || 1, 1 - projectile.globalSlow);
+                    other.slowTimer = Math.max(other.slowTimer || 0, 75);
+                }
+            }
 
             if (
                 projectile.stun >
@@ -5299,6 +6313,14 @@
             ) {
 
                 let killReward = enemy.reward;
+                if (dailyMode) {
+                    const c = getDailyChallenge();
+                    if (c.cash) killReward *= 1.4;
+                    if (c.bossRush && enemy.type === "boss") killReward *= 2;
+                }
+                if (projectile.tower && projectile.tower.type === "alchemist") {
+                    killReward *= (1 + (projectile.tower.transmuteBonus || .35));
+                }
                 if (projectile.tower && projectile.tower.type === "bounty") {
                     killReward *= (projectile.tower.bountyMultiplier || 3);
                     projectile.tower.bountyKills = (projectile.tower.bountyKills || 0) + 1;
@@ -5327,7 +6349,7 @@
 
                 score +=
                     enemy.reward *
-                    10;
+                    10 * (dailyMode ? (getDailyChallenge().score || 1) : 1);
 
 
                 if (enemy.type === "splitter") {
@@ -6016,12 +7038,7 @@
 
 
         function getTowerSkinColor(tower) {
-            const mastery = JSON.parse(localStorage.getItem("blockDefenseMastery") || "{}");
-            const kills = mastery[tower.type] || 0;
-            if (kills >= 250) return "#facc15";
-            if (kills >= 100) return "#e5e7eb";
-            if (kills >= 25) return "#c4b5fd";
-            return towerData[tower.type].color;
+            return getSkinVisual(tower.type).fill;
         }
 
 
@@ -6080,8 +7097,11 @@
                 );
 
 
+                const skinVisual =
+                    getSkinVisual(tower.type);
+
                 ctx.fillStyle =
-                    getTowerSkinColor(tower);
+                    skinVisual.fill;
 
 
                 ctx.fillRect(
@@ -6144,9 +7164,7 @@
 
                 ctx.fillText(
 
-                    letters[
-                        tower.type
-                    ],
+                    data.emoji || letters[tower.type],
 
                     x,
                     y
@@ -6154,7 +7172,44 @@
                 );
 
 
-                if (
+                
+                const equippedSkinId =
+                    getEquippedSkin(tower.type);
+
+                if (equippedSkinId !== "default") {
+                    ctx.strokeStyle =
+                        skinVisual.accent;
+
+                    ctx.lineWidth =
+                        2.5 * cameraZoom;
+
+                    ctx.strokeRect(
+                        x - size / 2,
+                        y - size / 2,
+                        size,
+                        size
+                    );
+
+                    ctx.fillStyle =
+                        skinVisual.accent;
+
+                    ctx.font =
+                        `bold ${8 * cameraZoom}px Arial`;
+
+                    ctx.textAlign =
+                        "center";
+
+                    ctx.textBaseline =
+                        "middle";
+
+                    ctx.fillText(
+                        skinVisual.label,
+                        x,
+                        y + size * .38
+                    );
+                }
+
+if (
                     tower.level >
                     0
                 ) {
@@ -6765,7 +7820,7 @@
 
 
             ctx.fillStyle =
-                "#182219";
+                mapVariants[currentMapVariant].bg || "#182219";
 
 
             ctx.fillRect(
@@ -6928,6 +7983,21 @@
         ========================= */
 
         document.addEventListener("keydown", event => {
+            if (event.key.toLowerCase() === "k" && !gameRunning) { openAchievements(); return; }
+            if (event.key.toLowerCase() === "p" && !gameRunning) { openProfile(); return; }
+            if (event.key.toLowerCase() === "l" && !gameRunning) { openCodex(); return; }
+            if (event.key.toLowerCase() === "d" && !gameRunning) { openDaily(); return; }
+            if (event.key === "Escape") {
+                const ids = ["profilePanel","codexPanel","dailyPanel"];
+                for (const id of ids) {
+                    const el=document.getElementById(id);
+                    if (el && !el.hidden && el.style.display !== "none") {
+                        el.hidden=true; el.style.display="none"; el.style.visibility="hidden"; el.style.pointerEvents="none";
+                        showMainMenu(); return;
+                    }
+                }
+            }
+
 
             const key = event.key.toLowerCase();
 
@@ -7292,6 +8362,61 @@
                 createBurst(tower.x, tower.y, "#fb923c");
             }
 
+            else if (tower.type === "void") {
+                for (const enemy of enemies.filter(inRange)) {
+                    hitEnemy(enemy, {
+                        tower, damage: tower.damage * 2.5, splash: 55, burn: 0, chain: 2, stun: 30, slow: .2, slowDuration: 90, rewind: 4, globalSlow: 0, color: towerData.void.color
+                    });
+                }
+                tower.abilityCooldown = 840;
+                createFloatingText(tower.x, tower.y - 35, "◈ RIFT STORM!", "#c084fc");
+                createBurst(tower.x, tower.y, "#8b5cf6");
+            }
+
+            else if (tower.type === "chrono") {
+                for (const enemy of enemies) {
+                    enemy.stun = Math.max(enemy.stun || 0, 210);
+                    enemy.slowFactor = .08;
+                    enemy.slowTimer = Math.max(enemy.slowTimer || 0, 240);
+                }
+                tower.abilityCooldown = 1050;
+                createFloatingText(tower.x, tower.y - 35, "◷ TIME STOP!", "#22d3ee");
+                createBurst(tower.x, tower.y, "#22d3ee");
+            }
+
+            else if (tower.type === "tesla") {
+                const targets = [...enemies].sort((a,b) => Math.hypot(a.x-tower.x,a.y-tower.y)-Math.hypot(b.x-tower.x,b.y-tower.y)).slice(0, 18);
+                for (const enemy of targets) {
+                    hitEnemy(enemy, { tower, damage: tower.damage * 2.2, splash: 0, burn: 0, chain: 5, stun: 90, slow: 0, slowDuration: 0, color: towerData.tesla.color });
+                }
+                tower.abilityCooldown = 900;
+                createFloatingText(tower.x, tower.y - 35, "ϟ OVERLOAD!", "#fde047");
+                createBurst(tower.x, tower.y, "#facc15");
+            }
+
+            else if (tower.type === "drone") {
+                const cap = tower.droneCap || 2;
+                tower.droneCount = Math.min(cap, (tower.droneCount || 0) + 3);
+                tower.droneBoost = 480;
+                tower.abilityCooldown = 780;
+                createFloatingText(tower.x, tower.y - 35, "✦ DRONE SWARM!", "#e2e8f0");
+                createBurst(tower.x, tower.y, "#94a3b8");
+            }
+
+            else if (tower.type === "alchemist") {
+                let bonus = 0;
+                for (const enemy of enemies.filter(inRange)) {
+                    bonus += Math.min(80, Math.max(10, enemy.reward * 1.5));
+                    hitEnemy(enemy, { tower, damage: tower.damage * 1.8, splash: 35, burn: 0, chain: 0, stun: 0, slow: 0, slowDuration: 0, color: towerData.alchemist.color });
+                }
+                bonus = Math.floor(bonus);
+                money += bonus;
+                totalMoneyEarned += bonus;
+                tower.abilityCooldown = 960;
+                createFloatingText(tower.x, tower.y - 35, `✧ TRANSMUTE +$${bonus}!`, "#fbbf24");
+                createBurst(tower.x, tower.y, "#fbbf24");
+            }
+
             else if (tower.type === "support") {
                 for (const other of towers) {
                     if (other === tower) continue;
@@ -7436,7 +8561,11 @@
             ["veteran", "Veteran", "Complete 3 levels", () => Number(localStorage.getItem("blockDefenseLevelsWon") || 0) >= 3],
             ["endless", "Endless Warrior", "Reach wave 20 in Endless Mode", () => endlessMode && currentWave >= 20],
             ["noLeak", "Clean Run", "Finish a level with 15+ lives", () => !endlessMode && currentWave >= levels[currentLevel].waves && lives >= 15],
-            ["support", "Networked", "Use Support Overclock 10 times", () => towers.some(t => t.type === "support" && (t.abilityUses || 0) >= 10)]
+            ["support", "Networked", "Use Support Overclock 10 times", () => towers.some(t => t.type === "support" && (t.abilityUses || 0) >= 10)],
+            ["daily", "Daily Grinder", "Complete a daily challenge", () => Object.keys(localStorage).some(k => k.startsWith("blockDefenseDaily_"))],
+            ["prestige", "Beyond Mastery", "Prestige any tower", () => Object.values(getPrestigeData()).some(v => v >= 1)],
+            ["collector", "Completionist", "Discover 8 enemy types", () => { const seen = JSON.parse(localStorage.getItem("blockDefenseEnemyCodex") || "[]"); return seen.length >= 8; }],
+            ["specialForces", "Special Forces", "Place each of the 5 special towers", () => specialTowersPlaced.size >= 5]
         ];
 
         function checkAchievements() {
@@ -7514,10 +8643,14 @@
                     💰 Money Earned: <strong>$${Math.floor(totalMoneyEarned)}</strong>`;
             }
 
-            document.getElementById(
-                "gameOver"
-            ).style.display =
-                "flex";
+            const gameOver = document.getElementById("gameOver");
+
+            if (gameOver) {
+                gameOver.hidden = false;
+                gameOver.style.setProperty("display", "flex", "important");
+                gameOver.style.setProperty("visibility", "visible", "important");
+                gameOver.style.setProperty("pointer-events", "auto", "important");
+            }
 
         }
 
@@ -7544,6 +8677,13 @@
             updateCampaignInfo();
             checkAchievements();
 
+            if (dailyMode) finishDailyChallenge();
+            const winTime = performance.now() - sessionStartTime;
+            if (!endlessMode && (!fastestWin || winTime < fastestWin)) {
+                fastestWin = winTime;
+                saveProfileStats();
+            }
+
             document.getElementById(
                 "completeText"
             ).innerHTML =
@@ -7557,10 +8697,15 @@
                 ⚡ Ability Uses: <strong>${totalAbilityUses}</strong>`;
 
 
-            document.getElementById(
-                "levelComplete"
-            ).style.display =
-                "flex";
+            const victoryScreen =
+                document.getElementById("levelComplete");
+
+            if (victoryScreen) {
+                victoryScreen.hidden = false;
+                victoryScreen.style.setProperty("display", "flex", "important");
+                victoryScreen.style.setProperty("visibility", "visible", "important");
+                victoryScreen.style.setProperty("pointer-events", "auto", "important");
+            }
 
         }
 
@@ -7581,6 +8726,7 @@
 
                     for (let sim = 0; sim < gameSpeed; sim++) {
 
+                        specialTime++;
                         updateWaveLogic();
 
 
@@ -7651,6 +8797,10 @@
 
         // Start at the main menu. Do NOT load a level automatically.
         // The player must click PLAY and then choose a map.
+        loadEquippedSkins();
+        refreshDailyState();
+        updateProfile();
+
         gameRunning =
             false;
 
