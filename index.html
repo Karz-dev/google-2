@@ -401,7 +401,16 @@
         }
 
         .heroShopButton:disabled {
-            opacity: .35;
+            opacity: .28;
+            filter: grayscale(1);
+            cursor: not-allowed;
+            border-color: #4b5563;
+        }
+
+        .heroShopButton.heroUnavailable {
+            opacity: .28;
+            filter: grayscale(1);
+            border-color: #4b5563;
             cursor: not-allowed;
         }
 
@@ -1588,8 +1597,6 @@
             </p>
 
             <div id="campaignInfo">Campaign progress: 0 / 6 levels complete</div>
-
-            <div class="heroChoice" id="heroChoice"></div>
 
             <button class="variantButton" onclick="cycleMapVariant()">🗺 Map Variant: Classic</button>
 
@@ -3113,8 +3120,11 @@
 
             document.getElementById(
                 "levelSelect"
-            ).style.display =
-                "none";
+            ).style.setProperty(
+                "display",
+                "none",
+                "important"
+            );
 
 
             document.getElementById(
@@ -3312,21 +3322,6 @@
         }
 
 
-        function buildHeroChoices() {
-            const box = document.getElementById("heroChoice");
-            if (!box) return;
-            box.innerHTML = Object.entries(heroData).map(([id, data]) =>
-                `<button class="${selectedHeroType === id ? "selected" : ""}" onclick="selectHero('${id}')">${data.emoji} ${data.name}</button>`
-            ).join("");
-            updateCampaignInfo();
-        }
-
-        function selectHero(type) {
-            if (!heroData[type]) return;
-            selectedHeroType = type;
-            buildHeroChoices();
-        }
-
         function cycleMapVariant() {
             currentMapVariant = (currentMapVariant + 1) % mapVariants.length;
             const button = document.querySelector(".variantButton");
@@ -3335,12 +3330,10 @@
 
         function updateCampaignInfo() {
             const info = document.getElementById("campaignInfo");
-            if (info) info.textContent = `Campaign progress: ${campaignCompleted.length} / 6 levels complete • Hero: ${heroData[selectedHeroType].name}`;
+            if (info) info.textContent = `Campaign progress: ${campaignCompleted.length} / 6 levels complete`;
         }
 
         buildLevelButtons();
-        buildHeroChoices();
-
 
         /* =========================
            HELP
@@ -6854,8 +6847,10 @@
 
                 if (hero) {
                     button.disabled = true;
+                    button.classList.add("heroUnavailable");
                     button.title = "You can only place one hero per game.";
                 } else {
+                    button.classList.remove("heroUnavailable");
                     button.disabled = money < heroData[type].cost;
                     button.title = button.disabled
                         ? `Need $${heroData[type].cost - money} more`
