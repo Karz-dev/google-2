@@ -366,6 +366,45 @@
            TOWER PANEL
         ========================= */
 
+        #heroPanel {
+            display: none;
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 285px;
+            padding: 16px;
+            background: rgba(15,23,42,.96);
+            border: 2px solid #60a5fa;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.45);
+            z-index: 20;
+        }
+
+        #heroPanel h2 { margin: 0 0 10px; }
+
+        #heroStats { line-height: 1.55; font-size: 13px; }
+
+        #heroPlaceButton { display: inline-block; }
+
+        .shopSectionLabel {
+            margin: 12px 0 5px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,.12);
+            color: #facc15;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: .5px;
+        }
+
+        .heroShopButton {
+            border-color: #60a5fa;
+        }
+
+        .heroShopButton:disabled {
+            opacity: .35;
+            cursor: not-allowed;
+        }
+
         #towerPanel {
 
             position: fixed;
@@ -882,6 +921,77 @@
             padding-top: 7px;
         }
 
+        .heroChoice {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 12px 0 6px;
+        }
+
+        .heroChoice button,
+        .variantButton,
+        .masteryButton {
+            padding: 9px 12px;
+            border: 2px solid #347c3e;
+            border-radius: 6px;
+            background: #24572d;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .heroChoice button.selected,
+        .variantButton:hover,
+        .masteryButton:hover {
+            border-color: #facc15;
+            background: #32743d;
+        }
+
+        #campaignInfo {
+            margin: 8px 0 12px;
+            color: #c8e7cb;
+            font-size: 13px;
+        }
+
+        #masteryPanel {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,.12);
+        }
+
+        .masteryRow {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            padding: 7px 8px;
+            margin: 5px 0;
+            background: rgba(0,0,0,.16);
+            border-radius: 5px;
+        }
+
+        .bountyTargetMarker {
+            position: fixed;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            padding: 9px 14px;
+            background: rgba(90,35,15,.96);
+            border: 2px solid #f59e0b;
+            border-radius: 6px;
+            color: #ffedd5;
+            font-weight: bold;
+            z-index: 30;
+            display: none;
+            pointer-events: none;
+        }
+
+        .bossPhaseText {
+            font-size: 9px;
+            color: #fde68a;
+            margin-top: 2px;
+        }
+
         .upgradePathLabel {
             display: block;
             font-size: 10px;
@@ -1063,6 +1173,8 @@
 
     <div id="waveCountdown"></div>
 
+    <div id="bountyTargetMarker">🎯 Select an enemy for the bounty</div>
+
 
     <!-- CAMERA HELP -->
 
@@ -1072,7 +1184,7 @@
         •
         Mouse Wheel = Zoom
         •
-        Middle Mouse = Drag<br>1-9 = Select Tower • E = Upgrade • X = Sell • R = Target • Q = Ability • P = Pause • Esc = Deselect
+        Middle Mouse = Drag<br>1-9 / 0 = Select Tower • E = Upgrade • X = Sell • R = Target • Q = Ability • N = Next Wave • K = Achievements • P = Pause • Esc = Deselect
 
     </div>
 
@@ -1277,10 +1389,66 @@
 
         </button>
 
+        <div class="shopSectionLabel">★ HEROES — ONE PER GAME</div>
+
+        <button
+            class="shopButton heroShopButton"
+            id="shop-hero-commander"
+            onclick="selectHeroFromShop('commander')"
+        >
+            <div class="shopName">★ Commander — $2,500</div>
+            <div class="shopInfo">Leader aura • Balanced • Place once</div>
+        </button>
+
+        <button
+            class="shopButton heroShopButton"
+            id="shop-hero-pyromancer"
+            onclick="selectHeroFromShop('pyromancer')"
+        >
+            <div class="shopName">🔥 Pyromancer — $3,000</div>
+            <div class="shopInfo">Heavy area damage • Burn • Place once</div>
+        </button>
+
+        <button
+            class="shopButton heroShopButton"
+            id="shop-hero-engineer"
+            onclick="selectHeroFromShop('engineer')"
+        >
+            <div class="shopName">⚙ Engineer — $2,750</div>
+            <div class="shopInfo">Rapid attacks • Speed aura • Place once</div>
+        </button>
+
+        <button
+            class="shopButton"
+            id="shop-bounty"
+            onclick="selectShopTower('bounty')"
+        >
+
+            <div class="shopName">
+
+                🦹 Bounty Hunter — $450
+
+            </div>
+
+            <div class="shopInfo">
+
+                3x cash from its kills • Hotkey: 0
+
+            </div>
+
+        </button>
+
 
     </div>
 
     <button id="openShopButton" onclick="openShop()">🛒 Shop</button>
+
+
+    <div id="heroPanel">
+        <h2 id="heroTitle">Hero</h2>
+        <div id="heroStats"></div>
+        <div style="margin-top:10px;font-size:12px;color:#93c5fd;">★ Hero can only be placed once per game.</div>
+    </div>
 
 
     <!-- =========================
@@ -1418,6 +1586,12 @@
             <p>
                 Choose your battlefield.
             </p>
+
+            <div id="campaignInfo">Campaign progress: 0 / 6 levels complete</div>
+
+            <div class="heroChoice" id="heroChoice"></div>
+
+            <button class="variantButton" onclick="cycleMapVariant()">🗺 Map Variant: Classic</button>
 
 
             <div id="levelGrid"></div>
@@ -2107,6 +2281,25 @@
         let waveStartedThisCycle = false;
         let endlessMode = false;
         let currentMapVariant = 0;
+        let selectedHeroType = "commander";
+        let hero = null;
+        let bountySelecting = false;
+        let bountyTarget = null;
+        let heroPlacing = false;
+        let selectedHero = null;
+        let campaignCompleted = JSON.parse(localStorage.getItem("blockDefenseCompletedLevels") || "[]");
+
+        const mapVariants = [
+            { name: "Classic", money: 1, lives: 1, enemySpeed: 1, enemyHp: 1 },
+            { name: "Nightfall", money: 1.10, lives: .9, enemySpeed: 1.06, enemyHp: 1.05 },
+            { name: "Prosperity", money: 1.20, lives: 1, enemySpeed: .96, enemyHp: 1.10 }
+        ];
+
+        const heroData = {
+            commander: { cost: 2500, name: "Commander", emoji: "★", color: "#60a5fa", damage: 28, cooldown: 42, range: 280, xpBonus: 1.15, auraDamage: .08, auraSpeed: .08, desc: "Balanced leader • buffs nearby towers" },
+            pyromancer: { cost: 3000, name: "Pyromancer", emoji: "🔥", color: "#fb7185", damage: 48, cooldown: 65, range: 320, xpBonus: 1, auraDamage: 0, auraSpeed: 0, desc: "Heavy area damage • applies burn" },
+            engineer: { cost: 2750, name: "Engineer", emoji: "⚙", color: "#fbbf24", damage: 18, cooldown: 24, range: 240, xpBonus: 1.05, auraDamage: .03, auraSpeed: .16, desc: "Rapid attacks • strong speed aura" }
+        };
 
 
         let selectedShopTower =
@@ -2760,6 +2953,18 @@
             },
 
 
+            bounty: {
+
+                name: "Bounty Hunter",
+                cost: 450,
+                damage: 10,
+                range: 260,
+                cooldown: 32,
+                color: "#f59e0b"
+
+            },
+
+
             economy: {
 
                 name:
@@ -2795,6 +3000,10 @@
                 level;
 
             endlessMode = endless;
+            bountySelecting = false;
+            bountyTarget = null;
+
+            const variant = mapVariants[currentMapVariant];
 
 
             const data =
@@ -2802,11 +3011,11 @@
 
 
             money =
-                data.money;
+                Math.floor(data.money * variant.money);
 
 
             lives =
-                data.lives;
+                Math.max(1, Math.floor(data.lives * variant.lives));
 
 
             score = 0;
@@ -2856,6 +3065,10 @@
             waterZones =
                 createWater(level);
 
+            hero = null;
+            heroPlacing = false;
+            selectedHero = null;
+
 
             cameraX = 0;
 
@@ -2881,13 +3094,15 @@
             document.getElementById(
                 "levelName"
             ).textContent =
-                data.name + (endlessMode ? " — ENDLESS" : "");
+                data.name + (endlessMode ? " — ENDLESS" : "") + ` — ${mapVariants[currentMapVariant].name}`;
 
 
             document.getElementById(
                 "towerPanel"
             ).style.display =
                 "none";
+            document.getElementById("heroPanel").style.display = "none";
+            document.getElementById("heroPlaceButton").textContent = "★ Place Hero";
 
 
             document.getElementById(
@@ -3097,7 +3312,34 @@
         }
 
 
+        function buildHeroChoices() {
+            const box = document.getElementById("heroChoice");
+            if (!box) return;
+            box.innerHTML = Object.entries(heroData).map(([id, data]) =>
+                `<button class="${selectedHeroType === id ? "selected" : ""}" onclick="selectHero('${id}')">${data.emoji} ${data.name}</button>`
+            ).join("");
+            updateCampaignInfo();
+        }
+
+        function selectHero(type) {
+            if (!heroData[type]) return;
+            selectedHeroType = type;
+            buildHeroChoices();
+        }
+
+        function cycleMapVariant() {
+            currentMapVariant = (currentMapVariant + 1) % mapVariants.length;
+            const button = document.querySelector(".variantButton");
+            if (button) button.textContent = `🗺 Map Variant: ${mapVariants[currentMapVariant].name}`;
+        }
+
+        function updateCampaignInfo() {
+            const info = document.getElementById("campaignInfo");
+            if (info) info.textContent = `Campaign progress: ${campaignCompleted.length} / 6 levels complete • Hero: ${heroData[selectedHeroType].name}`;
+        }
+
         buildLevelButtons();
+        buildHeroChoices();
 
 
         /* =========================
@@ -3401,7 +3643,10 @@
                 timer: 0,
 
                 totalSpent:
-                    data.cost
+                    data.cost,
+                bountyKills: 0,
+                bountyMultiplier: selectedShopTower === "bounty" ? 3 : 0,
+                bountyRewardMultiplier: selectedShopTower === "bounty" ? 5 : 0
 
             });
 
@@ -3512,6 +3757,11 @@
                 [{name:"Signal Boost",cost:200,effects:{range:40,auraDamage:.20,auraCooldown:.15}},{name:"Relay Tower",cost:300,effects:{range:45,auraDamage:.12,auraCooldown:.08}},{name:"Global Relay",cost:500,effects:{range:80,auraDamage:.15,auraCooldown:.10}}],
                 [{name:"Damage Uplink",cost:190,effects:{auraDamage:.12}},{name:"Power Grid",cost:300,effects:{auraDamage:.15}},{name:"Command Network",cost:500,effects:{auraDamage:.18}}],
                 [{name:"Speed Uplink",cost:190,effects:{auraCooldown:.10}},{name:"Turbo Network",cost:300,effects:{auraCooldown:.12}},{name:"Overclock Matrix",cost:500,effects:{auraCooldown:.15}}]
+            ],
+            bounty: [
+                [{name:"Bounty Pouch",cost:140,effects:{bountyMultiplier:.5}},{name:"Loaded Pouch",cost:240,effects:{bountyMultiplier:.5,damage:8}},{name:"Golden Pouch",cost:400,effects:{bountyMultiplier:1,damage:12}}],
+                [{name:"Wanted Poster",cost:150,effects:{bountyRewardMultiplier:1}},{name:"Priority Target",cost:260,effects:{bountyRewardMultiplier:1.5,range:45}},{name:"Most Wanted",cost:430,effects:{bountyRewardMultiplier:2,range:60}}],
+                [{name:"Quick Trigger",cost:120,effects:{cooldown:-6}},{name:"Fast Bounty",cost:210,effects:{cooldown:-7}},{name:"Rapid Contracts",cost:360,effects:{cooldown:-7,damage:15}}]
             ]
         };
 
@@ -3531,6 +3781,8 @@
                 else if (key === "waveBonus") tower.waveBonus = (tower.waveBonus || 0) + value;
                 else if (key === "auraDamage") tower.auraDamage = (tower.auraDamage || 0) + value;
                 else if (key === "auraCooldown") tower.auraCooldown = (tower.auraCooldown || 0) + value;
+                else if (key === "bountyMultiplier") tower.bountyMultiplier = (tower.bountyMultiplier || 3) + value;
+                else if (key === "bountyRewardMultiplier") tower.bountyRewardMultiplier = (tower.bountyRewardMultiplier || 5) + value;
             }
         }
 
@@ -3624,6 +3876,7 @@
                 ${tower.type === "economy" ? `<div><strong>Income:</strong> +$${tower.income} / ${(tower.incomeInterval / 60).toFixed(1)}s</div>` : ""}
                 ${tower.waveBonus ? `<div><strong>Wave Bonus:</strong> +$${tower.waveBonus}</div>` : ""}
                 ${tower.type === "support" ? `<div><strong>Aura:</strong> +${Math.round((tower.auraDamage || 0)*100)}% dmg / +${Math.round((tower.auraCooldown || 0)*100)}% speed</div>` : ""}
+                ${tower.type === "bounty" ? `<div><strong>Kill Cash:</strong> 3x</div><div><strong>Bounties:</strong> ${tower.bountyKills || 0}</div>` : ""}
                 <div id="statsTable"><strong>Total Damage:</strong> ${Math.floor(tower.totalDamage || 0)}<br><strong>Kills:</strong> ${tower.kills || 0}<br><strong>Shots:</strong> ${tower.shots || 0}<br><strong>Abilities:</strong> ${tower.abilityUses || 0}</div>
                 <div><strong>Ability:</strong> ${abilityLabel}</div>
             `;
@@ -3687,6 +3940,7 @@
                 water: ["💧 TIDAL BLAST — Q", "💧 Tidal Blast"],
                 shock: ["⚡ EMP — Q", "⚡ EMP"],
                 economy: ["💰 CASH INJECTION — Q", "💰 Cash Injection"],
+                bounty: ["🎯 BOUNTY — Q", "🎯 Bounty"],
                 frost: ["❄️ FREEZE — Q", "❄️ Freeze"],
                 mortar: ["💥 BARRAGE — Q", "💥 Barrage"],
                 support: ["📡 OVERCLOCK — Q", "📡 Overclock"]
@@ -4022,7 +4276,9 @@
                         "#991b1b",
 
                     emoji:
-                        "☠"
+                        "☠",
+                    phase: 1,
+                    enraged: false
 
                 };
 
@@ -4073,6 +4329,21 @@
 
             }
 
+
+            const variant = mapVariants[currentMapVariant];
+            enemy.hp = Math.floor(enemy.hp * variant.enemyHp);
+            enemy.maxHp = Math.floor(enemy.maxHp * variant.enemyHp);
+            enemy.speed *= variant.enemySpeed;
+
+            if (currentWave >= 12 && Math.random() < Math.min(.08 + currentWave * .002, .22) && !["boss", "shielded"].includes(enemy.type)) {
+                enemy.regen = true;
+                enemy.regenRate = enemy.maxHp * .006;
+            }
+
+            if (currentWave >= 14 && Math.random() < .08 && !["boss", "shielded"].includes(enemy.type)) {
+                enemy.stealth = true;
+                enemy.revealed = false;
+            }
 
             const routeChoices = levelRoutes.length ? levelRoutes : [levelPath];
             enemy.route = routeChoices.length > 1 ? Math.floor(Math.random() * routeChoices.length) : 0;
@@ -4489,6 +4760,10 @@
                     continue;
                 }
 
+                if (enemy.stealth && !enemy.revealed && tower.type !== "sniper" && tower.level < 9) {
+                    continue;
+                }
+
                 let value;
 
                 if (mode === "close") {
@@ -4610,8 +4885,9 @@
                 Math.hypot(other.x - tower.x, other.y - tower.y) <= other.range
             );
 
-            const speedBuff = supportTowers.reduce((sum, other) => sum + (other.auraCooldown || 0), 0) + (tower.overclock > 0 ? .45 : 0);
-            const damageBuff = supportTowers.reduce((sum, other) => sum + (other.auraDamage || 0), 0);
+            const heroBuffs = getHeroBuffs(tower);
+            const speedBuff = supportTowers.reduce((sum, other) => sum + (other.auraCooldown || 0), 0) + heroBuffs.speed + (tower.overclock > 0 ? .45 : 0);
+            const damageBuff = supportTowers.reduce((sum, other) => sum + (other.auraDamage || 0), 0) + heroBuffs.damage;
 
             const effectiveCooldown = Math.max(5, tower.cooldown * (1 - Math.min(.65, speedBuff)));
 
@@ -4809,6 +5085,25 @@
                 "#ffffff"
             );
 
+            if (projectile.tower && projectile.tower.type === "water") enemy.wetTimer = 150;
+            if (projectile.tower && projectile.tower.type === "shock" && enemy.wetTimer > 0) {
+                const combo = Math.min(60, projectile.damage * .35);
+                enemy.hp -= combo;
+                projectile.tower.totalDamage = (projectile.tower.totalDamage || 0) + combo;
+                totalDamageDealt += combo;
+                createFloatingText(enemy.x, enemy.y - enemy.radius - 40, `⚡ CONDUCTIVE +${Math.round(combo)}`, "#67e8f9");
+            }
+
+            if (projectile.tower && projectile.tower.type === "frost" && enemy.burn) {
+                const combo = 25 + projectile.tower.level * 5;
+                enemy.hp -= combo;
+                projectile.tower.totalDamage = (projectile.tower.totalDamage || 0) + combo;
+                totalDamageDealt += combo;
+                createFloatingText(enemy.x, enemy.y - enemy.radius - 40, `🔥❄ THERMAL SHOCK +${combo}`, "#facc15");
+            }
+
+            if (enemy.type === "boss") updateBossPhase(enemy);
+
 
             if (
                 projectile.burn
@@ -4966,14 +5261,31 @@
                 enemy.hp <= 0
             ) {
 
-                money +=
-                    enemy.reward;
+                let killReward = enemy.reward;
+                if (projectile.tower && projectile.tower.type === "bounty") {
+                    killReward *= (projectile.tower.bountyMultiplier || 3);
+                    projectile.tower.bountyKills = (projectile.tower.bountyKills || 0) + 1;
+                }
+                if (bountyTarget === enemy) {
+                    const bountyTower = towers.find(t => t.type === "bounty" && t.abilityCooldown > 0);
+                    killReward *= (bountyTower?.bountyRewardMultiplier || 5);
+                    createFloatingText(enemy.x, enemy.y - enemy.radius - 30, `🎯 BOUNTY 5x +$${Math.floor(killReward)}`, "#f59e0b");
+                    bountyTarget = null;
+                }
 
-                totalMoneyEarned += enemy.reward;
+                money +=
+                    killReward;
+
+                totalMoneyEarned += killReward;
                 enemiesDefeated++;
-                if (projectile.tower) projectile.tower.kills = (projectile.tower.kills || 0) + 1;
+                if (projectile.tower) {
+                    projectile.tower.kills = (projectile.tower.kills || 0) + 1;
+                    const mastery = JSON.parse(localStorage.getItem("blockDefenseMastery") || "{}");
+                    mastery[projectile.tower.type] = (mastery[projectile.tower.type] || 0) + 1;
+                    localStorage.setItem("blockDefenseMastery", JSON.stringify(mastery));
+                }
                 if (enemy.type === "boss") totalBossesDefeated++;
-                createFloatingText(enemy.x, enemy.y - enemy.radius - 8, `+$${enemy.reward}`, "#facc15");
+                createFloatingText(enemy.x, enemy.y - enemy.radius - 8, `+$${Math.floor(killReward)}`, "#facc15");
 
 
                 score +=
@@ -5014,6 +5326,78 @@
 
             }
 
+        }
+
+
+        function updateBossPhase(enemy) {
+            if (enemy.type !== "boss") return;
+            const ratio = enemy.hp / enemy.maxHp;
+            const nextPhase = ratio <= .25 ? 4 : ratio <= .50 ? 3 : ratio <= .75 ? 2 : 1;
+            if (nextPhase <= enemy.phase) return;
+            enemy.phase = nextPhase;
+            if (nextPhase === 2) {
+                enemy.speed *= 1.12;
+                enemy.shield = Math.max(enemy.shield || 0, enemy.maxHp * .08);
+                enemy.maxShield = enemy.shield;
+            }
+            if (nextPhase === 3) {
+                enemy.speed *= 1.15;
+                for (let i = 0; i < 2; i++) spawnEnemy("runner");
+            }
+            if (nextPhase === 4) {
+                enemy.speed *= 1.25;
+                enemy.enraged = true;
+            }
+            createFloatingText(enemy.x, enemy.y - 55, `☠ PHASE ${nextPhase}!`, "#f87171");
+            createBurst(enemy.x, enemy.y, "#ef4444");
+        }
+
+
+        function updateEnemyModifiers() {
+            for (const enemy of enemies) {
+                if (enemy.wetTimer > 0) enemy.wetTimer--;
+                if (enemy.regen && enemy.hp > 0 && enemy.hp < enemy.maxHp) {
+                    enemy.hp = Math.min(enemy.maxHp, enemy.hp + enemy.regenRate);
+                }
+                if (enemy.stealth) {
+                    enemy.revealed = enemies.some(other => other !== enemy && other.revealed && Math.hypot(other.x - enemy.x, other.y - enemy.y) < 90);
+                }
+            }
+        }
+
+
+        function updateHero() {
+            if (!hero) return;
+            const data = heroData[hero.type];
+            hero.timer--;
+            const target = enemies.find(enemy => !enemy.stealth && Math.hypot(enemy.x - hero.x, enemy.y - hero.y) <= hero.range);
+            if (hero.timer > 0 || !target) return;
+            hero.timer = hero.cooldown;
+            hero.xp += 10;
+            hero.level = 1 + Math.floor(hero.xp / 100);
+            const damage = data.damage * (1 + (hero.level - 1) * .06);
+            hitEnemy(target, {
+                tower: null,
+                damage,
+                splash: hero.type === "pyromancer" ? 75 : 0,
+                burn: hero.type === "pyromancer" ? 12 : 0,
+                chain: hero.type === "engineer" ? 1 : 0,
+                stun: hero.type === "commander" ? 20 : 0,
+                slow: 0,
+                slowDuration: 0,
+                color: data.color
+            });
+            hero.totalDamage += damage;
+            createBurst(hero.x, hero.y, data.color);
+        }
+
+
+        function getHeroBuffs(tower) {
+            if (!hero) return { damage: 0, speed: 0 };
+            const data = heroData[hero.type];
+            const distance = Math.hypot(hero.x - tower.x, hero.y - tower.y);
+            if (distance > 330) return { damage: 0, speed: 0 };
+            return { damage: data.auraDamage, speed: data.auraSpeed };
         }
 
 
@@ -5554,6 +5938,56 @@
            DRAW TOWERS
         ========================= */
 
+        function drawHero() {
+            if (!hero) return;
+            const data = heroData[hero.type];
+            const x = (hero.x - cameraX) * cameraZoom;
+            const y = (hero.y - cameraY) * cameraZoom;
+            ctx.save();
+            ctx.fillStyle = "rgba(0,0,0,.35)";
+            ctx.beginPath();
+            ctx.arc(x + 4 * cameraZoom, y + 5 * cameraZoom, 25 * cameraZoom, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = data.color;
+            ctx.beginPath();
+            ctx.arc(x, y, 25 * cameraZoom, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#facc15";
+            ctx.lineWidth = 3 * cameraZoom;
+            ctx.stroke();
+            ctx.font = `${20 * cameraZoom}px Arial`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "white";
+            ctx.fillText(data.emoji, x, y);
+            ctx.font = `bold ${11 * cameraZoom}px Arial`;
+            ctx.fillText(`Lv.${hero.level}`, x, y - 38 * cameraZoom);
+            if (heroPlacing) {
+                ctx.strokeStyle = "#60a5fa";
+                ctx.lineWidth = 3 * cameraZoom;
+                ctx.setLineDash([6 * cameraZoom, 5 * cameraZoom]);
+                ctx.beginPath();
+                ctx.arc(x, y, data.range * cameraZoom, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.font = `bold ${12 * cameraZoom}px Arial`;
+                ctx.fillStyle = "#60a5fa";
+                ctx.fillText("CLICK TO PLACE", x, y + 48 * cameraZoom);
+            }
+            ctx.restore();
+        }
+
+
+        function getTowerSkinColor(tower) {
+            const mastery = JSON.parse(localStorage.getItem("blockDefenseMastery") || "{}");
+            const kills = mastery[tower.type] || 0;
+            if (kills >= 250) return "#facc15";
+            if (kills >= 100) return "#e5e7eb";
+            if (kills >= 25) return "#c4b5fd";
+            return towerData[tower.type].color;
+        }
+
+
         function drawTowers() {
 
             for (
@@ -5610,7 +6044,7 @@
 
 
                 ctx.fillStyle =
-                    data.color;
+                    getTowerSkinColor(tower);
 
 
                 ctx.fillRect(
@@ -5665,7 +6099,8 @@
 
                     mortar: "M",
 
-                    support: "+"
+                    support: "+",
+                    bounty: "B"
 
                 };
 
@@ -5929,6 +6364,17 @@
 
 
                 ctx.fill();
+
+                if (bountyTarget === enemy) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius + 11 * cameraZoom, 0, Math.PI * 2);
+                    ctx.strokeStyle = "#f59e0b";
+                    ctx.lineWidth = 4 * cameraZoom;
+                    ctx.stroke();
+                    ctx.font = `bold ${12 * cameraZoom}px Arial`;
+                    ctx.fillStyle = "#f59e0b";
+                    ctx.fillText("BOUNTY", x, y - radius - 28 * cameraZoom);
+                }
 
                 if (enemy.shield > 0) {
                     ctx.beginPath();
@@ -6302,6 +6748,8 @@
 
             drawGrid();
 
+            drawHero();
+
             drawTowers();
 
             drawEnemies();
@@ -6343,15 +6791,113 @@
         }
 
 
+        function selectHeroFromShop(type) {
+            if (!gameRunning || hero || !heroData[type]) return;
+
+            const data = heroData[type];
+
+            if (money < data.cost) {
+                createFloatingText(
+                    cameraX + canvas.width / cameraZoom / 2,
+                    cameraY + canvas.height / cameraZoom / 2,
+                    `Need $${data.cost - money} more`,
+                    "#f87171"
+                );
+                return;
+            }
+
+            money -= data.cost;
+            totalMoneyEarned += 0;
+            totalTowerSpent += data.cost;
+
+            selectedHeroType = type;
+            hero = {
+                type: type,
+                x: 0,
+                y: 0,
+                range: data.range,
+                damage: data.damage,
+                cooldown: data.cooldown,
+                timer: 0,
+                xp: 0,
+                level: 1,
+                totalDamage: 0,
+                kills: 0,
+                totalSpent: data.cost
+            };
+
+            heroPlacing = true;
+            selectedHero = null;
+            selectedTower = null;
+            selectedShopTower = null;
+
+            document.getElementById("heroPanel").style.display = "none";
+            document.getElementById("towerPanel").style.display = "none";
+
+            document.querySelectorAll(".shopButton").forEach(button => button.classList.remove("selected"));
+
+            createFloatingText(
+                cameraX + canvas.width / cameraZoom / 2,
+                cameraY + canvas.height / cameraZoom / 2,
+                `★ ${data.name} — CHOOSE A LOCATION`,
+                "#60a5fa"
+            );
+
+            updateHeroShopButtons();
+            updateUI();
+        }
+
+        function updateHeroShopButtons() {
+            Object.keys(heroData).forEach(type => {
+                const button = document.getElementById("shop-hero-" + type);
+                if (!button) return;
+
+                if (hero) {
+                    button.disabled = true;
+                    button.title = "You can only place one hero per game.";
+                } else {
+                    button.disabled = money < heroData[type].cost;
+                    button.title = button.disabled
+                        ? `Need $${heroData[type].cost - money} more`
+                        : `Buy ${heroData[type].name} for $${heroData[type].cost}`;
+                }
+            });
+        }
+
+        function selectHeroOnMap() {
+            if (!hero) return;
+            selectedHero = hero;
+            selectedTower = null;
+            selectedShopTower = null;
+            document.getElementById("towerPanel").style.display = "none";
+            document.getElementById("heroPanel").style.display = "block";
+            const data = heroData[hero.type];
+            document.getElementById("heroTitle").textContent = `${data.emoji} ${data.name} Lv.${hero.level}`;
+            document.getElementById("heroStats").innerHTML = `
+                <div><strong>Damage:</strong> ${Math.round(data.damage * (1 + (hero.level - 1) * .06))}</div>
+                <div><strong>Range:</strong> ${Math.round(hero.range)}</div>
+                <div><strong>Attack Speed:</strong> ${(60 / hero.cooldown).toFixed(1)} /sec</div>
+                <div><strong>XP:</strong> ${hero.xp}</div>
+                <div><strong>Total Damage:</strong> ${Math.floor(hero.totalDamage || 0)}</div>
+                <div><strong>Kills:</strong> ${hero.kills || 0}</div>
+                <div><strong>Passive:</strong> ${data.desc}</div>
+            `;
+        }
+
         /* =========================
            CLICK
         ========================= */
 
         document.addEventListener("keydown", event => {
 
-            if (!gameRunning) return;
-
             const key = event.key.toLowerCase();
+
+            if (key === "k") {
+                openAchievements();
+                return;
+            }
+
+            if (!gameRunning) return;
 
             if (key === "p") {
                 togglePause();
@@ -6363,15 +6909,13 @@
                 return;
             }
 
-            if (key === "k") {
-                openAchievements();
-                return;
-            }
-
             if (key === "escape") {
                 selectedShopTower = null;
                 selectedTower = null;
+                selectedHero = null;
+                heroPlacing = false;
                 document.getElementById("towerPanel").style.display = "none";
+                document.getElementById("heroPanel").style.display = "none";
                 document.querySelectorAll(".shopButton").forEach(button => button.classList.remove("selected"));
                 return;
             }
@@ -6385,6 +6929,7 @@
             if (key === "7") selectShopTower("frost");
             if (key === "8") selectShopTower("mortar");
             if (key === "9") selectShopTower("support");
+            if (key === "0") selectShopTower("bounty");
 
             if (key === "e") {
                 if (selectedTower) {
@@ -6442,6 +6987,38 @@
                     cameraZoom;
 
 
+                if (heroPlacing && hero) {
+                    const snappedX = Math.floor(x / GRID_SIZE) * GRID_SIZE + GRID_SIZE / 2;
+                    const snappedY = Math.floor(y / GRID_SIZE) * GRID_SIZE + GRID_SIZE / 2;
+                    if (!isPath(snappedX, snappedY) &&
+                        !isWater(snappedX, snappedY) &&
+                        !towers.some(t => Math.hypot(t.x - snappedX, t.y - snappedY) < GRID_SIZE)) {
+                        hero.x = snappedX;
+                        hero.y = snappedY;
+                        heroPlacing = false;
+                        createFloatingText(hero.x, hero.y - 35, "★ HERO PLACED", "#60a5fa");
+                        updateHeroShopButtons();
+                        updateUI();
+                    }
+                    return;
+                }
+
+                if (hero && Math.hypot(hero.x - x, hero.y - y) <= 32) {
+                    selectHeroOnMap();
+                    return;
+                }
+
+                const clickedEnemy = enemies.find(enemy => Math.hypot(enemy.x - x, enemy.y - y) <= enemy.radius + 12);
+                if (bountySelecting && clickedEnemy) {
+                    bountyTarget = clickedEnemy;
+                    bountySelecting = false;
+                    document.getElementById("bountyTargetMarker").style.display = "none";
+                    if (selectedTower && selectedTower.type === "bounty") selectedTower.abilityCooldown = 900;
+                    createFloatingText(clickedEnemy.x, clickedEnemy.y - 35, "🎯 BOUNTY!", "#f59e0b");
+                    updateTowerPanel();
+                    return;
+                }
+
                 const tower =
                     getTowerAt(
                         x,
@@ -6455,6 +7032,8 @@
 
                     selectedTower =
                         tower;
+                    selectedHero = null;
+                    document.getElementById("heroPanel").style.display = "none";
 
 
                     selectedShopTower =
@@ -6630,6 +7209,13 @@
                 createBurst(tower.x, tower.y, "#eab308");
             }
 
+            else if (tower.type === "bounty") {
+                bountySelecting = true;
+                document.getElementById("bountyTargetMarker").style.display = "block";
+                createFloatingText(tower.x, tower.y - 35, "🎯 CHOOSE BOUNTY", "#f59e0b");
+                return;
+            }
+
             else if (tower.type === "frost") {
                 for (const enemy of enemies) {
                     if (inRange(enemy)) {
@@ -6715,6 +7301,8 @@
 
 
         function updateUI() {
+
+            updateHeroShopButtons();
 
             document.getElementById(
                 "money"
@@ -6833,6 +7421,8 @@
                 const done = unlocked.includes(id);
                 return `<div class="achievementItem ${done ? "" : "locked"}"><span>${done ? "🏆" : "🔒"} <strong>${name}</strong><br>${desc}</span><span>${done ? "UNLOCKED" : "LOCKED"}</span></div>`;
             }).join("");
+            const mastery = JSON.parse(localStorage.getItem("blockDefenseMastery") || "{}");
+            list.innerHTML += `<div id="masteryPanel"><h3>⭐ Tower Mastery & Skins</h3>${Object.entries(towerData).map(([id,data]) => { const kills = mastery[id] || 0; const level = kills >= 250 ? 3 : kills >= 100 ? 2 : kills >= 25 ? 1 : 0; const skin = level >= 3 ? "👑 Golden Skin" : level >= 2 ? "✨ Elite Skin" : level >= 1 ? "🎨 Veteran Skin" : "Locked"; return `<div class="masteryRow"><span><strong>${data.name}</strong><br>${kills} kills • Mastery ${level} • ${skin}</span><span>${level >= 3 ? "MAX" : `${Math.min(kills, 250)} / ${level === 0 ? 25 : level === 1 ? 100 : 250}`}</span></div>`; }).join("")}</div>`;
             panel.style.display = "flex";
         }
 
@@ -6909,6 +7499,10 @@
             localStorage.setItem(bestKey, bestScore);
             const wins = Number(localStorage.getItem("blockDefenseLevelsWon") || 0) + 1;
             localStorage.setItem("blockDefenseLevelsWon", wins);
+            campaignCompleted = JSON.parse(localStorage.getItem("blockDefenseCompletedLevels") || "[]");
+            if (!campaignCompleted.includes(currentLevel)) campaignCompleted.push(currentLevel);
+            localStorage.setItem("blockDefenseCompletedLevels", JSON.stringify(campaignCompleted));
+            updateCampaignInfo();
             checkAchievements();
 
             document.getElementById(
@@ -6965,7 +7559,9 @@
 
                         updateHealers();
                         updateBurn();
+                        updateEnemyModifiers();
                         updateEconomy();
+                        updateHero();
 
 
                         for (
